@@ -75,7 +75,7 @@ You can build SwiftQt by itself as follows:
 
 1. `cd SwiftQt`
 2. `./configure` 
-3. `swift package build` 
+3. `swift build` 
 
 I'll provide a sample application separately from the library.
 
