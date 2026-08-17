@@ -1,0 +1,5 @@
+module Cpp {
+    umbrella header "Cpp.h"
+    header "qt-c++.h"
+    export *
+}

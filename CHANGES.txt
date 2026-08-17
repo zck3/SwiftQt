@@ -1,0 +1,46 @@
+This file is a part of SwiftQt.
+
+This is SwiftQt 0.26.
+
+------------
+CHANGE LOG 
+------------
+0.1 	Basic structure
+0.2 	C Conduit routines; Swift calls them to talk with C++ code.
+0.3 	C++ CallPropagator, C++ calls it to talk with Swift.
+0.4 	Sample app that calls Conduit routines.
+0.5 	Creation of Swift object stand-ins for Qt objects.
+0.6 	Added processEvent to widgets.
+0.7 	Added Swift QObject class.
+0.8 	Added closures for some push button events.
+0.9 	Added closures for some text edit events.
+0.10	Work on QMenuBar, QMenu, QAction.
+0.11	Added some of QTableWidget & supporting classes.
+0.12	More QTableWidget & QTableWidgetItem support.
+0.13	QTableWidget vertical & horizontal headers.
+0.14	SwiftQt class convenience functions. Code cleanup.
+0.15	Basic QImage & QPixel support. More QLabel methods.
+0.16	QAbstractButton, QRadioButton, QCheckBox.
+0.17	QLayout, QBoxLayout, QVBoxLayout, QHBoxLayout, sampleBoxLayoutApp.
+0.18	QKeySequence, QGridLayout, QCalendarWidget, QDate, QLCDNumber.
+0.19	QAbstractSlider, QSlider
+0.20	Updated for Qt 6 and Swift 5.9.2.
+0.21	Downgrade to Qt 5. 
+0.22	Re-upgrade to Qt 6. Now using Swift 6.2.4. 
+0.23	- Converted SwiftQt to a Swift package. 
+	- Renamed constructors e.g. createLabel -> labelNew.
+	- Added applicationExec(), applicationNew().
+	- Added QScreen.swift and primary screen functions.
+	- Abandoned C++ MainWindow, now using event filter.
+	- Removed ApplicationDelegate as it's not relevant to Qt.
+	- Now passing QEvent type numbers to Swift side.
+	- Now passing signals as pseudo events e.g. QSignalSliderMoved.
+0.24	Converted sample apps into QMainWindow subclasses, rewrote appMain.
+0.25	- Added QColor.
+	- Converted QDate to value type.
+	- Renamed C types e.g. to Rect->SQRect.
+	- Added typealiases e.g. typealias QRect = SQRect.
+	- Added widget/object destruction on Swift side (WIP).
+	- Reimplemented QKeySequence as a char*.
+0.26	Refined Package.swift.
+
