@@ -18,7 +18,7 @@
 //
 // The author may be reached at 3 at zs3 dot me.
 //=========================================================================
-// BELOW ARE DECLARATIONS THAT MAP C FUNCTIONS TO SWIFT FUNCTIONS. 
+// BELOW ARE DECLARATIONS FOR C FUNCTIONS CALLABLE FROM THE SWIFT SIDE. 
 //=========================================================================
 
 #ifndef SWIFTQT_CSHIM_H
@@ -145,7 +145,6 @@ void Conduit_menuBarAddMenu (WidgetID, WidgetID) 	__attribute__((swift_name("Con
 WidgetID Conduit_menuNew (const char*title) 	__attribute__((swift_name("Conduit.menuNew(_:)")));
 const char *Conduit_menuTitle (WidgetID) 	__attribute__((swift_name("Conduit.menuTitle(_:)")));
 void Conduit_menuSetTitle (WidgetID, const char *) 	__attribute__((swift_name("Conduit.menuSetTitle(_:_:)")));
-void Conduit_menuAddAction (WidgetID, ObjectID) 	__attribute__((swift_name("Conduit.menuAddAction(_:_:)")));
 void Conduit_menuAddSeparator (WidgetID) 	__attribute__((swift_name("Conduit.menuAddSeparator(_:)")));
 
 //-----------------------------------------------------------------------------
@@ -169,14 +168,17 @@ void Conduit_statusBarShowMessage (WidgetID, const char*, long)	__attribute__((s
 // QWidget 
 //-----------------------------------------------------------------------------
 WidgetID Conduit_widgetNew (WidgetID)	__attribute__((swift_name("Conduit.widgetNew(_:)")));
+void Conduit_widgetDestroy (WidgetID) 	__attribute__((swift_name("Conduit.widgetDestroy(_:)")));
 void Conduit_move (WidgetID, SQCoord, SQCoord) 	__attribute__((swift_name("Conduit.move(_:_:_:)")));
 void Conduit_resize (WidgetID, SQCoord, SQCoord) 	__attribute__((swift_name("Conduit.resize(_:_:_:)")));
 void Conduit_setMinimumSize (WidgetID, SQSize) 	__attribute__((swift_name("Conduit.setMinimumSize(_:_:)")));
 SQSize Conduit_minimumSize (WidgetID)   	__attribute__((swift_name("Conduit.minimumSize(_:)")));
 void Conduit_setFrame (WidgetID, SQRect) 	__attribute__((swift_name("Conduit.setFrame(_:_:)")));
 SQRect Conduit_frame (WidgetID)   	__attribute__((swift_name("Conduit.frame(_:)")));
-SQCoord Conduit_height (WidgetID)   	__attribute__((swift_name("Conduit.height(_:)")));
+SQCoord Conduit_x (WidgetID)   	__attribute__((swift_name("Conduit.x(_:)")));
+SQCoord Conduit_y (WidgetID)   	__attribute__((swift_name("Conduit.y(_:)")));
 SQCoord Conduit_width (WidgetID)   	__attribute__((swift_name("Conduit.width(_:)")));
+SQCoord Conduit_height (WidgetID)   	__attribute__((swift_name("Conduit.height(_:)")));
 void Conduit_setHidden (WidgetID, bool) 	__attribute__((swift_name("Conduit.setHidden(_:_:)")));
 bool Conduit_isHidden (WidgetID)   	__attribute__((swift_name("Conduit.isHidden(_:)")));
 void Conduit_setStyleSheet (WidgetID, const char*) 	__attribute__((swift_name("Conduit.setStyleSheet(_:_:)")));
@@ -191,6 +193,10 @@ void Conduit_setMinimumHeight(WidgetID, long minh)     __attribute__((swift_name
 void Conduit_setMinimumWidth(WidgetID, long minw)     __attribute__((swift_name("Conduit.setMinimumWidth(_:_:)")));
 void Conduit_setParent(WidgetID, WidgetID)     __attribute__((swift_name("Conduit.setParent(_:_:)")));
 WidgetID Conduit_parentWidget(WidgetID)     __attribute__((swift_name("Conduit.parentWidget(_:)")));
+ObjectID Conduit_addAction (WidgetID, ObjectID) 	__attribute__((swift_name("Conduit.addAction(_:_:)")));
+ObjectID Conduit_addActionWithString (WidgetID, const char*) 	__attribute__((swift_name("Conduit.addActionWithString(_:_:)"))); // "Convenience function" per the header file.
+void Conduit_clearFocus (WidgetID)   	__attribute__((swift_name("Conduit.clearFocus(_:)")));
+void Conduit_setFocus (WidgetID)   	__attribute__((swift_name("Conduit.setFocus(_:)")));
 
 //-----------------------------------------------------------------------------
 // QGroupBox
@@ -207,6 +213,8 @@ void Conduit_groupBoxSetTitle (WidgetID, const char*) 	__attribute__((swift_name
 WidgetID Conduit_lineEditNew (WidgetID) 	__attribute__((swift_name("Conduit.lineEditNew(_:)")));
 const char *Conduit_lineEditText (WidgetID) 	__attribute__((swift_name("Conduit.lineEditText(_:)")));
 void Conduit_lineEditSetText (WidgetID, const char *) 	__attribute__((swift_name("Conduit.lineEditSetText(_:_:)")));
+void Conduit_lineEditSetAlignment (WidgetID, long)	__attribute__((swift_name("Conduit.lineEditSetAlignment(_:_:)")));
+long Conduit_lineEditAlignment (WidgetID)	__attribute__((swift_name("Conduit.lineEditAlignment(_:)")));
 
 //-----------------------------------------------------------------------------
 // QDate
@@ -334,7 +342,7 @@ bool Conduit_pushButtonIsDefault (WidgetID) 	__attribute__((swift_name("Conduit.
 void Conduit_pushButtonSetDefault (WidgetID, bool) 	__attribute__((swift_name("Conduit.pushButtonSetDefault(_:_:)")));
 
 //-----------------------------------------------------------------------------
-// Text editor
+// QTextEdit
 //-----------------------------------------------------------------------------
 WidgetID Conduit_textEditNew (WidgetID) 	__attribute__((swift_name("Conduit.textEditNew(_:)")));
 const char *Conduit_textEditToPlainText (WidgetID) 	__attribute__((swift_name("Conduit.textEditToPlainText(_:)")));
@@ -343,9 +351,13 @@ void Conduit_textEditSetText (WidgetID, const char *) 	__attribute__((swift_name
 void Conduit_textEditSetReadOnly (WidgetID, bool) 	__attribute__((swift_name("Conduit.textEditSetReadOnly(_:_:)")));
 const char *Conduit_textEditToHTML (WidgetID) 	__attribute__((swift_name("Conduit.textEditToHTML(_:)")));
 void Conduit_textEditSetAcceptRichText (WidgetID, bool)	__attribute__((swift_name("Conduit.textEditSetAcceptRichText(_:_:)")));
+bool Conduit_textEditIsReadOnly (WidgetID)	__attribute__((swift_name("Conduit.textEditIsReadOnly(_:)")));
+void Conduit_textEditSetAlignment (WidgetID, long)	__attribute__((swift_name("Conduit.textEditSetAlignment(_:_:)")));
+long Conduit_textEditAlignment (WidgetID)	__attribute__((swift_name("Conduit.textEditAlignment(_:)")));
+void Conduit_textEditScrollToBottom (WidgetID)	__attribute__((swift_name("Conduit.textEditScrollToBottom(_:)")));
 
 //-----------------------------------------------------------------------------
-// Web engine view
+// QWebEngineView
 //-----------------------------------------------------------------------------
 WidgetID Conduit_webEngineViewNew (WidgetID) 	__attribute__((swift_name("Conduit.webEngineViewNew(_:)")));
 void Conduit_webEngineViewSetHTML (WidgetID, const char *) 	__attribute__((swift_name("Conduit.webEngineViewSetHTML(_:_:)")));

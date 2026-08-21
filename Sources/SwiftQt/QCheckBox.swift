@@ -34,7 +34,7 @@ public class QCheckBox : QAbstractButton{
 	public convenience init (_ parent: QWidget, _ string: String) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			widgetID = Conduit.checkBoxNew (parentID, string)
+			self.widgetID = Conduit.checkBoxNew (parentID, string)
 			QWidget.registerWidget (widgetID!, self)
 		}
 	}

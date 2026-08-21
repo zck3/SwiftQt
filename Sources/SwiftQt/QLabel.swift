@@ -29,7 +29,7 @@ public class QLabel : QWidget{
 	public convenience init (_ parent: QWidget, _ text: String?) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			widgetID = Conduit.labelNew (parentID, text ?? "")
+			self.widgetID = Conduit.labelNew (parentID, text ?? "")
 			QWidget.registerWidget (widgetID!, self)
 		}
 	}
@@ -67,12 +67,12 @@ public class QLabel : QWidget{
 		}
 	}
 	public func setImage (_ image: QImage) {
-		if let widgetID = widgetID, let imageID = image.objectID {
+		if let widgetID = widgetID, let imageID = image.gadgetID {
 			Conduit.labelSetImage (widgetID, imageID)
 		}
 	}
 	public func setPixmap (_ pixmap: QPixmap) {
-		if let widgetID = widgetID, let pixmapID = pixmap.objectID {
+		if let widgetID = widgetID, let pixmapID = pixmap.gadgetID {
 			Conduit.labelSetPixmap (widgetID, pixmapID)
 		}
 	}

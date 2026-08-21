@@ -1,6 +1,6 @@
 //=========================================================================
 // This file is part of SwiftQt.
-// (C) 2023 Zack T Smith.
+// (C) 2023, 2026 Zack T Smith.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -135,10 +135,11 @@ void Conduit_menuBarAddMenu (WidgetID, WidgetID);
 //-----------------------------------------------------------------------------
 // QMenu
 //-----------------------------------------------------------------------------
-WidgetID Conduit_menuNew (const char*title);
+WidgetID Conduit_menuNew (const char *);
 const char *Conduit_menuTitle (WidgetID);
 void Conduit_menuSetTitle (WidgetID, const char *);
-void Conduit_menuAddAction (WidgetID, ObjectID);
+ObjectID Conduit_menuAddActionWithString (WidgetID, const char *);
+void Conduit_menuAddAction (WidgetID, ObjectID actionID);
 void Conduit_menuAddSeparator (WidgetID);
 
 //-----------------------------------------------------------------------------
@@ -319,9 +320,12 @@ WidgetID Conduit_textEditNew (WidgetID);
 const char *Conduit_textEditToPlainText (WidgetID);
 void Conduit_textEditSetText (WidgetID, const char *);
 //void Conduit_textEditSetHTML (WidgetID, const char *);
-void Conduit_textEditSetReadOnly (WidgetID, bool);
 const char *Conduit_textEditToHTML (WidgetID);
 void Conduit_textEditSetAcceptRichText (WidgetID, bool);
+void Conduit_textEditSetReadOnly (WidgetID, bool);
+bool Conduit_textEditIsReadOnly (WidgetID);
+void Conduit_textEditSetAlignment (WidgetID, long);
+long Conduit_textEditAlignment (WidgetID);
 
 //-----------------------------------------------------------------------------
 // Web engine view

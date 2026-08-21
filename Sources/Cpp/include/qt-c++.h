@@ -1,6 +1,6 @@
 //=========================================================================
 // This file is part of SwiftQt.
-// (C) 2023-2024 Zack T Smith.
+// (C) 2023-2024, 2026 Zack T Smith.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -32,6 +32,10 @@ extern "C" {
 #include "common.h"
 }
 
+struct QGadget { // Placeholder for Qt classes that don't descend from any other class.
+	int fubar;
+};
+
 class CallPropagator : QObject 
 {
 	Q_OBJECT
@@ -39,6 +43,40 @@ class CallPropagator : QObject
 public:
 	CallPropagator ();
 	~CallPropagator ();
+
+	//---------------------------------------------------------------------
+	// QWidget
+	//---------------------------------------------------------------------
+	WidgetID widgetNew (WidgetID);
+	void widgetDestroy (WidgetID);
+	void setFrame (WidgetID, SQRect);
+	SQRect frame (WidgetID);
+	void setMinimumSize (WidgetID, SQSize);
+	SQSize minimumSize (WidgetID);
+	SQCoord x (WidgetID);
+	SQCoord y (WidgetID);
+	SQCoord height (WidgetID);
+	SQCoord width (WidgetID);
+	void move (WidgetID, SQCoord, SQCoord);
+	void resize (WidgetID, SQCoord, SQCoord);
+	void setHidden (WidgetID, bool);
+	bool isHidden (WidgetID);
+	void setStyleSheet (WidgetID, const char*);
+	const char *styleSheet (WidgetID);
+	void raise (WidgetID);
+	void lower (WidgetID);
+	WidgetID layout (WidgetID);
+	void setLayout (WidgetID, ObjectID);
+	void setMaximumHeight (WidgetID, long maxh);
+	void setMaximumWidth (WidgetID, long maxw);
+	void setMinimumHeight (WidgetID, long minh);
+	void setMinimumWidth (WidgetID, long minw);
+	void setParent (WidgetID, WidgetID);
+	WidgetID parentWidget (WidgetID);
+	ObjectID addActionWithString (WidgetID, const char *); // "Convenience function"
+	void addAction (WidgetID, ObjectID); // Add preexisting QAction.
+	void clearFocus (WidgetID);
+	void setFocus (WidgetID);
 
 	//---------------------------------------------------------------------
 	// QCalendarWidget
@@ -108,22 +146,22 @@ public:
 	//---------------------------------------------------------------------
 	// QPixmap
 	//---------------------------------------------------------------------
-	ObjectID pixmapWithPathNew (const char*path);
-	ObjectID pixmapWithSizeNew (SQCoord,SQCoord);
-	bool pixmapLoad (ObjectID objectID, const char *path);
-	SQCoord pixmapWidth (ObjectID objectID);
-	SQCoord pixmapHeight (ObjectID objectID);
-	SQCoord pixmapDepth (ObjectID objectID);
+	GadgetID pixmapWithPathNew (const char*path);
+	GadgetID pixmapWithSizeNew (SQCoord, SQCoord);
+	bool pixmapLoad (GadgetID gadgetID, const char *path);
+	SQCoord pixmapWidth (GadgetID gadgetID);
+	SQCoord pixmapHeight (GadgetID gadgetID);
+	SQCoord pixmapDepth (GadgetID gadgetID);
 
 	//---------------------------------------------------------------------
 	// QImage
 	//---------------------------------------------------------------------
-	ObjectID imageNew (const char*path);
-	bool imageLoad (ObjectID objectID, const char *path);
-	bool imageIsGrayscale (ObjectID objectID);
-	SQCoord imageWidth (ObjectID objectID);
-	SQCoord imageHeight (ObjectID objectID);
-	SQCoord imageDepth (ObjectID objectID);
+	GadgetID imageNew (const char*path);
+	bool imageLoad (GadgetID gadgetID, const char *path);
+	bool imageIsGrayscale (GadgetID gadgetID);
+	SQCoord imageWidth (GadgetID gadgetID);
+	SQCoord imageHeight (GadgetID gadgetID);
+	SQCoord imageDepth (GadgetID gadgetID);
 
 	//---------------------------------------------------------------------
 	// QMainWindow
@@ -187,13 +225,12 @@ public:
 	WidgetID menuNew (const char *title = nullptr);
 	const char *menuTitle (WidgetID);
 	void menuSetTitle (WidgetID, const char *);
-	void menuAddAction (WidgetID, ObjectID);
 	void menuAddSeparator (WidgetID);
 
 	//---------------------------------------------------------------------
 	// QAction
 	//---------------------------------------------------------------------
-	ObjectID actionNew (const char*title);
+	ObjectID actionNew (const char* title);
 	void actionSetShortcut (ObjectID actionID, SQKeySequence keySequenceID);
 
 	//---------------------------------------------------------------------
@@ -263,10 +300,14 @@ public:
 	WidgetID textEditNew (WidgetID parent);
 	const char *textEditToPlainText (WidgetID);
 	const char *textEditToHTML (WidgetID);
-	void textEditSetReadOnly (WidgetID, bool);
 	void textEditSetText (WidgetID, const char *);
 	//void textEditSetHTML (WidgetID, const char *);
 	void textEditSetAcceptRichText (WidgetID, bool);
+	void textEditSetReadOnly (WidgetID, bool);
+	bool textEditIsReadOnly (WidgetID);
+	void textEditSetAlignment (WidgetID, long);
+	long textEditAlignment (WidgetID);
+	void textEditScrollToBottom (WidgetID);
 
 	//---------------------------------------------------------------------
 	// QWebEngineView
@@ -280,33 +321,8 @@ public:
 	WidgetID lineEditNew (WidgetID parentID);
 	const char *lineEditText (WidgetID);
 	void lineEditSetText (WidgetID, const char *);
-
-	//---------------------------------------------------------------------
-	// QWidget
-	//---------------------------------------------------------------------
-	WidgetID widgetNew (WidgetID);
-	void setFrame (WidgetID, SQRect);
-	SQRect frame (WidgetID);
-	void setMinimumSize (WidgetID, SQSize);
-	SQSize minimumSize (WidgetID);
-	SQCoord height (WidgetID);
-	SQCoord width (WidgetID);
-	void move (WidgetID, SQCoord, SQCoord);
-	void resize (WidgetID, SQCoord, SQCoord);
-	void setHidden (WidgetID, bool);
-	bool isHidden (WidgetID);
-	void setStyleSheet (WidgetID, const char*);
-	const char *styleSheet (WidgetID);
-	void raise (WidgetID);
-	void lower (WidgetID);
-	WidgetID layout (WidgetID);
-	void setLayout (WidgetID, ObjectID);
-	void setMaximumHeight (WidgetID, long maxh);
-	void setMaximumWidth (WidgetID, long maxw);
-	void setMinimumHeight (WidgetID, long minh);
-	void setMinimumWidth (WidgetID, long minw);
-	void setParent (WidgetID, WidgetID);
-	WidgetID parentWidget (WidgetID);
+	void lineEditSetAlignment (WidgetID, long);
+	long lineEditAlignment (WidgetID);
 
 	//---------------------------------------------------------------------
 	// QSlider
@@ -374,9 +390,10 @@ private:
 	//---------------------------------------------------------------------
 	// Book-keeping
 	//---------------------------------------------------------------------
-	int widgetObjectCounter = 100; // A zero widget/object ID means nullptr.
+	int widgetObjectGadgetCounter = 100; // A zero widget/object/gadget ID means nullptr.
 	std::map<WidgetID, QWidget*> widgets;
 	std::map<ObjectID, QObject*> objects;
+	std::map<GadgetID, void*> gadgets;
 	void widgetDestroyed (WidgetID widgetID) {
 		SQEvent event;
 		memset ((void*)&event, 0, sizeof(event));
@@ -391,8 +408,16 @@ private:
 		event.recipient = objectID;
 		swiftEventHandler (event);
 	}
+	void gadgetDestroyed (GadgetID gadgetID) {
+		SQEvent event;
+		memset ((void*)&event, 0, sizeof(event));
+		event.type = QGadgetDeallocated;
+		event.recipient = gadgetID;
+		swiftEventHandler (event);
+	}
 	WidgetID lookupOrAddWidget (QWidget*);
 	ObjectID lookupOrAddObject (QObject*);
+	GadgetID lookupOrAddGadget (QGadget*);
 	ObjectID lookupObject (QObject*);
 
 	std::deque<const char*> tableHorizontalHeaderLabels;

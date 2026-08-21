@@ -25,49 +25,49 @@ import CShim
 // QPixmap.swift
 
 @MainActor
-public class QPixmap : QObject{
+public class QPixmap : QGadget {
 	public convenience init (_ path: String?) {
 		self.init ()
-		objectID = Conduit.pixmapWithPathNew (path ?? "")
-		if let objectID = objectID {
-			QObject.registerObject (objectID, self)
+		gadgetID = Conduit.pixmapWithPathNew (path ?? "")
+		if let gadgetID = gadgetID {
+			QGadget.registerGadget (gadgetID, self)
 		} else {
-			print ("QPixmap is missing an object ID.")
+			print ("QPixmap is missing an gadget ID.")
 		}
 	}
 
 	public convenience init (_ width: Int, _ height: Int) {
 		self.init ()
-		objectID = Conduit.pixmapWithSizeNew (width, height)
-		if let objectID = objectID {
-			QObject.registerObject (objectID, self)
+		gadgetID = Conduit.pixmapWithSizeNew (width, height)
+		if let gadgetID = gadgetID {
+			QGadget.registerGadget (gadgetID, self)
 		} else {
-			print ("QPixmap is missing an object ID.")
+			print ("QPixmap is missing an gadget ID.")
 		}
 	}
 
 	public func load (_ path: String) -> Bool {
-		if let objectID = objectID {
-			return Conduit.pixmapLoad (objectID, path)
+		if let gadgetID = gadgetID {
+			return Conduit.pixmapLoad (gadgetID, path)
 		}
 		return false
 	}
 
 	public func width () -> Int {
-		if let objectID = objectID {
-			return Conduit.pixmapWidth (objectID)
+		if let gadgetID = gadgetID {
+			return Conduit.pixmapWidth (gadgetID)
 		}
 		return 0 
 	}
 	public func height () -> Int {
-		if let objectID = objectID {
-			return Conduit.pixmapHeight (objectID)
+		if let gadgetID = gadgetID {
+			return Conduit.pixmapHeight (gadgetID)
 		}
 		return 0 
 	}
 	public func depth () -> Int {
-		if let objectID = objectID {
-			return Conduit.pixmapDepth (objectID)
+		if let gadgetID = gadgetID {
+			return Conduit.pixmapDepth (gadgetID)
 		}
 		return 0 
 	}

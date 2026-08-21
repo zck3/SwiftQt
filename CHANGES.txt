@@ -25,7 +25,7 @@ CHANGE LOG
 0.18	QKeySequence, QGridLayout, QCalendarWidget, QDate, QLCDNumber.
 0.19	QAbstractSlider, QSlider
 0.20	Updated for Qt 6 and Swift 5.9.2.
-0.21	Downgrade to Qt 5. 
+0.21	Downgrade to Qt 5.
 0.22	Re-upgrade to Qt 6. Now using Swift 6.2.4. 
 0.23	- Converted SwiftQt to a Swift package. 
 	- Renamed constructors e.g. createLabel -> labelNew.
@@ -42,5 +42,14 @@ CHANGE LOG
 	- Added typealiases e.g. typealias QRect = SQRect.
 	- Added widget/object destruction on Swift side (WIP).
 	- Reimplemented QKeySequence as a char*.
-0.26	Refined Package.swift.
+0.26	- Refined Package.swift.
+	- Added gadget maintenance logic in preparation for QFont, QPainter.
+	- Added key press, key release events and Qt::Modifiers.
+	- Added QMainWindow key press, key release closures.
+	- QLineEdit support for changing text alignment.
+	- QTextEdit support for read-only mode and changing text alignment.
+	- Refined addAction logic.
+	- Added x, y functions for QWidget.
+	- Added clearFocus, setFocus functions for QWidget.
+	- Added keycode constants for ASCII data entry e.g. Key_A.
 

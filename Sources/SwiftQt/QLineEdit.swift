@@ -26,7 +26,7 @@ public class QLineEdit : QWidget{
 	public convenience init (_ parent: QMainWindow) {
 		self.init ()
 		if let windowID = parent.widgetID {
-			widgetID = Conduit.lineEditNew (windowID)
+			self.widgetID = Conduit.lineEditNew (windowID)
 			QWidget.registerWidget (widgetID!, self)
 		}
 	}
@@ -59,6 +59,19 @@ public class QLineEdit : QWidget{
 		if let widgetID = widgetID {
 			Conduit.lineEditSetText (widgetID, text)
 		}
+	}
+
+	public func setAlignment (_ value: Int) {
+		if let widgetID = widgetID {
+			Conduit.lineEditSetAlignment (widgetID, value)
+		}
+	}
+
+	public func alignment () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.lineEditAlignment (widgetID)
+		}
+		return 0
 	}
 
 }

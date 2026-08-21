@@ -40,6 +40,7 @@ extern "C" {
 // Each sides has their own version of window and font structs and classes.
 typedef long WidgetID;
 typedef long ObjectID;
+typedef long GadgetID; // e.g. QPainter object.
 typedef long SQCoord;
 typedef long SQColor;
 typedef const char * const SQKeySequence; // e.g. "Ctrl+w" or a name such as "Redo"
@@ -123,6 +124,7 @@ enum : long {
 	// Messages from C++ to Swift telling it to deallocate Swift widgets and objects.
 	QWidgetDeallocated = 600,
 	QObjectDeallocated = 601,
+	QGadgetDeallocated = 602,
 
 	//----------------------------------------
 	// The following convey to the Swift side
@@ -135,7 +137,7 @@ enum : long {
 	// Swift side.
 	//----------------------------------------
 
-	QSignalActionTriggered = 602,
+	QSignalActionTriggered = 605,
 
 	QSignalPushButtonClicked,
 	QSignalRadioButtonToggled, 
@@ -168,6 +170,7 @@ typedef struct event
 {
 	long recipient; // can be WidgetID or ObjectID
 	long type;
+	long key;
 	SQCoord x; // or column in the case of table
 	SQCoord y; // or row in the case of table
 	SQCoord width;
@@ -175,8 +178,6 @@ typedef struct event
 	float value;
 	long previousRow;
 	long previousColumn;
-	//const char _Nonnull **argv;
-	//int argc;
 } SQEvent;
 
 SQPoint SQPoint_new(SQCoord,SQCoord) 	__attribute__((swift_name("SQPoint.init(_:_:)")));

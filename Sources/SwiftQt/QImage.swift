@@ -25,45 +25,45 @@ import CShim
 // QImage.swift
 
 @MainActor
-public class QImage : QObject{
+public class QImage : QGadget {
 	public required convenience init (_ path: String?) {
 		self.init ()
-		objectID = Conduit.imageNew (path ?? "")
-		if let objectID = objectID {
-			QObject.registerObject (objectID, self)
+		gadgetID = Conduit.imageNew (path ?? "")
+		if let gadgetID = gadgetID {
+			QGadget.registerGadget (gadgetID, self)
 		} else {
-			print ("QImage is missing an object ID.")
+			print ("QImage is missing an gadget ID.")
 		}
 	}
 
 	public func load (_ path: String) -> Bool {
-		if let objectID = objectID {
-			return Conduit.imageLoad (objectID, path)
+		if let gadgetID = gadgetID {
+			return Conduit.imageLoad (gadgetID, path)
 		}
 		return false
 	}
 
 	public func width () -> Int {
-		if let objectID = objectID {
-			return Conduit.imageWidth (objectID)
+		if let gadgetID = gadgetID {
+			return Conduit.imageWidth (gadgetID)
 		}
 		return 0 
 	}
 	public func height () -> Int {
-		if let objectID = objectID {
-			return Conduit.imageHeight (objectID)
+		if let gadgetID = gadgetID {
+			return Conduit.imageHeight (gadgetID)
 		}
 		return 0 
 	}
 	public func depth () -> Int {
-		if let objectID = objectID {
-			return Conduit.imageDepth (objectID)
+		if let gadgetID = gadgetID {
+			return Conduit.imageDepth (gadgetID)
 		}
 		return 0 
 	}
 	public func isGrayscale () -> Bool {
-		if let objectID = objectID {
-			return Conduit.imageIsGrayscale (objectID)
+		if let gadgetID = gadgetID {
+			return Conduit.imageIsGrayscale (gadgetID)
 		}
 		return false 
 	}

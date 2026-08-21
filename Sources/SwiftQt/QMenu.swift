@@ -26,11 +26,11 @@ import CShim
 // 
 
 @MainActor
-public class QMenu : QWidget{
+public class QMenu : QWidget {
 	public convenience init (_ title:String) {
 		self.init ()
 
-		widgetID = Conduit.menuNew (title)
+		self.widgetID = Conduit.menuNew (title)
 		QWidget.registerWidget (widgetID!, self)
 	}
 
@@ -66,23 +66,4 @@ public class QMenu : QWidget{
 		}
 	}
 
-	public func addAction (_ string: String) -> QAction? {
-		let action = QAction (string)
-		if let widgetID = widgetID {
-			if let actionID = action.objectID {
-				Conduit.menuAddAction (widgetID, actionID)
-			} 
-		}
-		return action
-	}
-
-	public func addAction (_ string: String, triggeredHandler: () -> Void?) -> QAction? {
-		let action = QAction (string)
-		if let widgetID = widgetID {
-			if let actionID = action.objectID {
-				Conduit.menuAddAction (widgetID, actionID)
-			} 
-		}
-		return action
-	}
 }

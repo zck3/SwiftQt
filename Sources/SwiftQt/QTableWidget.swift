@@ -47,7 +47,7 @@ public class QTableWidget : QWidget{
 	public convenience init (_ parent: QMainWindow) {
 		self.init ()
 		if let windowID = parent.widgetID {
-			widgetID = Conduit.tableWidgetNew (windowID)
+			self.widgetID = Conduit.tableWidgetNew (windowID)
 			QWidget.registerWidget (widgetID!, self)
 		}
 	}

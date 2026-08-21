@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,25 +24,24 @@ import CShim
 @MainActor
 public class QTextEdit : QWidget{
 	public var formatChangedHandler: ()->Void = {
-		print ("QTextEdit format changed!");
 	}
 	public var cursorMovedHandler: ()->Void = {
-		print ("QTextEdit cursor moved!");
 	}
 	public var modifiedHandler: ()->Void = {
-		print ("QTextEdit modified!");
 	}
 	public var textChangedHandler: ()->Void = {
-		print ("QTextEdit text changed!");
 	}
 	//----------
 
 	public convenience init (_ parent: QMainWindow) {
 		self.init ()
 		if let windowID = parent.widgetID {
-			widgetID = Conduit.textEditNew (windowID)
+			self.widgetID = Conduit.textEditNew (windowID)
 			QWidget.registerWidget (widgetID!, self)
 		}
+	}
+
+	deinit {
 	}
 
 	public override func processEvent (_ event: SQEvent) -> Int {
@@ -95,5 +94,35 @@ public class QTextEdit : QWidget{
 		}
 	}
 
+	public func setReadOnly (_ readOnly: Bool) {
+		if let widgetID = widgetID {
+			Conduit.textEditSetReadOnly (widgetID, readOnly)
+		}
+	}
 
+	public func isReadOnly () -> Bool {
+		if let widgetID = widgetID {
+			return Conduit.textEditIsReadOnly (widgetID)
+		}
+		return false
+	}
+
+	public func setAlignment (_ value: Int) {
+		if let widgetID = widgetID {
+			Conduit.textEditSetAlignment (widgetID, value)
+		}
+	}
+
+	public func alignment () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.textEditAlignment (widgetID)
+		}
+		return 0
+	}
+
+	public func scrollToBottom () {
+		if let widgetID = widgetID {
+			Conduit.textEditScrollToBottom (widgetID)
+		}
+	}
 }

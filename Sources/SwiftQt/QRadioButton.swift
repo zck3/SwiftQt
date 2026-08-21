@@ -30,7 +30,7 @@ public class QRadioButton : QAbstractButton{
 	public convenience init (_ parent: QWidget, _ string: String) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			widgetID = Conduit.radioButtonNew (parentID, string)
+			self.widgetID = Conduit.radioButtonNew (parentID, string)
 			QWidget.registerWidget (widgetID!, self)
 		}
 	}

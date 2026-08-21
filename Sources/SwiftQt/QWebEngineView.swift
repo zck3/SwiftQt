@@ -26,7 +26,7 @@ public class QWebEngineView : QWidget{
 	public convenience init (_ window: QMainWindow) {
 		self.init ()
 		if let windowID = window.widgetID {
-			widgetID = Conduit.webEngineViewNew (windowID)
+			self.widgetID = Conduit.webEngineViewNew (windowID)
 			QWidget.registerWidget (widgetID!, self)
 		}
 	}

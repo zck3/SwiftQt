@@ -36,7 +36,7 @@ public class QSlider : QAbstractSlider{
 	public convenience init (_ parent: QMainWindow) {
 		self.init ()
 		if let windowID = parent.widgetID {
-			widgetID = Conduit.sliderNew (windowID)
+			self.widgetID = Conduit.sliderNew (windowID)
 			QWidget.registerWidget (widgetID!, self)
 		}
 	}

@@ -30,7 +30,7 @@ public class QStatusBar : QWidget{
 	public convenience init (_ parent: QMainWindow, _ text: String?) {
 		self.init ()
 		if let windowID = parent.widgetID {
-			widgetID = Conduit.statusBarNew (windowID, text ?? "")
+			self.widgetID = Conduit.statusBarNew (windowID, text ?? "")
 		}
 	}
 

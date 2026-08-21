@@ -26,10 +26,10 @@ import CShim
 
 @MainActor
 public class QLCDNumber : QWidget{
-	public convenience init (_ parent: QMainWindow, numberOfDigits: Int) {
+	public convenience init (_ parent: QWidget, numberOfDigits: Int) {
 		self.init ()
-		if let windowID = parent.widgetID {
-			widgetID = Conduit.lcdNumberNew (windowID, numberOfDigits)
+		if let parentID = parent.widgetID {
+			self.widgetID = Conduit.lcdNumberNew (parentID, numberOfDigits)
 			QWidget.registerWidget (widgetID!, self)
 		}
 	}

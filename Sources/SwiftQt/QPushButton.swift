@@ -26,11 +26,11 @@ import CShim
 // 
 
 @MainActor
-public class QPushButton : QAbstractButton{
+public class QPushButton : QAbstractButton {
 	public convenience init (_ parent: QWidget, _ string: String) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			widgetID = Conduit.pushButtonNew (parentID, string)
+			self.widgetID = Conduit.pushButtonNew (parentID, string)
 			QWidget.registerWidget (widgetID!, self)
 		}
 	}

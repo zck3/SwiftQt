@@ -34,7 +34,13 @@ open class QMainWindow : QWidget {
 	}
 	public var windowHiddenHandler: ()->Void = {
 	}
-	public var windowResizedHandler: ()->Void = {
+	public var windowResizedHandler: (_ event: SQEvent)->Void = { event in
+	}
+	public var windowMovedHandler: (_ event: SQEvent)->Void = { event in
+	}
+	public var windowKeyPressHandler: (_ event: SQEvent)->Void = { event in
+	}
+	public var windowKeyReleaseHandler: (_ event: SQEvent)->Void = { event in
 	}
 	public var windowEnteredHandler: ()->Void = {
 	}
@@ -42,14 +48,12 @@ open class QMainWindow : QWidget {
 	}
 	public var windowPaintedHandler: ()->Void = {
 	}
-	public var windowMovedHandler: ()->Void = {
-	}
 	public var windowDidQuitHandler: ()->Void = {
 	}
 
 	public required init (x: Int, y: Int, width: Int, height: Int) {
 		super.init ()
-		widgetID = Conduit.windowNew (x, y, width, height)
+		self.widgetID = Conduit.windowNew (x, y, width, height)
 		QWidget.registerWidget (widgetID!, self)
 	}
 
@@ -68,7 +72,16 @@ open class QMainWindow : QWidget {
 			windowHiddenHandler()
 			return 0
 		case QEventResize:
-			windowResizedHandler()
+			windowResizedHandler(event)
+			return 0
+		case QEventMove:
+			windowMovedHandler(event)
+			return 0
+		case QEventKeyPress:
+			windowKeyPressHandler(event)
+			return 0
+		case QEventKeyRelease:
+			windowKeyReleaseHandler(event)
 			return 0
 		case QEventEnter:
 			windowEnteredHandler()
@@ -78,9 +91,6 @@ open class QMainWindow : QWidget {
 			return 0
 		case QEventPaint:
 			windowPaintedHandler()
-			return 0
-		case QEventMove:
-			windowMovedHandler()
 			return 0
 		case QEventQuit:
 			windowDidQuitHandler()

@@ -29,7 +29,7 @@ import CShim
 public class QMenuBar : QWidget{
 	public required override init () {
 		super.init()
-		widgetID = Conduit.menuBarNew ()
+		self.widgetID = Conduit.menuBarNew ()
 		QWidget.registerWidget (widgetID!, self)
 	}
 

@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,9 +25,20 @@ import CShim
 // QAction.swift
 
 @MainActor
-public class QAction : QObject{
+public class QAction : QObject {
 	public var triggeredHandler: ()->Void = {
-		print ("ACTION WAS TRIGGERED")
+	}
+
+	public required convenience init (_ text: String, _ handler: @escaping ()->Void) {
+		self.init ()
+		objectID = Conduit.actionNew (text)
+
+		if let objectID = objectID {
+			QObject.registerObject (objectID, self)
+			triggeredHandler = handler
+		} else {
+			print ("QAction is missing an object ID.");
+		}
 	}
 
 	public required convenience init (_ text: String) {

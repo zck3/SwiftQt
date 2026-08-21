@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,8 +23,6 @@ import CShim
 
 @MainActor
 public class QWidgetStorage {
-	//let idMask : Int32 = 0x00ffffff
-	//let typeMask : Int32 = 0x7f000000
 	let idMask : Int = 0x00ffffff
 	let typeMask : Int = 0x7f000000
 
@@ -48,9 +46,10 @@ public class QWidgetStorage {
 @MainActor
 open class QWidget : QObject 
 {
-	var widgetID : WidgetID?
-	//let typeMask : Int32 = 0x7f000000
 	let typeMask : Int = 0x7f000000
+
+	@MainActor
+	var widgetID : WidgetID?
 
 	public static func isKnownWidget (_ widgetID: WidgetID) -> Bool {
 		//let idMask : Int32 = 0x00ffffff
@@ -101,19 +100,25 @@ open class QWidget : QObject
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			widgetID = Conduit.widgetNew (parentID)
+			self.widgetID = Conduit.widgetNew (parentID)
 			QWidgetStorage.shared.register(widget: self, id: widgetID!)
 		}
 	}
 
 	public func destroy() {
 		if let widgetID = widgetID {
-			//QWidget.unregisterWidget (widgetID)
 			QWidgetStorage.shared.unregister(id: widgetID)
 		}
 	}
 
 	deinit {
+		if let id = widgetID {
+			Task { @MainActor in
+				QWidget.unregisterWidget(id)
+				Conduit.widgetDestroy(id)
+				print ("Swift informed C++ that deinit of widget \(id) happened.")
+			}
+		}
 	}
 
 	public func move (_ x: Int, _ y: Int) {
@@ -164,6 +169,20 @@ open class QWidget : QObject
 		if let widgetID = widgetID {
 			Conduit.setHidden (widgetID, value)
 		}
+	}
+
+	public func x () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.x (widgetID)
+		}
+		return 0
+	}
+
+	public func y () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.y (widgetID)
+		}
+		return 0
 	}
 
 	public func width () -> Int {
@@ -226,24 +245,38 @@ open class QWidget : QObject
 			Conduit.setMinimumHeight (widgetID, minh)
 		}
 	}
+
 	public func setMinimumWidth(_ minw: Int) {
 		if let widgetID = widgetID {
 			Conduit.setMinimumWidth (widgetID, minw)
 		}
 	}
+
+	public func clearFocus() {
+		if let widgetID = widgetID {
+			Conduit.clearFocus (widgetID)
+		}
+	}
+
+	public func setFocus() {
+		if let widgetID = widgetID {
+			Conduit.setFocus (widgetID)
+		}
+	}
+
 	public func setParent(_ parent: QWidget?) {
 		if let widgetID = widgetID {
-			if let parent = parent {
-				if let parentID = parent.widgetID {
+			if parent != nil {
+				if let parentID = parent!.widgetID {
 					Conduit.setParent(widgetID, parentID)
 				}
-				else {
-					// Remove our widget from its parent.
-					Conduit.setParent(widgetID, -1)
-				}
+			} else {
+				// Remove our widget from its parent.
+				Conduit.setParent(widgetID, -1)
 			}
 		}
 	}
+
 	public func parentWidget () -> QWidget? {
 		if let widgetID = widgetID {
 			let parentID = Conduit.parentWidget (widgetID)
@@ -256,6 +289,41 @@ open class QWidget : QObject
 			return parent
 		}
 		return nil
+	}
+
+	/* This is the form of addAction deemed a convenience function in the Qt header file.
+	 * It creates the QAction object for you.
+	 */
+	public func addAction (_ string: String, _ triggeredHandler: @escaping () -> Void) -> QAction? {
+		if let widgetID = widgetID {
+			let action = QAction ()
+			action.triggeredHandler = triggeredHandler
+			let actionID : Int = Conduit.addActionWithString (widgetID, string)
+			action.objectID = actionID
+			QWidget.registerObject(actionID, action)
+			return action
+		} 
+		return nil
+	}
+
+	/* This adds a preexisting action onto a QWidget.
+	 */
+	public func addAction (_ action: QAction, _ triggeredHandler: @escaping () -> Void) -> QAction? {
+		if let widgetID = widgetID, 
+		   let actionID = action.objectID {
+			Conduit.addAction (widgetID, actionID)
+			action.triggeredHandler = triggeredHandler
+			return action
+		}
+		return nil
+	}
+
+	public override func processEvent (_ event: SQEvent) -> Int {
+		switch (event.type) {
+			default: 
+				print ("QWidget unknown event.")
+		}
+		return 0
 	}
 
 }
