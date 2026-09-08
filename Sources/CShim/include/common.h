@@ -26,9 +26,9 @@
 #define SWIFTQT_COMMON_TYPES_H
 
 #define kKitName "SwiftQt"
-#define kKitRelease "0.26"
+#define kKitRelease "0.27"
 #define kKitReleaseMajor 0
-#define kKitReleaseMinor 26
+#define kKitReleaseMinor 27
 
 #ifdef __cplusplus
 extern "C" {

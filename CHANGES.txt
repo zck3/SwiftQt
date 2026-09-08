@@ -44,7 +44,7 @@ CHANGE LOG
 	- Reimplemented QKeySequence as a char*.
 0.26	- Refined Package.swift.
 	- Added gadget maintenance logic in preparation for QFont, QPainter.
-	- Added key press, key release events and Qt::Modifiers.
+0.27	- Added key press, key release events and Qt::Modifiers.
 	- Added QMainWindow key press, key release closures.
 	- QLineEdit support for changing text alignment.
 	- QTextEdit support for read-only mode and changing text alignment.
