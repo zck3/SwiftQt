@@ -1,6 +1,6 @@
 //=========================================================================
 // This file is part of SwiftQt.
-// (C) 2023 Zack T Smith.
+// (C) 2023, 2026 Zack T Smith.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -168,6 +168,7 @@ public typealias QSize = SQSize
 public typealias QPoint = SQPoint
 public typealias QColor = SQColor
 public typealias QKeySequence = SQKeySequence 
+public typealias QUrl = String
 
 public extension SQKeySequence {
 	func count () -> Int {
@@ -201,3 +202,11 @@ public extension QKeySequence {
 	static func Underline()->String	{ return "Ctrl+u"; }
 }
 
+public extension QUrl {
+	func isValid () -> Bool {
+		return Conduit.urlIsValid (self)
+	}
+	func isLocalFile () -> Bool {
+		return Conduit.urlIsLocalFile (self)
+	}
+}

@@ -1,7 +1,5 @@
 This file is a part of SwiftQt.
 
-This is SwiftQt 0.26.
-
 ------------
 CHANGE LOG 
 ------------
@@ -52,4 +50,8 @@ CHANGE LOG
 	- Added x, y functions for QWidget.
 	- Added clearFocus, setFocus functions for QWidget.
 	- Added keycode constants for ASCII data entry e.g. Key_A.
-
+0.28	- Added QScrollBar and support for it in QTextEdit, QTableWidget.
+	- Added QUrl value type.
+	- Added closures and methods to QWebEngineView.
+	- Added signals, closures and methods to QLineEdit.
+	- Added QScrollArea, Qt.ScrollBarPolicy.

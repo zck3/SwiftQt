@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,7 +22,14 @@
 import CShim
 
 @MainActor
-public class QLineEdit : QWidget{
+public class QLineEdit : QWidget {
+	public var textChangedHandler: ()->Void = {
+	}
+	public var returnPressedHandler: ()->Void = {
+	}
+	public var editingFinishedHandler: ()->Void = {
+	}
+
 	public convenience init (_ parent: QMainWindow) {
 		self.init ()
 		if let windowID = parent.widgetID {
@@ -33,14 +40,22 @@ public class QLineEdit : QWidget{
 
 	public override func processEvent (_ event: SQEvent) -> Int {
 		switch (event.type) {
+			case QSignalLineEditTextChanged:
+				textChangedHandler ()
+			case QSignalLineEditReturnPressed:
+				returnPressedHandler ()
+			case QSignalLineEditEditingFinished:
+				editingFinishedHandler ()
 			default: 
 				print ("QLineEdit unknown event.");
 		}
 		return 0
 	}
 
-	public func setPlaceholder (_ string: String) {
-		// TODO
+	public func setPlaceholderText (_ string: String) {
+		if let widgetID = widgetID {
+			Conduit.lineEditSetText (widgetID, string)
+		}
 	}
 
 	public func text () -> String {
@@ -72,6 +87,38 @@ public class QLineEdit : QWidget{
 			return Conduit.lineEditAlignment (widgetID)
 		}
 		return 0
+	}
+
+	public func setMaxLength (_ length: Int) {
+		if let widgetID = widgetID {
+			Conduit.lineEditSetMaxLength (widgetID, length)
+		}
+	}
+
+	public func setCursorPosition (_ length: Int) {
+		if let widgetID = widgetID {
+			Conduit.lineEditSetCursorPosition (widgetID, length)
+		}
+	}
+
+	public func cursorPosition () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.lineEditCursorPosition (widgetID)
+		}
+		return 0
+	}
+
+	public func maxLength () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.lineEditMaxLength (widgetID)
+		}
+		return 0
+	}
+
+	public func del () -> Void {
+		if let widgetID = widgetID {
+			Conduit.lineEditDel (widgetID)
+		}
 	}
 
 }

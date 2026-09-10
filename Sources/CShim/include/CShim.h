@@ -154,6 +154,12 @@ ObjectID Conduit_actionNew (const char* title) 	__attribute__((swift_name("Condu
 void Conduit_actionSetShortcut (ObjectID, SQKeySequence) 	__attribute__((swift_name("Conduit.actionSetShortcut(_:_:)")));
 
 //-----------------------------------------------------------------------------
+// QUrl
+//-----------------------------------------------------------------------------
+bool Conduit_urlIsValid (const char* ) 	__attribute__((swift_name("Conduit.urlIsValid(_:)")));
+bool Conduit_urlIsLocalFile (const char* ) 	__attribute__((swift_name("Conduit.urlIsLocalFile(_:)")));
+
+//-----------------------------------------------------------------------------
 // QColor
 //-----------------------------------------------------------------------------
 //ObjectID Conduit_colorNew (long red, long green, long blue) 	__attribute__((swift_name("Conduit.colorNew(_:_:_:)")));
@@ -181,6 +187,7 @@ SQCoord Conduit_width (WidgetID)   	__attribute__((swift_name("Conduit.width(_:)
 SQCoord Conduit_height (WidgetID)   	__attribute__((swift_name("Conduit.height(_:)")));
 void Conduit_setHidden (WidgetID, bool) 	__attribute__((swift_name("Conduit.setHidden(_:_:)")));
 bool Conduit_isHidden (WidgetID)   	__attribute__((swift_name("Conduit.isHidden(_:)")));
+bool Conduit_isEnabled (WidgetID)   	__attribute__((swift_name("Conduit.isEnabled(_:)")));
 void Conduit_setStyleSheet (WidgetID, const char*) 	__attribute__((swift_name("Conduit.setStyleSheet(_:_:)")));
 const char *Conduit_styleSheet (WidgetID) 	__attribute__((swift_name("Conduit.styleSheet(_:)")));
 void Conduit_raise (WidgetID) 	__attribute__((swift_name("Conduit.raise(_:)")));
@@ -215,6 +222,12 @@ const char *Conduit_lineEditText (WidgetID) 	__attribute__((swift_name("Conduit.
 void Conduit_lineEditSetText (WidgetID, const char *) 	__attribute__((swift_name("Conduit.lineEditSetText(_:_:)")));
 void Conduit_lineEditSetAlignment (WidgetID, long)	__attribute__((swift_name("Conduit.lineEditSetAlignment(_:_:)")));
 long Conduit_lineEditAlignment (WidgetID)	__attribute__((swift_name("Conduit.lineEditAlignment(_:)")));
+long Conduit_lineEditSetMaxLength (WidgetID, long)	__attribute__((swift_name("Conduit.lineEditSetMaxLength(_:_:)")));
+long Conduit_lineEditSetPlaceholderText (WidgetID, const char*)	__attribute__((swift_name("Conduit.lineEditSetPlaceholderText(_:_:)")));
+void Conduit_lineEditSetCursorPosition (WidgetID, long)	__attribute__((swift_name("Conduit.lineEditSetCursorPosition(_:_:)")));
+long Conduit_lineEditCursorPosition (WidgetID)	__attribute__((swift_name("Conduit.lineEditCursorPosition(_:)")));
+long Conduit_lineEditMaxLength (WidgetID)	__attribute__((swift_name("Conduit.lineEditMaxLength(_:)")));
+void Conduit_lineEditDel (WidgetID)	__attribute__((swift_name("Conduit.lineEditDel(_:)")));
 
 //-----------------------------------------------------------------------------
 // QDate
@@ -355,12 +368,23 @@ bool Conduit_textEditIsReadOnly (WidgetID)	__attribute__((swift_name("Conduit.te
 void Conduit_textEditSetAlignment (WidgetID, long)	__attribute__((swift_name("Conduit.textEditSetAlignment(_:_:)")));
 long Conduit_textEditAlignment (WidgetID)	__attribute__((swift_name("Conduit.textEditAlignment(_:)")));
 void Conduit_textEditScrollToBottom (WidgetID)	__attribute__((swift_name("Conduit.textEditScrollToBottom(_:)")));
+WidgetID Conduit_textEditVerticalScrollBar (WidgetID)	__attribute__((swift_name("Conduit.textEditVerticalScrollBar(_:)")));
+WidgetID Conduit_textEditHorizontalScrollBar (WidgetID)	__attribute__((swift_name("Conduit.textEditHorizontalScrollBar(_:)")));
 
 //-----------------------------------------------------------------------------
 // QWebEngineView
 //-----------------------------------------------------------------------------
 WidgetID Conduit_webEngineViewNew (WidgetID) 	__attribute__((swift_name("Conduit.webEngineViewNew(_:)")));
 void Conduit_webEngineViewSetHTML (WidgetID, const char *) 	__attribute__((swift_name("Conduit.webEngineViewSetHTML(_:_:)")));
+WidgetID Conduit_webEngineVerticalScrollBar (WidgetID)	__attribute__((swift_name("Conduit.webEngineVerticalScrollBar(_:)")));
+WidgetID Conduit_webEngineHorizontalScrollBar (WidgetID)	__attribute__((swift_name("Conduit.webEngineHorizontalScrollBar(_:)")));
+void Conduit_webEngineViewBack (WidgetID)	__attribute__((swift_name("Conduit.webEngineViewBack(_:)")));
+void Conduit_webEngineViewForward (WidgetID)	__attribute__((swift_name("Conduit.webEngineViewForward(_:)")));
+void Conduit_webEngineViewReload (WidgetID)	__attribute__((swift_name("Conduit.webEngineViewReload(_:)")));
+void Conduit_webEngineViewStop (WidgetID)	__attribute__((swift_name("Conduit.webEngineViewStop(_:)")));
+const char *Conduit_webEngineViewSelectedText (WidgetID)	__attribute__((swift_name("Conduit.webEngineViewSelectedText(_:)")));
+const char *Conduit_webEngineViewTitle (WidgetID)	__attribute__((swift_name("Conduit.webEngineViewTitle(_:)")));
+void Conduit_webEngineViewSetUrl (WidgetID, const char*)	__attribute__((swift_name("Conduit.webEngineViewSetUrl(_:_:)")));
 
 //-----------------------------------------------------------------------------
 // QTableWidgetItem
@@ -394,5 +418,17 @@ void Conduit_tableWidgetInsertColumn (WidgetID tableID, long column)	__attribute
 void Conduit_tableWidgetInsertRow (WidgetID tableID, long row)	__attribute__((swift_name("Conduit.tableWidgetInsertRow(_:_:)")));
 void Conduit_tableWidgetSetVerticalHeaderLabel (WidgetID tableID, const char *, bool)	__attribute__((swift_name("Conduit.tableWidgetSetVerticalHeaderLabels(_:_:_:)")));
 void Conduit_tableWidgetSetHorizontalHeaderLabel (WidgetID tableID, const char *, bool)	__attribute__((swift_name("Conduit.tableWidgetSetHorizontalHeaderLabels(_:_:_:)")));
+WidgetID Conduit_tableWidgetVerticalScrollBar (WidgetID)	__attribute__((swift_name("Conduit.tableWidgetVerticalScrollBar(_:)")));
+WidgetID Conduit_tableWidgetHorizontalScrollBar (WidgetID)	__attribute__((swift_name("Conduit.tableWidgetHorizontalScrollBar(_:)")));
+
+//-----------------------------------------------------------------------------
+// QScrollArea
+//-----------------------------------------------------------------------------
+WidgetID Conduit_scrollAreaNew (WidgetID)	__attribute__((swift_name("Conduit.scrollAreaNew(_:)")));
+void Conduit_scrollAreaSetWidget (WidgetID, WidgetID)	__attribute__((swift_name("Conduit.scrollAreaSetWidget(_:_:)")));	
+WidgetID Conduit_scrollAreaHorizontalScrollBar (WidgetID)	__attribute__((swift_name("Conduit.scrollAreaHorizontalScrollBar(_:)")));	
+WidgetID Conduit_scrollAreaVerticalScrollBar (WidgetID) 	__attribute__((swift_name("Conduit.scrollAreaVerticalScrollBar(_:)")));	
+void Conduit_scrollAreaSetVerticalScrollBarPolicy (WidgetID,long) 	__attribute__((swift_name("Conduit.scrollAreaSetVerticalScrollBarPolicy(_:_:)")));	
+void Conduit_scrollAreaSetHorizontalScrollBarPolicy (WidgetID,long) 	__attribute__((swift_name("Conduit.scrollAreaSetHorizontalScrollBarPolicy(_:_:)")));	
 
 #endif

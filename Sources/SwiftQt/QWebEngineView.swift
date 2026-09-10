@@ -31,6 +31,12 @@ public class QWebEngineView : QWidget{
 		}
 	}
 
+	public func setUrl (_ url: QUrl) {
+		if let widgetID = widgetID {
+			Conduit.webEngineViewSetUrl (widgetID, url)
+		}
+	}
+
 	public func setHTML (_ html: String) {
 		if let widgetID = widgetID {
 			Conduit.webEngineViewSetHTML (widgetID, html)
@@ -43,6 +49,54 @@ public class QWebEngineView : QWidget{
 				print ("QWebEngineView unknown event.");
 		}
 		return 0
+	}
+
+	public func back (_ html: String) {
+		if let widgetID = widgetID {
+			Conduit.webEngineViewBack (widgetID)
+		}
+	}
+
+	public func forward (_ html: String) {
+		if let widgetID = widgetID {
+			Conduit.webEngineViewForward (widgetID)
+		}
+	}
+
+	public func reload (_ html: String) {
+		if let widgetID = widgetID {
+			Conduit.webEngineViewReload (widgetID)
+		}
+	}
+
+	public func stop (_ html: String) {
+		if let widgetID = widgetID {
+			Conduit.webEngineViewStop (widgetID)
+		}
+	}
+
+	public func selectedText () -> String {
+		if let widgetID = widgetID {
+			let unsafeString : UnsafePointer<CChar>? = Conduit.webEngineViewSelectedText (widgetID)
+			if let unsafeString = unsafeString {
+				let safeString : String = String (cString:unsafeString);
+				unsafeString.deallocate()
+				return safeString
+			}
+		}
+		return ""
+	}
+
+	public func title () -> String {
+		if let widgetID = widgetID {
+			let unsafeString : UnsafePointer<CChar>? = Conduit.webEngineViewTitle (widgetID)
+			if let unsafeString = unsafeString {
+				let safeString : String = String (cString:unsafeString);
+				unsafeString.deallocate()
+				return safeString
+			}
+		}
+		return ""
 	}
 
 }

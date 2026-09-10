@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,27 +22,18 @@
 import CShim
 
 @MainActor
-public class QTableWidget : QWidget{
+public class QTableWidget : QWidget {
         public var cellChangedHandler: (_ row:Int, _ column:Int)->Void = { row, column in
-                print ("QTableWidget cellChanged at \(row),\(column)")
         }
-
         public var cellClickedHandler : (_ row:Int, _ column:Int)->Void = { row, column in
-                print ("QTableWidget cellClicked at \(row),\(column)")
         }
-
         public var cellDoubleClickedHandler : (_ row:Int, _ column:Int)->Void = { row, column in
-                print ("QTableWidget cellDoubleClicked at \(row),\(column)")
         }
-	//----------
-
         public var currentCellChangedHandler: (_ row:Int, _ column:Int, _ previousRow:Int, _ previousColumn:Int)->Void = { row, column, previousRow, previousColumn in
-                print ("QTableWidget currentCellChanged to \(row),\(column)")
         }
-
 	public var itemSelectionChangedHandler: ()->Void = {
-                print ("QTableWidget itemSelectionChanged");
 	}
+	//----------
 
 	public convenience init (_ parent: QMainWindow) {
 		self.init ()
@@ -217,5 +208,22 @@ public class QTableWidget : QWidget{
 			return Conduit.tableWidgetInsertRow(widgetID, row)
                 }
 	}
+
+	public func verticalScrollBar () -> QScrollBar? {
+		if let widgetID = widgetID {
+			let scrollbarID = Conduit.tableWidgetVerticalScrollBar (widgetID)
+			return QScrollBar(withID: scrollbarID)
+		}
+		return nil
+	}
+
+	public func horizontalScrollBar () -> QScrollBar? {
+		if let widgetID = widgetID {
+			let scrollbarID = Conduit.tableWidgetHorizontalScrollBar (widgetID)
+			return QScrollBar(withID: scrollbarID)
+		}
+		return nil
+	}
+
 }
 

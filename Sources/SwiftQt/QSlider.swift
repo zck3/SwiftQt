@@ -25,13 +25,26 @@ import CShim
 // QSlider.swift
 
 @MainActor
-public class QSlider : QAbstractSlider{
+public class QSlider : QAbstractSlider {
 	public static let NoTicks = 0
 	public static let TicksBothSides = 3
 	public static let TicksAbove = 1
 	public static let TicksBelow = 2	
 	public static let TicksLeft = TicksAbove	
 	public static let TicksRight = TicksBelow
+
+	public var valueChangedHandler: (_ value: Int)->Void = { value in 
+		//print ("Slider value changed to \(value)!");
+	}
+	public var sliderMovedHandler: (_ value: Int)->Void = { value in 
+		//print ("Slider moved! New value=\(value)");
+	}
+	public var sliderPressedHandler: ()->Void = {
+		//print ("Slider pressed!");
+	}
+	public var sliderReleasedHandler: ()->Void = {
+		//print ("Slider released!");
+	}
 
 	public convenience init (_ parent: QMainWindow) {
 		self.init ()

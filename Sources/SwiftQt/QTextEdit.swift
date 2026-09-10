@@ -22,7 +22,7 @@
 import CShim
 
 @MainActor
-public class QTextEdit : QWidget{
+public class QTextEdit : QWidget {
 	public var formatChangedHandler: ()->Void = {
 	}
 	public var cursorMovedHandler: ()->Void = {
@@ -120,6 +120,24 @@ public class QTextEdit : QWidget{
 		return 0
 	}
 
+	public func verticalScrollBar () -> QScrollBar? {
+		if let widgetID = widgetID {
+			let scrollbarID = Conduit.textEditVerticalScrollBar (widgetID)
+			return QScrollBar(withID: scrollbarID)
+		}
+		return nil
+	}
+
+	public func horizontalScrollBar () -> QScrollBar? {
+		if let widgetID = widgetID {
+			let scrollbarID = Conduit.textEditHorizontalScrollBar (widgetID)
+			return QScrollBar(withID: scrollbarID)
+		}
+		return nil
+	}
+
+	/* Convenience function.
+	 */
 	public func scrollToBottom () {
 		if let widgetID = widgetID {
 			Conduit.textEditScrollToBottom (widgetID)

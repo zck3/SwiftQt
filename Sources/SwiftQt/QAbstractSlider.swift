@@ -27,36 +27,6 @@ import CShim
 
 @MainActor
 public class QAbstractSlider : QWidget{
-	public var valueChangedHandler: (_ value: Int)->Void = { value in 
-		//print ("Slider value changed to \(value)!");
-	}
-	public var sliderMovedHandler: (_ value: Int)->Void = { value in 
-		//print ("Slider moved! New value=\(value)");
-	}
-	public var sliderPressedHandler: ()->Void = {
-		//print ("Slider pressed!");
-	}
-	public var sliderReleasedHandler: ()->Void = {
-		//print ("Slider released!");
-	}
-
-	public override func processEvent (_ event: SQEvent) -> Int {
-		switch (event.type) {
-			case QSignalSliderValueChanged:
-				valueChangedHandler(event.x)
-			case QSignalSliderMoved:
-				sliderMovedHandler(event.x)
-			case QSignalSliderPressed:
-				sliderPressedHandler()
-			case QSignalSliderReleased:
-				sliderReleasedHandler()
-
-			default: 
-				print ("QAbstractSlider unknown event.");
-		}
-		return 0
-	}
-
 	public func value () -> Int {
 		if let widgetID = widgetID {
 			return Conduit.abstractSliderValue (widgetID)

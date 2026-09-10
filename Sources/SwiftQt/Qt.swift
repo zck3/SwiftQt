@@ -93,6 +93,11 @@ public class Qt {
 	public static let Saturday = 6
 	public static let Sunday = 7
 
+	// Qt::ScrollBarPolicy
+	public static let ScrollBarAsNeeded = 0
+	public static let ScrollBarAlwaysOff = 1
+	public static let ScrollBarAlwaysOn = 2
+
 	// Qt::ItemFlags
 	public static let NoItemFlags = 0
 	public static let ItemIsSelectable = 1
@@ -103,7 +108,7 @@ public class Qt {
 	public static let ItemIsEnabled = 32
 	public static let ItemIsTristate = 64
 
-	// Keys
+	// Key codes
 	public static let Key_Space = 0x20
 	public static let Key_Any = Key_Space
 	public static let Key_Exclam = 0x21

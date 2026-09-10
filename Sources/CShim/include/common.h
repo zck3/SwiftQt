@@ -26,9 +26,9 @@
 #define SWIFTQT_COMMON_TYPES_H
 
 #define kKitName "SwiftQt"
-#define kKitRelease "0.27"
+#define kKitRelease "0.28"
 #define kKitReleaseMajor 0
-#define kKitReleaseMinor 27
+#define kKitReleaseMinor 28
 
 #ifdef __cplusplus
 extern "C" {
@@ -164,6 +164,10 @@ enum : long {
 	QSignalSliderReleased,
 
 	QSignalLabelHovered,
+
+	QSignalLineEditTextChanged,
+	QSignalLineEditEditingFinished,
+	QSignalLineEditReturnPressed,
 };
 
 typedef struct event

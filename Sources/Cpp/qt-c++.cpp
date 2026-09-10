@@ -23,6 +23,7 @@
 #include <QtCore/QProcess>
 #include <QtCore/QtGlobal>
 #include <QtCore/QStandardPaths>
+#include <QtCore/QUrl>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QColor>
 #include <QtGui/QGuiApplication>
@@ -47,6 +48,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
+#include <QtWidgets/QScrollArea>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
@@ -76,6 +78,16 @@ void ensure_call_propagator_exists()
 	if (!sharedCallPropagator) {
 		sharedCallPropagator = new CallPropagator();
 	}
+}
+
+//--------------------
+// QUrl
+//--------------------
+bool Conduit_urlIsValid (const char* url_string) {
+	return sharedCallPropagator->urlIsValid (url_string);
+}
+bool Conduit_urlIsLocalFile (const char* url_string) {
+	return sharedCallPropagator->urlIsLocalFile (url_string);
 }
 
 //--------------------
@@ -525,6 +537,11 @@ void Conduit_setHidden (WidgetID widgetID, bool value)
 bool Conduit_isHidden (WidgetID widgetID)
 {
 	return sharedCallPropagator->isHidden (widgetID);
+}
+
+bool Conduit_isEnabled (WidgetID widgetID)
+{
+	return sharedCallPropagator->isEnabled (widgetID);
 }
 
 void Conduit_setMinimumSize (WidgetID widgetID, SQSize size)
@@ -1003,9 +1020,24 @@ void Conduit_textEditScrollToBottom (WidgetID widgetID)
 	sharedCallPropagator->textEditScrollToBottom (widgetID);
 }
 
+WidgetID Conduit_textEditVerticalScrollBar (WidgetID widgetID)
+{
+	return sharedCallPropagator->textEditVerticalScrollBar (widgetID);
+}
+
+WidgetID Conduit_textEditHorizontalScrollBar (WidgetID widgetID)
+{
+	return sharedCallPropagator->textEditHorizontalScrollBar (widgetID);
+}
+
 //--------------------
 // QLineEdit
 //--------------------
+WidgetID Conduit_lineEditNew (WidgetID parent)
+{
+	return sharedCallPropagator->lineEditNew (parent);
+}
+
 const char *Conduit_lineEditText (WidgetID widgetID)
 {
 	return sharedCallPropagator->lineEditText (widgetID);
@@ -1014,11 +1046,6 @@ const char *Conduit_lineEditText (WidgetID widgetID)
 void Conduit_lineEditSetText (WidgetID widgetID, const char *text)
 {
 	sharedCallPropagator->lineEditSetText (widgetID, text);
-}
-
-WidgetID Conduit_lineEditNew (WidgetID parent)
-{
-	return sharedCallPropagator->lineEditNew (parent);
 }
 
 long Conduit_lineEditAlignment (WidgetID widgetID)
@@ -1030,6 +1057,37 @@ void Conduit_lineEditSetAlignment (WidgetID widgetID, long value)
 {
 	sharedCallPropagator->lineEditSetAlignment (widgetID, value);
 }
+
+void Conduit_lineEditSetPlaceholderText (WidgetID widgetID, const char* text)
+{
+	sharedCallPropagator->lineEditSetPlaceholderText (widgetID, text);
+}
+
+void Conduit_lineEditSetMaxLength (WidgetID widgetID, long value)
+{
+	sharedCallPropagator->lineEditSetMaxLength (widgetID, value);
+}
+
+void Conduit_lineEditSetCursorPosition (WidgetID widgetID, long value)
+{
+	sharedCallPropagator->lineEditSetCursorPosition (widgetID, value);
+}
+
+long Conduit_lineEditCursorPosition (WidgetID widgetID)
+{
+	return sharedCallPropagator->lineEditCursorPosition (widgetID);
+}
+
+long Conduit_lineEditMaxLength (WidgetID widgetID)
+{
+	return sharedCallPropagator->lineEditMaxLength (widgetID);
+}
+
+void Conduit_lineEditDel (WidgetID widgetID)
+{
+	return sharedCallPropagator->lineEditDel (widgetID);
+}
+
 
 //--------------------
 // QTableWidgetItem
@@ -1135,6 +1193,16 @@ void Conduit_tableWidgetSetHorizontalHeaderLabel (WidgetID tableID, const char *
 	sharedCallPropagator->tableWidgetSetHorizontalHeaderLabel (tableID, string, is_last);
 }
 
+WidgetID Conduit_tableWidgetVerticalScrollBar (WidgetID widgetID)
+{
+	return sharedCallPropagator->tableWidgetVerticalScrollBar (widgetID);
+}
+
+WidgetID Conduit_tableWidgetHorizontalScrollBar (WidgetID widgetID)
+{
+	return sharedCallPropagator->tableWidgetHorizontalScrollBar (widgetID);
+}
+
 //--------------------
 // QWebEngineView
 //--------------------
@@ -1146,6 +1214,32 @@ WidgetID Conduit_webEngineViewNew (WidgetID parent)
 void Conduit_webEngineViewSetHTML (WidgetID widgetID, const char *text)
 {
 	sharedCallPropagator->webEngineViewSetHTML (widgetID, text);
+}
+
+const char *Conduit_webEngineViewSelectedText (WidgetID widgetID)
+{
+	return sharedCallPropagator->webEngineViewSelectedText (widgetID);
+}
+
+const char *Conduit_webEngineViewTitle (WidgetID widgetID)
+{
+	return sharedCallPropagator->webEngineViewTitle (widgetID);
+}
+
+void Conduit_webEngineViewBack (WidgetID widgetID) {
+	sharedCallPropagator->webEngineViewBack (widgetID);
+}
+void Conduit_webEngineViewForward (WidgetID widgetID) {
+	sharedCallPropagator->webEngineViewForward (widgetID);
+}
+void Conduit_webEngineViewReload (WidgetID widgetID) {
+	sharedCallPropagator->webEngineViewReload (widgetID);
+}
+void Conduit_webEngineViewStop (WidgetID widgetID) {
+	sharedCallPropagator->webEngineViewStop (widgetID);
+}
+void Conduit_webEngineViewSetUrl (WidgetID widgetID, const char* string) {
+	sharedCallPropagator->webEngineViewSetUrl (widgetID, string);
 }
 
 //--------------------
@@ -1234,6 +1328,19 @@ void Conduit_applicationQuit ()
 	QApplication::quit ();
 }
 
+long Conduit_applicationTotalMainWindows ()
+{
+	long count = 0;
+
+	for (const auto value : QApplication::topLevelWidgets()) {
+		QWidget *widget = value;
+		if (dynamic_cast<QMainWindow*>(widget)) {
+			count++;
+		}
+	}
+	return count;
+}
+
 void Conduit_applicationBeep()
 {
 #ifdef __linux__
@@ -1253,6 +1360,40 @@ void Conduit_applicationBeep()
 	// BSD, Haiku etc.
 	QApplication::beep();
 #endif
+}
+
+//--------------------
+// QScrollArea
+//--------------------
+WidgetID Conduit_scrollAreaNew (WidgetID parentID)
+{
+	ensure_call_propagator_exists();
+	return sharedCallPropagator->scrollAreaNew (parentID);
+}
+
+void Conduit_scrollAreaSetWidget (WidgetID areaID, WidgetID widgetID)
+{
+	sharedCallPropagator->scrollAreaSetWidget (areaID, widgetID);
+}
+
+WidgetID Conduit_scrollAreaVerticalScrollBar (WidgetID widgetID)
+{
+	return sharedCallPropagator->scrollAreaVerticalScrollBar (widgetID);
+}
+
+WidgetID Conduit_scrollAreaHorizontalScrollBar (WidgetID widgetID)
+{
+	return sharedCallPropagator->scrollAreaHorizontalScrollBar (widgetID);
+}
+
+void Conduit_scrollAreaSetVerticalScrollBarPolicy (WidgetID areaID, long policy)
+{
+	sharedCallPropagator->scrollAreaSetVerticalScrollBarPolicy (areaID, policy);
+}
+
+void Conduit_scrollAreaSetHorizontalScrollBarPolicy (WidgetID areaID, long policy)
+{
+	sharedCallPropagator->scrollAreaSetHorizontalScrollBarPolicy (areaID, policy);
 }
 
 //-----------------------------------------------------------------------------
@@ -1693,7 +1834,7 @@ void CallPropagator::widgetDestroy (WidgetID widgetID)
 
 	widget->setParent (nullptr);
 	widgets[widgetID] = nullptr;
-	delete widget;
+	widget->deleteLater();
 }
 
 WidgetID CallPropagator::widgetNew (WidgetID parentID)
@@ -1746,6 +1887,15 @@ bool CallPropagator::isHidden (WidgetID widgetID)
 	QWidget *widget = widgets[widgetID];
 	if (widget) {
 		return widget->isHidden();
+	}
+	return false;
+}
+
+bool CallPropagator::isEnabled (WidgetID widgetID)
+{
+	QWidget *widget = widgets[widgetID];
+	if (widget) {
+		return widget->isEnabled();
 	}
 	return false;
 }
@@ -1811,7 +1961,7 @@ void CallPropagator::setParent (WidgetID widgetID, WidgetID parentID)
 	if (parentID <= 0) {
 		widget->setParent (nullptr);
 		widgets[widgetID] = nullptr;
-		delete widget;
+		widget->deleteLater();
 		return;
 	}
 	QWidget *parent = widgets[widgetID];
@@ -2191,17 +2341,95 @@ QMainWindow *CallPropagator::mainWindow ()
 	return NULL;
 }
 
-long Conduit_applicationTotalMainWindows ()
+//--------------------
+// QScrollArea
+//--------------------
+WidgetID CallPropagator::scrollAreaNew (WidgetID parentID)
 {
-	long count = 0;
-
-	for (const auto value : QApplication::topLevelWidgets()) {
-		QWidget *widget = value;
-		if (dynamic_cast<QMainWindow*>(widget)) {
-			count++;
-		}
+	QWidget *parent = widgets[parentID];
+	if (!parent) {
+		return -1;
 	}
-	return count;
+
+	QScrollArea *scrollArea = new QScrollArea (parent);
+	if (!scrollArea) {
+		return -1;
+	} 
+	scrollArea->setViewport (nullptr);
+
+	int index = widgetObjectGadgetCounter++;
+	widgets[index] = scrollArea;
+
+	connect (scrollArea, &QObject::destroyed, this, [this, index]() {
+		widgetDestroyed(index);
+	});
+
+	return index;
+}
+
+void CallPropagator::scrollAreaSetWidget (WidgetID areaID, WidgetID widgetID)
+{
+	QScrollArea *area = (QScrollArea*) widgets[areaID];
+	if (!area) {
+		return;
+	}
+	QWidget *widget = (QWidget*) widgets[widgetID];
+	if (!widget) {
+		return;
+	}
+	area->setWidget (widget);
+}
+
+WidgetID CallPropagator::scrollAreaHorizontalScrollBar (WidgetID areaID)
+{
+	QScrollArea *area = (QScrollArea*) widgets[areaID];
+	if (!area) {
+		return 0;
+	}
+	QScrollBar *scrollbar = area->horizontalScrollBar();
+	return widgetIDForQScrollbar(scrollbar);
+}
+
+WidgetID CallPropagator::scrollAreaVerticalScrollBar (WidgetID areaID)
+{
+	QScrollArea *area = (QScrollArea*) widgets[areaID];
+	if (!area) {
+		return 0;
+	}
+	QScrollBar *scrollbar = area->verticalScrollBar();
+	return widgetIDForQScrollbar(scrollbar);
+}
+
+void CallPropagator::scrollAreaSetVerticalScrollBarPolicy (WidgetID areaID, long value)
+{
+	QScrollArea *area = (QScrollArea*) widgets[areaID];
+	if (!area) {
+		return;
+	}
+	Qt::ScrollBarPolicy policy;
+	switch (value) {
+	default:
+	case 0: policy = Qt::ScrollBarAsNeeded; break;
+	case 1: policy = Qt::ScrollBarAlwaysOff; break;
+	case 2: policy = Qt::ScrollBarAlwaysOn; break;
+	}
+	area->setVerticalScrollBarPolicy (policy);
+}
+
+void CallPropagator::scrollAreaSetHorizontalScrollBarPolicy (WidgetID areaID, long value)
+{
+	QScrollArea *area = (QScrollArea*) widgets[areaID];
+	if (!area) {
+		return;
+	}
+	Qt::ScrollBarPolicy policy;
+	switch (value) {
+	default:
+	case 0: policy = Qt::ScrollBarAsNeeded; break;
+	case 1: policy = Qt::ScrollBarAlwaysOff; break;
+	case 2: policy = Qt::ScrollBarAlwaysOn; break;
+	}
+	area->setHorizontalScrollBarPolicy (policy);
 }
 
 //--------------------
@@ -2640,7 +2868,7 @@ WidgetID CallPropagator::checkBoxNew (WidgetID parentID, const char *text)
 	int index = widgetObjectGadgetCounter++;
 	widgets[index] = button;
 
-	connect (button, &QCheckBox::stateChanged, this, [index]() {
+	connect (button, &QCheckBox::checkStateChanged, this, [index]() {
 		SQEvent event;
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalCheckBoxStateChanged;
@@ -2788,7 +3016,6 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 	widgets[index] = table;
 
 	connect (table, &QTableWidget::cellChanged, this, [index](int row, int column) {
-		//printf ("QTableWidget cellChanged\n");
 		SQEvent event;
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTableCellChanged;
@@ -2798,7 +3025,6 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 		swiftEventHandler (event);
 	});
 	connect (table, &QTableWidget::cellClicked, this, [index](int row, int column) {
-		//printf ("QTableWidget cellClicked\n");
 		SQEvent event;
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTableCellClicked;
@@ -2808,7 +3034,6 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 		swiftEventHandler (event);
 	});
 	connect (table, &QTableWidget::cellDoubleClicked, this, [index](int row, int column) {
-		//printf ("QTableWidget cellDoubleClicked\n");
 		SQEvent event;
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTableCellDoubleClicked;
@@ -2818,7 +3043,6 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 		swiftEventHandler (event);
 	});
 	connect (table, &QTableWidget::itemSelectionChanged, this, [index]() {
-		//printf ("QTableWidget itemSelectionChanged\n");
 		SQEvent event;
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTableItemSelectionChanged;
@@ -2826,7 +3050,6 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 		swiftEventHandler (event);
 	});
 	connect (table, &QTableWidget::currentCellChanged, this, [index](int row, int column, int previousRow, int previousColumn) {
-		//printf ("QTableWidget currentCellChanged\n");
 		SQEvent event;
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTableCurrentCellChanged;
@@ -3110,7 +3333,7 @@ WidgetID CallPropagator::lookupWidget (QWidget* widget)
 {
 	// Check whether we already have this QWidget on file.
 	// If not, create an entry for it in the widgets dictionary.
-	int index = -1;
+	int index = 0;
 	for (const auto & [key, value] : widgets) {
 		if (((void*)value) == (void*)widget) {
 			index = key;
@@ -3150,6 +3373,83 @@ ObjectID CallPropagator::lookupObject (QObject* object)
 		}
 	}
 	return index;
+}
+
+WidgetID CallPropagator::tableWidgetVerticalScrollBar (WidgetID widgetID)
+{
+	QTableWidget *tableWidget = (QTableWidget *) widgets[widgetID];
+	if (!tableWidget) {
+		return 0;
+	}
+	QScrollBar *scrollbar = tableWidget->verticalScrollBar();
+	return widgetIDForQScrollbar(scrollbar);
+}
+
+/* If we've already associated this QScrollBar with a widget ID,
+ * no need to assign to a new one, nor to connect signals/slots again.
+ */
+WidgetID CallPropagator::widgetIDForQScrollbar (QScrollBar* scrollbar)
+{
+	if (!scrollbar) {
+		return 0;
+	}
+
+	WidgetID index = lookupWidget (scrollbar);
+	if (index <= 0) {
+		index = widgetObjectGadgetCounter++;
+		widgets[index ] = scrollbar;
+
+		connect (scrollbar, &QScrollBar::destroyed, this, [this, index]() {
+			widgetDestroyed(index);
+		});
+
+		connect (scrollbar, &QScrollBar::sliderPressed, this, [index]() {
+			SQEvent event;
+			memset ((void*)&event, 0, sizeof(event));
+			event.type = QSignalSliderPressed;
+			event.recipient = index;
+			swiftEventHandler (event);
+		});
+		connect (scrollbar, &QScrollBar::sliderMoved, this, [index](int value) {
+			SQEvent event;
+			memset ((void*)&event, 0, sizeof(event));
+			event.type = QSignalSliderMoved;
+			event.x = value;
+			event.recipient = index;
+			swiftEventHandler (event);
+		});
+		connect (scrollbar, &QScrollBar::sliderReleased, this, [index]() {
+			SQEvent event;
+			memset ((void*)&event, 0, sizeof(event));
+			event.type = QSignalSliderReleased;
+			event.recipient = index;
+			swiftEventHandler (event);
+		});
+		connect (scrollbar, &QScrollBar::valueChanged, this, [index](int value) {
+			SQEvent event;
+			memset ((void*)&event, 0, sizeof(event));
+			event.type = QSignalSliderValueChanged;
+			event.x = value;
+			event.recipient = index;
+			swiftEventHandler (event);
+		});
+
+		connect (scrollbar, &QScrollBar::destroyed, this, [this, index]() {
+			widgetDestroyed(index);
+		});
+	}
+
+	return index;
+}
+
+WidgetID CallPropagator::tableWidgetHorizontalScrollBar (WidgetID widgetID)
+{
+	QTableWidget *tableWidget = (QTableWidget *) widgets[widgetID];
+	if (!tableWidget) {
+		return 0;
+	}
+	QScrollBar *scrollbar = tableWidget->horizontalScrollBar();
+	return widgetIDForQScrollbar(scrollbar);
 }
 
 //--------------------
@@ -3359,6 +3659,26 @@ void CallPropagator::textEditScrollToBottom (WidgetID widgetID)
 	vertical->setValue(vertical->maximum());
 }
 
+WidgetID CallPropagator::textEditVerticalScrollBar (WidgetID widgetID)
+{
+	QTextEdit *textEdit = (QTextEdit*) widgets[widgetID];
+	if (!textEdit) {
+		return 0;
+	}
+	QScrollBar *scrollbar = textEdit->verticalScrollBar();
+	return widgetIDForQScrollbar(scrollbar);
+}
+
+WidgetID CallPropagator::textEditHorizontalScrollBar (WidgetID widgetID)
+{
+	QTextEdit *textEdit = (QTextEdit*) widgets[widgetID];
+	if (!textEdit) {
+		return 0;
+	}
+	QScrollBar *scrollbar = textEdit->horizontalScrollBar();
+	return widgetIDForQScrollbar(scrollbar);
+}
+
 //--------------------
 // QWebEngineView
 //--------------------
@@ -3401,6 +3721,86 @@ void CallPropagator::webEngineViewSetHTML (WidgetID widgetID, const char *text)
 	}
 }
 
+void CallPropagator::webEngineViewBack (WidgetID widgetID)
+{
+	QWebEngineView *webEngineView = (QWebEngineView *) widgets[widgetID];
+	if (!webEngineView) {
+		return;
+	}
+	webEngineView->back();
+}
+
+void CallPropagator::webEngineViewForward (WidgetID widgetID)
+{
+	QWebEngineView *webEngineView = (QWebEngineView *) widgets[widgetID];
+	if (!webEngineView) {
+		return;
+	}
+	webEngineView->forward();
+}
+
+void CallPropagator::webEngineViewReload (WidgetID widgetID)
+{
+	QWebEngineView *webEngineView = (QWebEngineView *) widgets[widgetID];
+	if (!webEngineView) {
+		return;
+	}
+	webEngineView->reload();
+}
+
+void CallPropagator::webEngineViewStop (WidgetID widgetID)
+{
+	QWebEngineView *webEngineView = (QWebEngineView *) widgets[widgetID];
+	if (!webEngineView) {
+		return;
+	}
+	webEngineView->stop();
+}
+
+const char *CallPropagator::webEngineViewTitle (WidgetID widgetID)
+{
+	QWebEngineView *webEngineView = (QWebEngineView *) widgets[widgetID];
+	if (!webEngineView) {
+		return NULL;
+	}
+
+	QString text = webEngineView->title ();
+	std::string string = text.toStdString();
+	const char *cstring = string.c_str();
+	char *copy = strdup(cstring);
+	return copy;
+}
+
+const char *CallPropagator::webEngineViewSelectedText (WidgetID widgetID)
+{
+	QWebEngineView *webEngineView = (QWebEngineView *) widgets[widgetID];
+	if (!webEngineView) {
+		return NULL;
+	}
+
+	QString text = webEngineView->selectedText ();
+	std::string string = text.toStdString();
+	const char *cstring = string.c_str();
+	char *copy = strdup(cstring);
+	return copy;
+}
+
+void CallPropagator::webEngineViewSetUrl (WidgetID widgetID, const char *url_string)
+{
+	QWebEngineView *webEngineView = (QWebEngineView *) widgets[widgetID];
+	if (!webEngineView) {
+		return;
+	}
+
+	QUrl url(url_string ?: "");
+	if (url.isValid()) {
+		webEngineView->setUrl (url);
+	} else {
+		qDebug() << "Cannot set URL to " << url;
+	}
+}
+
+
 //--------------------
 // QLineEdit
 //--------------------
@@ -3440,6 +3840,28 @@ WidgetID CallPropagator::lineEditNew (WidgetID parentID)
 	int index = widgetObjectGadgetCounter++;
 	widgets[index] = lineEdit;
 
+        connect (lineEdit, &QLineEdit::editingFinished, this, [index]() {
+                SQEvent event; 
+                memset ((void*)&event, 0, sizeof(event)); 
+                event.type = QSignalLineEditEditingFinished;
+                event.recipient = index; 
+                swiftEventHandler (event);
+        });
+        connect (lineEdit, &QLineEdit::textChanged, this, [index]() {
+                SQEvent event; 
+                memset ((void*)&event, 0, sizeof(event)); 
+                event.type = QSignalLineEditTextChanged;
+                event.recipient = index; 
+                swiftEventHandler (event);
+        });
+        connect (lineEdit, &QLineEdit::returnPressed, this, [index]() {
+                SQEvent event; 
+                memset ((void*)&event, 0, sizeof(event)); 
+                event.type = QSignalLineEditReturnPressed;
+                event.recipient = index; 
+                swiftEventHandler (event);
+        });
+
 	connect (lineEdit, &QLineEdit::destroyed, this, [this, index]() {
 		widgetDestroyed(index);
 	});
@@ -3466,6 +3888,61 @@ void CallPropagator::lineEditSetAlignment (WidgetID widgetID, long value)
 	Qt::Alignment alignment = long_to_alignment(value);
 	widget->setAlignment (alignment);
 }
+
+void CallPropagator::lineEditSetPlaceholderText (WidgetID widgetID, const char* text)
+{
+	QLineEdit *widget = (QLineEdit*) widgets[widgetID];
+	if (!widget) {
+		return;
+	}
+	widget->setPlaceholderText (text ?: "");
+}
+
+void CallPropagator::lineEditSetMaxLength (WidgetID widgetID, long value)
+{
+	QLineEdit *widget = (QLineEdit*) widgets[widgetID];
+	if (!widget) {
+		return;
+	}
+	widget->setMaxLength (value);
+}
+
+void CallPropagator::lineEditSetCursorPosition (WidgetID widgetID, long value)
+{
+	QLineEdit *widget = (QLineEdit*) widgets[widgetID];
+	if (!widget) {
+		return;
+	}
+	widget->setCursorPosition (value);
+}
+
+long CallPropagator::lineEditCursorPosition (WidgetID widgetID)
+{
+	QLineEdit *widget = (QLineEdit*) widgets[widgetID];
+	if (!widget) {
+		return 0;
+	}
+	return widget->cursorPosition();
+}
+
+long CallPropagator::lineEditMaxLength (WidgetID widgetID)
+{
+	QLineEdit *widget = (QLineEdit*) widgets[widgetID];
+	if (!widget) {
+		return 0;
+	}
+	return widget->maxLength();
+}
+
+void CallPropagator::lineEditDel (WidgetID widgetID)
+{
+	QLineEdit *widget = (QLineEdit*) widgets[widgetID];
+	if (!widget) {
+		return;
+	}
+	widget->del();
+}
+
 
 //--------------------
 // QGridLayout
@@ -4177,6 +4654,22 @@ long CallPropagator::primaryScreenHeight ()
 	}
         QRect rect = screen->availableVirtualGeometry();
 	return rect.size().height ();
+}
+
+//--------------------
+// QUrl
+//--------------------
+bool CallPropagator::urlIsValid (const char* url_string)
+{
+	QUrl url(url_string);
+	qDebug() << "URL " << url;
+	return url.isValid();
+}
+bool CallPropagator::urlIsLocalFile (const char* url_string)
+{
+	QUrl url(url_string);
+	qDebug() << "URL " << url;
+	return url.isLocalFile();
 }
 
 //--------------------

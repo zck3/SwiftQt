@@ -24,7 +24,6 @@ import CShim
 @MainActor
 public class QWidgetStorage {
 	let idMask : Int = 0x00ffffff
-	let typeMask : Int = 0x7f000000
 
 	static let shared = QWidgetStorage()
 
@@ -46,35 +45,41 @@ public class QWidgetStorage {
 @MainActor
 open class QWidget : QObject 
 {
-	let typeMask : Int = 0x7f000000
+	public var mouseButtonPressEventHandler: (_ event: SQEvent) -> Void = { event in
+	}
+	public var mouseButtonReleaseEventHandler: (_ event: SQEvent) -> Void = { event in
+	}
+	public var mouseMoveEventHandler: (_ event: SQEvent) -> Void = { event in
+	}
+	public var mouseButtonDblClickEventHandler: (_ event: SQEvent) -> Void = { event in
+	}
+	public var wheelEventHandler: (_ event: SQEvent) -> Void = { event in
+	}
 
 	@MainActor
 	var widgetID : WidgetID?
 
 	public static func isKnownWidget (_ widgetID: WidgetID) -> Bool {
-		//let idMask : Int32 = 0x00ffffff
 		let idMask : Int = 0x00ffffff
 		return QWidgetStorage.shared.widget(id: widgetID & idMask) != nil
 	}
 
 	public static func lookupWidget (_ widgetID: WidgetID) -> QWidget? {
-		//let idMask : Int32 = 0x00ffffff
 		let idMask : Int = 0x00ffffff
 		return QWidgetStorage.shared.widget(id: widgetID & idMask)
 	}
 
 	public static func registerWidget (_ widgetID: WidgetID, _ widget: QWidget) {
-		//let idMask : Int32 = 0x00ffffff
 		let idMask : Int = 0x00ffffff
 		QWidgetStorage.shared.register (widget: widget, id: widgetID & idMask)
 	}
 
 	public static func unregisterWidget (_ widgetID: WidgetID) {
-		//let idMask : Int32 = 0x00ffffff
 		let idMask : Int = 0x00ffffff
 		QWidgetStorage.shared.unregister (id: widgetID & idMask)
 	}
 
+#if false
 	// Not used
 	public static func manufactureWidget (fromID widgetID: WidgetID) -> QWidget {
 		switch (widgetID >> 24) {
@@ -96,6 +101,7 @@ open class QWidget : QObject
 			return QWidget()
 		}
 	}
+#endif
 
 	public convenience init (_ parent: QWidget) {
 		self.init ()
@@ -161,6 +167,13 @@ open class QWidget : QObject
 	public func isHidden () -> Bool {
 		if let widgetID = widgetID {
 			return Conduit.isHidden (widgetID)
+		}
+		return false
+	}
+
+	public func isEnabled () -> Bool {
+		if let widgetID = widgetID {
+			return Conduit.isEnabled (widgetID)
 		}
 		return false
 	}
@@ -283,7 +296,6 @@ open class QWidget : QObject
 			if parentID < 0 {
 				return nil
 			}
-			//let idMask : Int32 = 0x00ffffff
 			let idMask : Int = 0x00ffffff
 			let parent : QWidget? = QWidgetStorage.shared.widget(id: parentID & idMask) ?? nil
 			return parent
@@ -291,9 +303,6 @@ open class QWidget : QObject
 		return nil
 	}
 
-	/* This is the form of addAction deemed a convenience function in the Qt header file.
-	 * It creates the QAction object for you.
-	 */
 	public func addAction (_ string: String, _ triggeredHandler: @escaping () -> Void) -> QAction? {
 		if let widgetID = widgetID {
 			let action = QAction ()
@@ -306,8 +315,6 @@ open class QWidget : QObject
 		return nil
 	}
 
-	/* This adds a preexisting action onto a QWidget.
-	 */
 	public func addAction (_ action: QAction, _ triggeredHandler: @escaping () -> Void) -> QAction? {
 		if let widgetID = widgetID, 
 		   let actionID = action.objectID {
@@ -320,8 +327,18 @@ open class QWidget : QObject
 
 	public override func processEvent (_ event: SQEvent) -> Int {
 		switch (event.type) {
+			case QEventMouseButtonRelease:
+				mouseButtonReleaseEventHandler (event)
+			case QEventMouseButtonPress:
+				mouseButtonPressEventHandler (event)
+			case QEventMouseButtonDblClick:
+				mouseButtonDblClickEventHandler (event)
+			case QEventWheel:
+				wheelEventHandler (event)
+			case QEventMouseMove:
+				mouseMoveEventHandler (event)
 			default: 
-				print ("QWidget unknown event.")
+				print ("QWidget unknown event \(event.type).")
 		}
 		return 0
 	}

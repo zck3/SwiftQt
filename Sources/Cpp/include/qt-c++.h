@@ -24,6 +24,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QScrollBar>
 
 #include <map>
 #include <deque>
@@ -61,6 +62,7 @@ public:
 	void resize (WidgetID, SQCoord, SQCoord);
 	void setHidden (WidgetID, bool);
 	bool isHidden (WidgetID);
+	bool isEnabled (WidgetID);
 	void setStyleSheet (WidgetID, const char*);
 	const char *styleSheet (WidgetID);
 	void raise (WidgetID);
@@ -293,6 +295,8 @@ public:
 	void tableWidgetInsertRow (WidgetID tableID, long row);
 	void tableWidgetSetVerticalHeaderLabel (WidgetID tableID, const char *, bool is_last);
 	void tableWidgetSetHorizontalHeaderLabel (WidgetID tableID, const char *, bool is_last);
+	WidgetID tableWidgetVerticalScrollBar (WidgetID);
+	WidgetID tableWidgetHorizontalScrollBar (WidgetID);
 
 	//---------------------------------------------------------------------
 	// QTextEdit
@@ -308,12 +312,21 @@ public:
 	void textEditSetAlignment (WidgetID, long);
 	long textEditAlignment (WidgetID);
 	void textEditScrollToBottom (WidgetID);
+	WidgetID textEditVerticalScrollBar (WidgetID);
+	WidgetID textEditHorizontalScrollBar (WidgetID);
 
 	//---------------------------------------------------------------------
 	// QWebEngineView
 	//---------------------------------------------------------------------
 	WidgetID webEngineViewNew (WidgetID parentID);
 	void webEngineViewSetHTML (WidgetID, const char *);
+	void webEngineViewBack (WidgetID);
+	void webEngineViewForward (WidgetID);
+	void webEngineViewReload (WidgetID);
+	void webEngineViewStop (WidgetID);
+	const char *webEngineViewSelectedText (WidgetID);
+	const char *webEngineViewTitle (WidgetID);
+	void webEngineViewSetUrl (WidgetID, const char*);
 
 	//---------------------------------------------------------------------
 	// QLineEdit
@@ -323,6 +336,12 @@ public:
 	void lineEditSetText (WidgetID, const char *);
 	void lineEditSetAlignment (WidgetID, long);
 	long lineEditAlignment (WidgetID);
+	void lineEditSetPlaceholderText (WidgetID, const char*);
+	void lineEditSetMaxLength (WidgetID, long);
+	void lineEditSetCursorPosition (WidgetID, long);
+	long lineEditCursorPosition (WidgetID);
+	long lineEditMaxLength (WidgetID);
+	void lineEditDel (WidgetID);
 
 	//---------------------------------------------------------------------
 	// QSlider
@@ -364,6 +383,27 @@ public:
 	void lcdNumberDisplayDouble (WidgetID, double);
 	bool lcdNumberSmallDecimalPoint (WidgetID);
 	void lcdNumberSetSmallDecimalPoint (WidgetID,bool);
+
+	//---------------------------------------------------------------------
+	// QUrl
+	//---------------------------------------------------------------------
+	bool urlIsValid (const char*);
+	bool urlIsLocalFile (const char*);
+
+	//---------------------------------------------------------------------
+	// QScrollArea
+	//---------------------------------------------------------------------
+	WidgetID scrollAreaNew (WidgetID parent);
+	void scrollAreaSetWidget (WidgetID, WidgetID);
+	WidgetID scrollAreaHorizontalScrollBar (WidgetID areaID);
+	WidgetID scrollAreaVerticalScrollBar (WidgetID areaID);
+	void scrollAreaSetVerticalScrollBarPolicy (WidgetID, long);
+	void scrollAreaSetHorizontalScrollBarPolicy (WidgetID, long);
+
+	//---------------------------------------------------------------------
+	// QScrollBar
+	//---------------------------------------------------------------------
+	WidgetID widgetIDForQScrollbar (QScrollBar*);
 
 	//---------------------------------------------------------------------
 	// QApplication
