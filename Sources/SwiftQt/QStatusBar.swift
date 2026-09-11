@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -30,7 +30,13 @@ public class QStatusBar : QWidget{
 	public convenience init (_ parent: QMainWindow, _ text: String?) {
 		self.init ()
 		if let windowID = parent.widgetID {
-			self.widgetID = Conduit.statusBarNew (windowID, text ?? "")
+			let id = Conduit.statusBarNew (windowID, text ?? "")
+			if id != 0 {
+				self.widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QStatusBar.")
+			}
 		}
 	}
 

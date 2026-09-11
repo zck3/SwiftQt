@@ -27,7 +27,7 @@ import CShim
 // 
 
 @MainActor
-public class QLayout : QObject{
+public class QLayout : QObject {
 	public override func processEvent (_ event: SQEvent) -> Int {
 		switch (event.type) {
 			default: 

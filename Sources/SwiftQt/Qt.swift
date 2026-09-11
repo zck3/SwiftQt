@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -107,6 +107,15 @@ public class Qt {
 	public static let ItemIsUserCheckable = 16
 	public static let ItemIsEnabled = 32
 	public static let ItemIsTristate = 64
+
+	// QPdfDocument::Error
+	public static let PdfNone = 0
+	public static let PdfUnknown = 1
+	public static let PdfDataNotYetAvailable = 2
+	public static let PdfFileNotFound = 3
+	public static let PdfInvalidFileFormat = 4
+	public static let PdfIncorrectPassword = 5
+	public static let PdfUnsupportedSecurityScheme = 6
 
 	// Key codes
 	public static let Key_Space = 0x20

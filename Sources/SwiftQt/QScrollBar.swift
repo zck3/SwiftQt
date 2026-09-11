@@ -20,7 +20,8 @@
  *=======================================================================*/
 
 // QScrollBar
-// We're typically given a scroll bar, we don't instantiate them ourselves.
+// We're typically given a scroll bar by a class that uses them
+// and we don't instantiate them ourselves.
 
 import CShim
 
@@ -28,8 +29,12 @@ import CShim
 public class QScrollBar : QAbstractSlider {
 	public convenience init (withID: WidgetID) {
 		self.init ()
-		self.widgetID = withID
-		QWidget.registerWidget (withID, self)
+		if withID != 0 {
+			self.widgetID = withID
+			QWidget.registerWidget (withID, self)
+		} else {
+			fatalError("QScrollBar ID is invalid.")
+		}
 	}
 
 	public var valueChangedHandler: (_ value: Int)->Void = { value in 

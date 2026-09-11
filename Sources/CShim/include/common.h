@@ -26,9 +26,9 @@
 #define SWIFTQT_COMMON_TYPES_H
 
 #define kKitName "SwiftQt"
-#define kKitRelease "0.28"
+#define kKitRelease "0.29"
 #define kKitReleaseMajor 0
-#define kKitReleaseMinor 28
+#define kKitReleaseMinor 29
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,6 +41,7 @@ extern "C" {
 typedef long WidgetID;
 typedef long ObjectID;
 typedef long GadgetID; // e.g. QPainter object.
+#define InvalidID (0)
 typedef long SQCoord;
 typedef long SQColor;
 typedef const char * const SQKeySequence; // e.g. "Ctrl+w" or a name such as "Redo"

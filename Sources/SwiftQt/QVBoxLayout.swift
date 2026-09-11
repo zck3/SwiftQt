@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,12 +26,18 @@ import CShim
 // 
 
 @MainActor
-public class QVBoxLayout : QBoxLayout{
+public class QVBoxLayout : QBoxLayout {
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			objectID = Conduit.vBoxLayoutNew (parentID)
-			QWidget.registerObject (objectID!, self)
+			let id = Conduit.vBoxLayoutNew (parentID)
+			if id != 0 {
+				self.objectID = id
+				QObject.registerObject (id, self)
+			} else {
+				fatalError("Unable to instantiate a QVBoxLayout.")
+			}
+			
 		}
 	}
 

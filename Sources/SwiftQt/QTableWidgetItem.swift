@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,11 +26,16 @@ import CShim
 // 
 
 @MainActor
-public class QTableWidgetItem : QObject{
+public class QTableWidgetItem : QObject {
 	convenience init (_ string: String?) {
 		self.init ()
-		objectID = Conduit.tableWidgetItemNew (string ?? "")
-		QObject.registerObject (objectID!, self)
+		let id = Conduit.tableWidgetItemNew (string ?? "")
+		if id != 0 {
+			self.objectID = id
+			QObject.registerObject (id, self)
+		} else {
+			fatalError("Unable to instantiate a QTableWidgetItem.")
+		}
 	}
 
 	public override func processEvent (_ event: SQEvent) -> Int {

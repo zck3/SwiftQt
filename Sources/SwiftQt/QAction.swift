@@ -31,23 +31,24 @@ public class QAction : QObject {
 
 	public required convenience init (_ text: String, _ handler: @escaping ()->Void) {
 		self.init ()
-		objectID = Conduit.actionNew (text)
-
-		if let objectID = objectID {
-			QObject.registerObject (objectID, self)
+		let id = Conduit.actionNew (text)
+		if id != 0 {
+			self.objectID = id
+			QObject.registerObject (id, self)
 			triggeredHandler = handler
 		} else {
-			print ("QAction is missing an object ID.");
+			fatalError("Unable to instantiate a QAction.")
 		}
 	}
 
 	public required convenience init (_ text: String) {
 		self.init ()
-		objectID = Conduit.actionNew (text)
-		if let objectID = objectID {
-			QObject.registerObject (objectID, self)
+		let id = Conduit.actionNew (text)
+		if id != 0 {
+			self.objectID = id
+			QObject.registerObject (id, self)
 		} else {
-			print ("QAction is missing an object ID.");
+			fatalError("Unable to instantiate a QAction.")
 		}
 	}
 
@@ -57,9 +58,9 @@ public class QAction : QObject {
 				triggeredHandler ()
 
 			// TODO
-			// changed
-			// hovered
-			// toggled
+			// Changed
+			// Hovered
+			// Toggled
 			default: 
 				print ("QAction unknown event.");
 		}

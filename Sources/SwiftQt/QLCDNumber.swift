@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -29,8 +29,13 @@ public class QLCDNumber : QWidget{
 	public convenience init (_ parent: QWidget, numberOfDigits: Int) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			self.widgetID = Conduit.lcdNumberNew (parentID, numberOfDigits)
-			QWidget.registerWidget (widgetID!, self)
+			let id = Conduit.lcdNumberNew (parentID, numberOfDigits)
+			if id != 0 {
+				self.widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QLCDNumber.")
+			}
 		}
 	}
 

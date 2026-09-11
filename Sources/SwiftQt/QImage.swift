@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,11 +28,12 @@ import CShim
 public class QImage : QGadget {
 	public required convenience init (_ path: String?) {
 		self.init ()
-		gadgetID = Conduit.imageNew (path ?? "")
-		if let gadgetID = gadgetID {
-			QGadget.registerGadget (gadgetID, self)
+		let id = Conduit.imageNew (path ?? "")
+		if id > 0 {
+			gadgetID = id
+			QGadget.registerGadget (id, self)
 		} else {
-			print ("QImage is missing an gadget ID.")
+			fatalError("Unable to instantiate a QImage.")
 		}
 	}
 
@@ -49,22 +50,31 @@ public class QImage : QGadget {
 		}
 		return 0 
 	}
+
 	public func height () -> Int {
 		if let gadgetID = gadgetID {
 			return Conduit.imageHeight (gadgetID)
 		}
 		return 0 
 	}
+
 	public func depth () -> Int {
 		if let gadgetID = gadgetID {
 			return Conduit.imageDepth (gadgetID)
 		}
 		return 0 
 	}
+
 	public func isGrayscale () -> Bool {
 		if let gadgetID = gadgetID {
 			return Conduit.imageIsGrayscale (gadgetID)
 		}
 		return false 
+	}
+
+	public func setPixel(x: Int, y: Int, color: Int) {
+		if let gadgetID = gadgetID {
+			Conduit.imageSetPixel (gadgetID, x, y, color)
+		}
 	}
 }

@@ -26,7 +26,7 @@ import CShim
 // 
 
 @MainActor
-public class QBoxLayout : QLayout{
+public class QBoxLayout : QLayout {
 	// QBoxLayout::Direction
 	public static let LeftToRight = 0
 	public static let RightToLeft = 1
@@ -36,8 +36,13 @@ public class QBoxLayout : QLayout{
 	public convenience init (_ direction: Int, _ parent: QMainWindow) {
 		self.init ()
 		if let windowID = parent.widgetID {
-			objectID = Conduit.boxLayoutNew (windowID, direction)
-			QWidget.registerObject (objectID!, self)
+			let id = Conduit.boxLayoutNew (windowID, direction)
+			if id != 0 {
+				objectID = id
+				QObject.registerObject (id, self)
+			} else {
+				fatalError("Unable to instantiate a QBoxLayout.")
+			}
 		}
 	}
 

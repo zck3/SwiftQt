@@ -22,7 +22,7 @@
 import CShim
 
 @MainActor
-public class QObjectStorage{
+public class QObjectStorage {
 	static let shared = QObjectStorage()
 
 	private var objects: [ObjectID: QObject] = [:]

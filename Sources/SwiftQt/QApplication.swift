@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -52,18 +52,18 @@ public class QApplication : QObject {
 		let c_array = UnsafeMutablePointer<UnsafeMutablePointer<CChar>?>.allocate(capacity: cStrings.count)
 		c_array.initialize(from: cStrings, count: cStrings.count)
 
-		objectID = Conduit.applicationNew (argc, c_array)
+		let id = Conduit.applicationNew (argc, c_array)
+		if id == 0 {
+			fatalError("Unable to instantiate a QApplication.")
+		}
+		objectID = id
 
 		for ptr in cStrings {
 			ptr?.deallocate()
 		}
 		c_array.deallocate()
 
-		if let objectID = objectID {
-			QObject.registerObject (objectID, self)
-		} else {
-			print ("QApplicaiton is missing an object ID.")
-		}
+		QObject.registerObject (id, self)
 	}
 
 	public override func processEvent (_ event: SQEvent) -> Int {

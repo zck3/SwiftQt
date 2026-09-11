@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,11 +26,16 @@ import CShim
 // 
 
 @MainActor
-public class QMenuBar : QWidget{
+public class QMenuBar : QWidget {
 	public required override init () {
 		super.init()
-		self.widgetID = Conduit.menuBarNew ()
-		QWidget.registerWidget (widgetID!, self)
+		let id = Conduit.menuBarNew ()
+		if id != 0 {
+			self.widgetID = id
+			QWidget.registerWidget (id, self)
+		} else {
+			fatalError("Unable to instantiate a QMenuBar.")
+		}
 	}
 
 	public override func processEvent (_ event: SQEvent) -> Int {

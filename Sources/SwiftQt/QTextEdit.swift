@@ -36,8 +36,13 @@ public class QTextEdit : QWidget {
 	public convenience init (_ parent: QMainWindow) {
 		self.init ()
 		if let windowID = parent.widgetID {
-			self.widgetID = Conduit.textEditNew (windowID)
-			QWidget.registerWidget (widgetID!, self)
+			let id = Conduit.textEditNew (windowID)
+			if id != 0 {
+				self.widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QTextEdit.")
+			}
 		}
 	}
 

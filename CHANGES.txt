@@ -55,3 +55,7 @@ CHANGE LOG
 	- Added closures and methods to QWebEngineView.
 	- Added signals, closures and methods to QLineEdit.
 	- Added QScrollArea, Qt.ScrollBarPolicy.
+0.29	- Added QPdfDocument and QPdfView. 
+	- Detection of object instantiation errors. 
+	- Improved QWidget, QImage.
+

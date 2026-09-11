@@ -38,8 +38,13 @@ public class QTableWidget : QWidget {
 	public convenience init (_ parent: QMainWindow) {
 		self.init ()
 		if let windowID = parent.widgetID {
-			self.widgetID = Conduit.tableWidgetNew (windowID)
-			QWidget.registerWidget (widgetID!, self)
+			let id = Conduit.tableWidgetNew (windowID)
+			if id != 0 {
+				self.widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QTableWidget.")
+			}
 		}
 	}
 

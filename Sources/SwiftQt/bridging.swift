@@ -210,3 +210,4 @@ public extension QUrl {
 		return Conduit.urlIsLocalFile (self)
 	}
 }
+

@@ -52,8 +52,10 @@ public:
 	void widgetDestroy (WidgetID);
 	void setFrame (WidgetID, SQRect);
 	SQRect frame (WidgetID);
-	void setMinimumSize (WidgetID, SQSize);
 	SQSize minimumSize (WidgetID);
+	void setMinimumSize (WidgetID, SQSize);
+	SQSize maximumSize (WidgetID);
+	void setMaximumSize (WidgetID, SQSize);
 	SQCoord x (WidgetID);
 	SQCoord y (WidgetID);
 	SQCoord height (WidgetID);
@@ -63,6 +65,7 @@ public:
 	void setHidden (WidgetID, bool);
 	bool isHidden (WidgetID);
 	bool isEnabled (WidgetID);
+	bool isMinimized (WidgetID windowID);
 	void setStyleSheet (WidgetID, const char*);
 	const char *styleSheet (WidgetID);
 	void raise (WidgetID);
@@ -79,6 +82,20 @@ public:
 	void addAction (WidgetID, ObjectID); // Add preexisting QAction.
 	void clearFocus (WidgetID);
 	void setFocus (WidgetID);
+
+	//---------------------------------------------------------------------
+	// QPdfView
+	//---------------------------------------------------------------------
+	WidgetID pdfViewNew (WidgetID);
+	void pdfViewSetDocument (WidgetID, ObjectID);
+
+	//---------------------------------------------------------------------
+	// QPdfDocument
+	//---------------------------------------------------------------------
+	ObjectID pdfDocumentNew(ObjectID);
+	long pdfDocumentLoad(ObjectID, const char*);
+	void pdfDocumentClose(ObjectID objectID);
+	long pdfDocumentPageCount(ObjectID);
 
 	//---------------------------------------------------------------------
 	// QCalendarWidget
@@ -164,6 +181,8 @@ public:
 	SQCoord imageWidth (GadgetID gadgetID);
 	SQCoord imageHeight (GadgetID gadgetID);
 	SQCoord imageDepth (GadgetID gadgetID);
+	void imageSetPixel (GadgetID, SQCoord, SQCoord, long);
+	void imageFill (GadgetID, long);
 
 	//---------------------------------------------------------------------
 	// QMainWindow
@@ -204,8 +223,8 @@ public:
 	void labelClear (WidgetID);
 	const char* labelText (WidgetID);
 	void labelSetText (WidgetID, const char*);
-	void labelSetPixmap (WidgetID, ObjectID); 
-	void labelSetImage (WidgetID, ObjectID); 
+	void labelSetPixmap (WidgetID, GadgetID); 
+	void labelSetImage (WidgetID, GadgetID); 
 	bool labelWordWrap (WidgetID labelID);
 	void labelSetWordWrap (WidgetID labelID, bool value);
 	long labelAlignment (WidgetID labelID);

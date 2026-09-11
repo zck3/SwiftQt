@@ -30,8 +30,13 @@ public class QGridLayout : QLayout{
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let widgetID = parent.widgetID {
-			objectID = Conduit.gridLayoutNew (widgetID)
-			QWidget.registerObject (objectID!, self)
+			let id = Conduit.gridLayoutNew (widgetID)
+			if id != 0 {
+				objectID = id
+				QObject.registerObject (id, self)
+			} else {
+				fatalError("Unable to instantiate a QGridLayout.")
+			}
 		}
 	}
 

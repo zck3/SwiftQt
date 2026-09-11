@@ -53,8 +53,13 @@ open class QMainWindow : QWidget {
 
 	public required init (x: Int, y: Int, width: Int, height: Int) {
 		super.init ()
-		self.widgetID = Conduit.windowNew (x, y, width, height)
-		QWidget.registerWidget (widgetID!, self)
+		let id = Conduit.windowNew (x, y, width, height)
+		if id != 0 {
+			self.widgetID = id
+			QWidget.registerWidget (id, self)
+		} else {
+			fatalError("Unable to instantiate a QMainWindow.")
+		}
 	}
 
 	open override func processEvent (_ event: SQEvent) -> Int {

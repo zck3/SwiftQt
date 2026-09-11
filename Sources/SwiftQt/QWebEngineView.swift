@@ -26,8 +26,13 @@ public class QWebEngineView : QWidget{
 	public convenience init (_ window: QMainWindow) {
 		self.init ()
 		if let windowID = window.widgetID {
-			self.widgetID = Conduit.webEngineViewNew (windowID)
-			QWidget.registerWidget (widgetID!, self)
+			let id = Conduit.webEngineViewNew (windowID)
+			if id != 0 {
+				self.widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QWebEngineView.")
+			}
 		}
 	}
 

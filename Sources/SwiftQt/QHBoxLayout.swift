@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,16 +26,20 @@ import CShim
 // 
 
 @MainActor
-public class QHBoxLayout : QBoxLayout{
+public class QHBoxLayout : QBoxLayout {
 	deinit {
-		print ("QHBoxLayout deinit called.")
 	}
 
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			objectID = Conduit.hBoxLayoutNew (parentID)
-			QWidget.registerObject (objectID!, self)
+			let id = Conduit.hBoxLayoutNew (parentID)
+			if id != 0 {
+				objectID = id
+				QObject.registerObject (id, self)
+			} else {
+				fatalError("Unable to instantiate a QHBoxLayout.")
+			}
 		}
 	}
 

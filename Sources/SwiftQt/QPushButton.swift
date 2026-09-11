@@ -30,8 +30,13 @@ public class QPushButton : QAbstractButton {
 	public convenience init (_ parent: QWidget, _ string: String) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			self.widgetID = Conduit.pushButtonNew (parentID, string)
-			QWidget.registerWidget (widgetID!, self)
+			let id = Conduit.pushButtonNew (parentID, string)
+			if id != 0 {
+				self.widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QPushButton.")
+			}
 		}
 	}
 

@@ -56,6 +56,8 @@
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
 #include <QtMultimedia/QSoundEffect>
+#include <QtPdf/QPdfDocument>
+#include <QtPdfWidgets/QPdfView>
 
 #include <iostream>
 #include <exception>
@@ -78,6 +80,38 @@ void ensure_call_propagator_exists()
 	if (!sharedCallPropagator) {
 		sharedCallPropagator = new CallPropagator();
 	}
+}
+
+//--------------------
+// QPdfView
+//--------------------
+WidgetID Conduit_pdfViewNew (WidgetID parentID)
+{
+	return sharedCallPropagator->pdfViewNew (parentID);
+}
+
+void Conduit_pdfViewSetDocument (WidgetID widgetID, ObjectID documentID)
+{
+	sharedCallPropagator->pdfViewSetDocument (widgetID, documentID);
+}
+
+//--------------------
+// QPdfDocument
+//--------------------
+ObjectID Conduit_pdfDocumentNew (ObjectID parentID) {
+	return sharedCallPropagator->pdfDocumentNew (parentID);
+}
+
+long Conduit_pdfDocumentLoad (ObjectID documentID, const char* filename) {
+	return sharedCallPropagator->pdfDocumentLoad (documentID, filename);
+}
+
+void Conduit_pdfDocumentClose(ObjectID documentID) {
+	sharedCallPropagator->pdfDocumentClose (documentID);
+}
+
+long Conduit_pdfDocumentPageCount(ObjectID documentID) {
+	return sharedCallPropagator->pdfDocumentPageCount (documentID);
 }
 
 //--------------------
@@ -456,34 +490,44 @@ SQCoord Conduit_pixmapDepth (GadgetID gadgetID)
 //--------------------
 // QImage
 //--------------------
-ObjectID Conduit_imageNew (const char* path)
+GadgetID Conduit_imageNew (const char* path)
 {
 	return sharedCallPropagator->imageNew (path);
 }
 
-bool Conduit_imageLoad (ObjectID objectID, const char *path)
+bool Conduit_imageLoad (GadgetID gadgetID, const char *path)
 {
-	return sharedCallPropagator->imageLoad (objectID, path);
+	return sharedCallPropagator->imageLoad (gadgetID, path);
 }
 
-bool Conduit_imageIsGrayscale (ObjectID objectID)
+bool Conduit_imageIsGrayscale (GadgetID gadgetID)
 {
-	return sharedCallPropagator->imageIsGrayscale (objectID);
+	return sharedCallPropagator->imageIsGrayscale (gadgetID);
 }
 
-SQCoord Conduit_imageWidth (ObjectID objectID)
+SQCoord Conduit_imageWidth (GadgetID gadgetID)
 {
-	return sharedCallPropagator->imageWidth (objectID);
+	return sharedCallPropagator->imageWidth (gadgetID);
 }
 
-SQCoord Conduit_imageHeight (ObjectID objectID)
+SQCoord Conduit_imageHeight (GadgetID gadgetID)
 {
-	return sharedCallPropagator->imageHeight (objectID);
+	return sharedCallPropagator->imageHeight (gadgetID);
 }
 
-SQCoord Conduit_imageDepth (ObjectID objectID)
+SQCoord Conduit_imageDepth (GadgetID gadgetID)
 {
-	return sharedCallPropagator->imageDepth (objectID);
+	return sharedCallPropagator->imageDepth (gadgetID);
+}
+
+void Conduit_imageSetPixel (GadgetID gadgetID, long x, long y, long color)
+{
+	return sharedCallPropagator->imageSetPixel (gadgetID, x, y, color);
+}
+
+void Conduit_imageFill (GadgetID gadgetID, long color)
+{
+	return sharedCallPropagator->imageFill (gadgetID, color);
 }
 
 //--------------------
@@ -542,6 +586,21 @@ bool Conduit_isHidden (WidgetID widgetID)
 bool Conduit_isEnabled (WidgetID widgetID)
 {
 	return sharedCallPropagator->isEnabled (widgetID);
+}
+
+bool Conduit_isMinimized (WidgetID widgetID)
+{
+	return sharedCallPropagator->isMinimized (widgetID);
+}
+
+void Conduit_setMaximumSize (WidgetID widgetID, SQSize size)
+{
+	sharedCallPropagator->setMaximumSize (widgetID, size);
+}
+
+SQSize Conduit_maximumSize (WidgetID widgetID)
+{
+	return sharedCallPropagator->maximumSize (widgetID);
 }
 
 void Conduit_setMinimumSize (WidgetID widgetID, SQSize size)
@@ -873,7 +932,7 @@ void Conduit_labelSetPixmap (WidgetID labelID, ObjectID pixmapID)
 	sharedCallPropagator->labelSetPixmap (labelID, pixmapID);
 }
 
-void Conduit_labelSetImage (WidgetID labelID, ObjectID imageID)
+void Conduit_labelSetImage (WidgetID labelID, GadgetID imageID)
 {
 	sharedCallPropagator->labelSetImage (labelID, imageID);
 }
@@ -1464,7 +1523,7 @@ ObjectID CallPropagator::boxLayoutNew (WidgetID parentID, long direction)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 	QBoxLayout::Direction dir;
 	switch (direction) {
@@ -1548,7 +1607,7 @@ ObjectID CallPropagator::hBoxLayoutNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 	QHBoxLayout *layout = new QHBoxLayout (parent);
 	int layoutID = widgetObjectGadgetCounter++;
@@ -1568,7 +1627,7 @@ ObjectID CallPropagator::vBoxLayoutNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 	QVBoxLayout *layout = new QVBoxLayout (parent);
 	int layoutID = widgetObjectGadgetCounter++;
@@ -1741,6 +1800,24 @@ SQCoord CallPropagator::imageDepth (GadgetID gadgetID)
 	return image->depth();
 }
 
+void CallPropagator::imageSetPixel (GadgetID gadgetID, long x, long y, long color)
+{
+	QImage *image = (QImage*) gadgets[gadgetID];
+	if (!image) {
+		return;
+	}
+	image->setPixel (x, y, (uint) color);
+}
+
+void CallPropagator::imageFill (GadgetID gadgetID, long color)
+{
+	QImage *image = (QImage*) gadgets[gadgetID];
+	if (!image) {
+		return;
+	}
+	image->fill ((uint) color);
+}
+
 //--------------------
 // Conveniences
 //--------------------
@@ -1764,7 +1841,7 @@ WidgetID CallPropagator::groupBoxNew (WidgetID parentID, const char* title)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 	QGroupBox *widget = new QGroupBox(title, parent);
 	int widgetID = widgetObjectGadgetCounter++;
@@ -1841,7 +1918,7 @@ WidgetID CallPropagator::widgetNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 	QWidget *widget = new QWidget (parent);
 
@@ -1900,6 +1977,15 @@ bool CallPropagator::isEnabled (WidgetID widgetID)
 	return false;
 }
 
+bool CallPropagator::isMinimized (WidgetID windowID)
+{
+	QWidget *window = widgets[windowID];
+	if (window) {
+		return window->isMinimized();
+	}
+	return false;
+}
+
 void CallPropagator::setFrame (WidgetID widgetID, SQRect rect)
 {
 	QWidget *widget = widgets[widgetID];
@@ -1909,7 +1995,35 @@ void CallPropagator::setFrame (WidgetID widgetID, SQRect rect)
 	widget->move (rect.origin.x, rect.origin.y);
 	widget->resize (rect.size.width, rect.size.height);
 
-	//printf("Qt: %s %s to %ld,%ld %ldx%ld\n", typeid(widget).name(), __FUNCTION__, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+#if debugging
+	printf("Qt: %s %s to %ld,%ld %ldx%ld\n", typeid(widget).name(), __FUNCTION__, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+#endif
+}
+
+void CallPropagator::setMaximumSize (WidgetID widgetID, SQSize size)
+{
+	QWidget *widget = widgets[widgetID];
+	if (!widget) {
+		return;
+	}
+	QSize qsize;
+	qsize.setWidth (size.width);
+	qsize.setHeight (size.height);
+	widget->setMaximumSize (qsize);
+}
+
+SQSize CallPropagator::maximumSize (WidgetID widgetID)
+{
+	QWidget *widget = widgets[widgetID];
+	if (!widget) {
+		SQSize zerosize = {0, 0};
+		return zerosize;
+	}
+	QSize qsize = widget->maximumSize ();
+	SQSize size;
+	size.width = qsize.width();
+	size.height = qsize.height();
+	return size;
 }
 
 void CallPropagator::setMinimumSize (WidgetID widgetID, SQSize size)
@@ -1934,7 +2048,7 @@ SQSize CallPropagator::minimumSize (WidgetID widgetID)
 	QSize qsize = widget->minimumSize ();
 	SQSize size;
 	size.width = qsize.width();
-	size.height = qsize.height ();
+	size.height = qsize.height();
 	return size;
 }
 
@@ -1942,11 +2056,11 @@ WidgetID CallPropagator::parentWidget (WidgetID widgetID)
 {
 	QWidget *widget = widgets[widgetID];
 	if (!widget) {
-		return -1;
+		return InvalidID;
 	}
 	QWidget *parent = widget->parentWidget ();
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 	WidgetID parentID = lookupOrAddWidget (parent);
 	return parentID;
@@ -2069,7 +2183,7 @@ WidgetID CallPropagator::layout (WidgetID widgetID)
 {
 	QWidget *widget = widgets[widgetID];
 	if (!widget) {
-		return -1;
+		return InvalidID;
 	}
 	QLayout *layout = widget->layout ();
 	ObjectID layoutID = lookupOrAddObject ((QObject*)layout);
@@ -2104,8 +2218,6 @@ SQRect CallPropagator::frame (WidgetID widgetID)
 	rect.origin.y = widget->y();
 	rect.size.width = widget->width();
 	rect.size.height = widget->height ();
-
-	//printf("Qt: %s %s: %ld,%ld %ldx%ld\n", typeid(widget).name(), __FUNCTION__, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 	return rect;
 }
 
@@ -2146,7 +2258,7 @@ ObjectID CallPropagator::addActionWithString (WidgetID widgetID, const char *str
 	QWidget *widget = (QWidget*) widgets[widgetID];
 	if (!widget) {
 		qDebug() << "QAction parent not found";
-		return -1;
+		return InvalidID;
 	}
 	QAction *action = widget->addAction(string);
 	int actionID = widgetObjectGadgetCounter++;
@@ -2348,12 +2460,12 @@ WidgetID CallPropagator::scrollAreaNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QScrollArea *scrollArea = new QScrollArea (parent);
 	if (!scrollArea) {
-		return -1;
+		return InvalidID;
 	} 
 	scrollArea->setViewport (nullptr);
 
@@ -2384,7 +2496,7 @@ WidgetID CallPropagator::scrollAreaHorizontalScrollBar (WidgetID areaID)
 {
 	QScrollArea *area = (QScrollArea*) widgets[areaID];
 	if (!area) {
-		return 0;
+		return InvalidID;
 	}
 	QScrollBar *scrollbar = area->horizontalScrollBar();
 	return widgetIDForQScrollbar(scrollbar);
@@ -2394,7 +2506,7 @@ WidgetID CallPropagator::scrollAreaVerticalScrollBar (WidgetID areaID)
 {
 	QScrollArea *area = (QScrollArea*) widgets[areaID];
 	if (!area) {
-		return 0;
+		return InvalidID;
 	}
 	QScrollBar *scrollbar = area->verticalScrollBar();
 	return widgetIDForQScrollbar(scrollbar);
@@ -2447,7 +2559,7 @@ WidgetID CallPropagator::statusBarNew (WidgetID parentID, const char *text)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QStatusBar *statusBar = new QStatusBar (parent);
@@ -2580,7 +2692,7 @@ WidgetID CallPropagator::labelNew (WidgetID parentID, const char *text)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QLabel *label = new QLabel (parent);
@@ -2757,7 +2869,7 @@ void CallPropagator::labelSetPixmap (WidgetID labelID, ObjectID pixmapID)
 	label->setPixmap (*pixmap);
 }
 
-void CallPropagator::labelSetImage (WidgetID labelID, ObjectID imageID)
+void CallPropagator::labelSetImage (WidgetID labelID, GadgetID imageID)
 {
 	QLabel *label = (QLabel*) widgets[labelID];
 	if (!label) {
@@ -2824,7 +2936,7 @@ WidgetID CallPropagator::radioButtonNew (WidgetID parentID, const char *text)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QRadioButton *button = new QRadioButton (parent);
@@ -2857,7 +2969,7 @@ WidgetID CallPropagator::checkBoxNew (WidgetID parentID, const char *text)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QCheckBox *button = new QCheckBox (parent);
@@ -2932,10 +3044,8 @@ WidgetID CallPropagator::pushButtonNew (WidgetID parentID, const char *text)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
-
-	// printf("Qt: BUTTON TEXT=%s\n",text);
 
 	QPushButton *button = new QPushButton (parent);
 	if (text) {
@@ -3007,7 +3117,7 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QTableWidget *table = new QTableWidget (parent);
@@ -3123,7 +3233,7 @@ ObjectID CallPropagator::tableWidgetItemNew (const char *text)
 		objects[index] = (QObject*) item;
 		return index;
 	} else {
-		return -1;
+		return InvalidID;
 	}
 }
 
@@ -3240,7 +3350,7 @@ void CallPropagator::tableWidgetSetRowCount (WidgetID tableID, long count) {
 long CallPropagator::tableWidgetCurrentColumn (WidgetID tableID) {
 	QTableWidget *table = (QTableWidget*) widgets[tableID];
 	if (!table) {
-		return -1;
+		return InvalidID;
 	}
 
 	return table->currentColumn();
@@ -3248,7 +3358,7 @@ long CallPropagator::tableWidgetCurrentColumn (WidgetID tableID) {
 long CallPropagator::tableWidgetCurrentRow (WidgetID tableID) {
 	QTableWidget *table = (QTableWidget*) widgets[tableID];
 	if (!table) {
-		return -1;
+		return InvalidID;
 	}
 
 	return table->currentRow();
@@ -3282,12 +3392,12 @@ WidgetID CallPropagator::tableWidgetCellWidget (WidgetID tableID, long row, long
 {
 	QTableWidget *table = (QTableWidget*) widgets[tableID];
 	if (!table) {
-		return -1;
+		return InvalidID;
 	}
 
 	QWidget *widget = table->cellWidget (row, column);
 	if (!widget) {
-		return -1;
+		return InvalidID;
 	}
 
 	WidgetID widgetID = lookupWidget (widget);
@@ -3379,7 +3489,7 @@ WidgetID CallPropagator::tableWidgetVerticalScrollBar (WidgetID widgetID)
 {
 	QTableWidget *tableWidget = (QTableWidget *) widgets[widgetID];
 	if (!tableWidget) {
-		return 0;
+		return InvalidID;
 	}
 	QScrollBar *scrollbar = tableWidget->verticalScrollBar();
 	return widgetIDForQScrollbar(scrollbar);
@@ -3391,7 +3501,7 @@ WidgetID CallPropagator::tableWidgetVerticalScrollBar (WidgetID widgetID)
 WidgetID CallPropagator::widgetIDForQScrollbar (QScrollBar* scrollbar)
 {
 	if (!scrollbar) {
-		return 0;
+		return InvalidID;
 	}
 
 	WidgetID index = lookupWidget (scrollbar);
@@ -3433,10 +3543,6 @@ WidgetID CallPropagator::widgetIDForQScrollbar (QScrollBar* scrollbar)
 			event.recipient = index;
 			swiftEventHandler (event);
 		});
-
-		connect (scrollbar, &QScrollBar::destroyed, this, [this, index]() {
-			widgetDestroyed(index);
-		});
 	}
 
 	return index;
@@ -3446,7 +3552,7 @@ WidgetID CallPropagator::tableWidgetHorizontalScrollBar (WidgetID widgetID)
 {
 	QTableWidget *tableWidget = (QTableWidget *) widgets[widgetID];
 	if (!tableWidget) {
-		return 0;
+		return InvalidID;
 	}
 	QScrollBar *scrollbar = tableWidget->horizontalScrollBar();
 	return widgetIDForQScrollbar(scrollbar);
@@ -3458,11 +3564,11 @@ WidgetID CallPropagator::tableWidgetHorizontalScrollBar (WidgetID widgetID)
 ObjectID CallPropagator::tableWidgetItem (WidgetID tableID, long row, long column) {
 	QTableWidget *table = (QTableWidget*) widgets[tableID];
 	if (!table) {
-		return -1;
+		return InvalidID;
 	}
 	QTableWidgetItem *item = table->item(row, column);
         if (!item) {
-                return -1;
+		return InvalidID;
 	}
 	int index = lookupOrAddObject ((QObject*) item);
 	return index;
@@ -3471,12 +3577,12 @@ ObjectID CallPropagator::tableWidgetItem (WidgetID tableID, long row, long colum
 ObjectID CallPropagator::tableWidgetCurrentItem (WidgetID tableID) {
 	QTableWidget *table = (QTableWidget*) widgets[tableID];
 	if (!table) {
-		return -1;
+		return InvalidID;
 	}
 
 	QTableWidgetItem *item = table->currentItem();
         if (!item) {
-                return -1;
+		return InvalidID;
 	}
 	int index = lookupOrAddObject ((QObject*) item);
 	return index;
@@ -3502,7 +3608,7 @@ WidgetID CallPropagator::textEditNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QTextEdit *editor = new QTextEdit (parent);
@@ -3686,7 +3792,7 @@ WidgetID CallPropagator::webEngineViewNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QWebEngineView *webview = new QWebEngineView (parent);
@@ -3710,8 +3816,6 @@ void CallPropagator::webEngineViewSetHTML (WidgetID widgetID, const char *text)
 	if (!webEngineView) {
 		return;
 	}
-
-	printf ("Setting HTML of %s to %s\n", typeid(webEngineView).name(), text); fflush(NULL);
 
 	try {
 		webEngineView->setHtml (text ?: "");
@@ -3832,7 +3936,7 @@ WidgetID CallPropagator::lineEditNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QLineEdit *lineEdit = new QLineEdit (parent);
@@ -3951,7 +4055,7 @@ ObjectID CallPropagator::gridLayoutNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 	QGridLayout *layout = new QGridLayout (parent);
 	int layoutID = widgetObjectGadgetCounter++;
@@ -4162,7 +4266,7 @@ WidgetID CallPropagator::calendarWidgetNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return -1;
+		return InvalidID;
 	}
 
 	QCalendarWidget *widget = new QCalendarWidget (parent);
@@ -4188,7 +4292,7 @@ SQDate CallPropagator::calendarWidgetSelectedDate (WidgetID widgetID)
 {
 	QCalendarWidget *widget = (QCalendarWidget*) widgets[widgetID];
 	if (!widget) {
-		return -1;
+		return InvalidID;
 	}
 	QDate qdate = widget->selectedDate();
 	SQDate date = (SQDate) qdate.toJulianDay();
@@ -4238,7 +4342,7 @@ long CallPropagator::calendarWidgetYearShown (WidgetID widgetID)
 long CallPropagator::calendarWidgetHorizontalHeaderFormat (WidgetID widgetID) {
 	QCalendarWidget *widget = (QCalendarWidget*) widgets[widgetID];
 	if (!widget) {
-		return -1;
+		return InvalidID;
 	}
 	return (long) widget->horizontalHeaderFormat ();
 }
@@ -4246,7 +4350,7 @@ long CallPropagator::calendarWidgetHorizontalHeaderFormat (WidgetID widgetID) {
 long CallPropagator::calendarWidgetVerticalHeaderFormat (WidgetID widgetID) {
 	QCalendarWidget *widget = (QCalendarWidget*) widgets[widgetID];
 	if (!widget) {
-		return -1;
+		return InvalidID;
 	}
 	return (long) widget->verticalHeaderFormat ();
 }
@@ -4284,7 +4388,7 @@ long CallPropagator::calendarWidgetFirstDayOfWeek(WidgetID widgetID)
 {
 	QCalendarWidget *widget = (QCalendarWidget*) widgets[widgetID];
 	if (!widget) {
-		return -1;
+		return InvalidID;
 	}
 	return (long) widget->firstDayOfWeek();
 }
@@ -4316,12 +4420,12 @@ WidgetID CallPropagator::sliderNew (WidgetID parentID)
 {
 	QWidget *parent = widgets[parentID];
 	if (!parent) {
-		return 0;
+		return InvalidID;
 	}
 
 	QSlider *widget = new QSlider (parent);
 	if (!widget) {
-		return 0;
+		return InvalidID;
 	}
 	int index = widgetObjectGadgetCounter++;
 	widgets[index] = widget;
@@ -4367,7 +4471,7 @@ WidgetID CallPropagator::sliderNew (WidgetID parentID)
 long CallPropagator::sliderTickPosition (WidgetID widgetID) {
 	QSlider *widget = (QSlider*) widgets[widgetID];
 	if (!widget) {
-		return -1;
+		return InvalidID;
 	}
 	return widget->tickPosition();
 }
@@ -4375,7 +4479,7 @@ long CallPropagator::sliderTickPosition (WidgetID widgetID) {
 long CallPropagator::sliderTickInterval (WidgetID widgetID) {
 	QSlider *widget = (QSlider*) widgets[widgetID];
 	if (!widget) {
-		return -1;
+		return InvalidID;
 	}
 	return widget->tickInterval();
 }
@@ -4515,11 +4619,11 @@ long CallPropagator::abstractSliderValue (WidgetID widgetID) {
 WidgetID CallPropagator::lcdNumberNew (WidgetID parentID, long numDigits) {
 	QWidget *parent = (QWidget*) widgets[parentID];
 	if (!parent) {
-		return 0;
+		return InvalidID;
 	}
 	QLCDNumber *widget = new QLCDNumber (numDigits, parent);
 	if (!widget) {
-		return 0;
+		return InvalidID;
 	}
 	int index = widgetObjectGadgetCounter++;
 	widgets[index] = widget;
@@ -4626,11 +4730,9 @@ long CallPropagator::primaryScreenLogicalDotsPerInch()
 {
         QScreen *screen = QGuiApplication::primaryScreen();
 	if (!screen) {
-		perror (__FUNCTION__);
 		return 0;
 	}
 	int dpi = screen->logicalDotsPerInch();
-	printf ("Screen DPI is %d\n", dpi);
 	return dpi;
 }
 
@@ -4638,7 +4740,6 @@ long CallPropagator::primaryScreenWidth ()
 {
         QScreen *screen = QGuiApplication::primaryScreen();
 	if (!screen) {
-		perror (__FUNCTION__);
 		return 0;
 	}
         QRect rect = screen->availableVirtualGeometry();
@@ -4649,11 +4750,116 @@ long CallPropagator::primaryScreenHeight ()
 {
         QScreen *screen = QGuiApplication::primaryScreen();
 	if (!screen) {
-		perror (__FUNCTION__);
 		return 0;
 	}
         QRect rect = screen->availableVirtualGeometry();
 	return rect.size().height ();
+}
+
+//--------------------
+// QPdfView
+//--------------------
+WidgetID CallPropagator::pdfViewNew (WidgetID parentID)
+{
+	QWidget *parent = widgets[parentID];
+	if (!parent) {
+		return InvalidID;
+	}
+
+	QPdfView *view = new QPdfView(parent);
+	int viewID = widgetObjectGadgetCounter++;
+	widgets[viewID] = (QWidget*) view;
+
+	connect (view, &QObject::destroyed, this, [this, viewID]() {
+		widgetDestroyed(viewID);
+	});
+	return viewID;
+}
+
+void CallPropagator::pdfViewSetDocument (WidgetID widgetID, ObjectID documentID)
+{
+	QPdfView *view = (QPdfView*) widgets[widgetID];
+	if (!view) {
+		return;
+	}
+	QPdfDocument *document = (QPdfDocument*) objects[documentID];
+	if (!document) {
+		return;
+	}
+	view->setDocument (document);
+}
+
+//--------------------
+// QPdfDocument
+//--------------------
+ObjectID CallPropagator::pdfDocumentNew (ObjectID parentID) 
+{
+	QObject *parent = objects[parentID];
+	if (!parent) {
+		parent = (QObject*) widgets[parentID];
+		if (!parent) {
+			return InvalidID;
+		}
+	}
+	QPdfDocument *document = new QPdfDocument (parent);
+	if (!document) {
+		return InvalidID;
+	}
+
+	int documentID = widgetObjectGadgetCounter++;
+	objects[documentID] = (QObject*) document;
+
+	connect (document, &QObject::destroyed, this, [this, documentID]() {
+		objectDestroyed(documentID);
+	});
+	return documentID;
+}
+
+long CallPropagator::pdfDocumentLoad (ObjectID documentID, const char* filename) 
+{
+	if (!filename) {
+		return -1;
+	}
+	QPdfDocument *document = (QPdfDocument*) objects[documentID];
+	if (!document) {
+		return -1;
+	}
+
+	switch (document->load(filename)) {
+	case QPdfDocument::Error::None:
+		return 0;
+	default:
+	case QPdfDocument::Error::Unknown:
+		return 1;
+	case QPdfDocument::Error::DataNotYetAvailable:
+		return 2;
+	case QPdfDocument::Error::FileNotFound:
+		return 3;
+	case QPdfDocument::Error::InvalidFileFormat:
+		return 4;
+	case QPdfDocument::Error::IncorrectPassword:
+		return 5;
+	case QPdfDocument::Error::UnsupportedSecurityScheme:
+		return 6;
+	}
+}
+
+void CallPropagator::pdfDocumentClose (ObjectID documentID) 
+{
+	QPdfDocument *document = (QPdfDocument*) objects[documentID];
+	if (!document) {
+		return;
+	}
+	document->close();
+}
+
+long CallPropagator::pdfDocumentPageCount (ObjectID documentID) 
+{
+	QPdfDocument *document = (QPdfDocument*) objects[documentID];
+	if (!document) {
+		return 0;
+	}
+	return document->pageCount();
 }
 
 //--------------------

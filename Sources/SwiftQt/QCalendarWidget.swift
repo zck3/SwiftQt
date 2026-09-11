@@ -47,8 +47,13 @@ public class QCalendarWidget : QWidget{
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			self.widgetID = Conduit.calendarWidgetNew (parentID)
-			QWidget.registerWidget (widgetID!, self)
+			let id = Conduit.calendarWidgetNew (parentID)
+			if id != 0 {
+				self.widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QCalendarWidget.")
+			}
 		}
 	}
 

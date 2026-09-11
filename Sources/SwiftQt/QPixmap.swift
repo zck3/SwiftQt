@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,21 +28,23 @@ import CShim
 public class QPixmap : QGadget {
 	public convenience init (_ path: String?) {
 		self.init ()
-		gadgetID = Conduit.pixmapWithPathNew (path ?? "")
-		if let gadgetID = gadgetID {
-			QGadget.registerGadget (gadgetID, self)
+		let id = Conduit.pixmapWithPathNew (path ?? "")
+		if id != 0 {
+			self.gadgetID = id
+			QGadget.registerGadget (id, self)
 		} else {
-			print ("QPixmap is missing an gadget ID.")
+			fatalError("Unable to instantiate a QPixmap.")
 		}
 	}
 
 	public convenience init (_ width: Int, _ height: Int) {
 		self.init ()
-		gadgetID = Conduit.pixmapWithSizeNew (width, height)
-		if let gadgetID = gadgetID {
-			QGadget.registerGadget (gadgetID, self)
+		let id = Conduit.pixmapWithSizeNew (width, height)
+		if id != 0 {
+			self.gadgetID = id
+			QGadget.registerGadget (id, self)
 		} else {
-			print ("QPixmap is missing an gadget ID.")
+			fatalError("Unable to instantiate a QPixmap.")
 		}
 	}
 

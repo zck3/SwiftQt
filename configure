@@ -61,7 +61,7 @@ if ( which clang++ > /dev/null ); then
 	echo "Detected Clang $version."
 elif ( which g++ > /dev/null ); then
 	version=$(g++ --version 2>&1 | head -1 | cut -d ' ' -f 3)
-	echo "Detected G++ $version."
+	echo "Detected GNU C++ $version."
 elif ( which c++ > /dev/null ); then
 	echo "Detected C++."
 else

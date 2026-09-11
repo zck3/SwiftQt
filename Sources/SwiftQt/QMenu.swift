@@ -30,8 +30,13 @@ public class QMenu : QWidget {
 	public convenience init (_ title:String) {
 		self.init ()
 
-		self.widgetID = Conduit.menuNew (title)
-		QWidget.registerWidget (widgetID!, self)
+		let id = Conduit.menuNew (title)
+		if id != 0 {
+			self.widgetID = id
+			QWidget.registerWidget (id, self)
+		} else {
+			fatalError("Unable to instantiate a QMenu.")
+		}
 	}
 
 	public override func processEvent (_ event: SQEvent) -> Int {

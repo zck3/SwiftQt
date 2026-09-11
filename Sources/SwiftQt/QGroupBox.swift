@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,12 +26,17 @@ import CShim
 // 
 
 @MainActor
-public class QGroupBox : QWidget{
+public class QGroupBox : QWidget {
 	public convenience init (_ title: String, _ parent: QMainWindow) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			widgetID = Conduit.groupBoxNew (parentID, title)
-			QWidget.registerWidget (widgetID!, self)
+			let id = Conduit.groupBoxNew (parentID, title)
+			if id != 0 {
+				widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QGroupBox.")
+			}
 		}
 	}
 

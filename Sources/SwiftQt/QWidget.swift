@@ -106,8 +106,13 @@ open class QWidget : QObject
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			self.widgetID = Conduit.widgetNew (parentID)
-			QWidgetStorage.shared.register(widget: self, id: widgetID!)
+			let id = Conduit.widgetNew (parentID)
+			if id != 0 {
+				self.widgetID = id
+				QWidgetStorage.shared.register(widget: self, id: id)
+			} else {
+				fatalError("Unable to instantiate a QWidget.")
+			}
 		}
 	}
 
@@ -243,6 +248,12 @@ open class QWidget : QObject
 		}
 	}
 
+	public func setMaximumSize (_ size: QSize) {
+		if let widgetID = widgetID {
+			Conduit.setMaximumSize (widgetID, size)
+		}
+	}
+
 	public func setMaximumHeight(_ maxh: Int) {
 		if let widgetID = widgetID {
 			Conduit.setMaximumHeight (widgetID, maxh)
@@ -309,7 +320,7 @@ open class QWidget : QObject
 			action.triggeredHandler = triggeredHandler
 			let actionID : Int = Conduit.addActionWithString (widgetID, string)
 			action.objectID = actionID
-			QWidget.registerObject(actionID, action)
+			QObject.registerObject(actionID, action)
 			return action
 		} 
 		return nil

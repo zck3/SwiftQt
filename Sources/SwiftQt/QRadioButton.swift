@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,12 +26,17 @@ import CShim
 // 
 
 @MainActor
-public class QRadioButton : QAbstractButton{
+public class QRadioButton : QAbstractButton {
 	public convenience init (_ parent: QWidget, _ string: String) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			self.widgetID = Conduit.radioButtonNew (parentID, string)
-			QWidget.registerWidget (widgetID!, self)
+			let id = Conduit.radioButtonNew (parentID, string)
+			if id != 0 {
+				self.widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QRadioButton.")
+			}
 		}
 	}
 
@@ -45,22 +50,4 @@ public class QRadioButton : QAbstractButton{
 		}
 		return 0
 	}
-
-//	func text () -> String {
-//		if let widgetID = widgetID {
-//			let unsafeString : UnsafePointer<CChar>? = Conduit.radioButtonText(widgetID)
-//			if let unsafeString = unsafeString {
-//				let safeString : String = String (cString:unsafeString);
-//				unsafeString.deallocate()
-//				return safeString
-//			}
-//		}
-//		return ""
-//	}
-//
-//	func setText (_ text: String) {
-//		if let widgetID = widgetID {
-//			Conduit.radioButtonSetText (widgetID, text)
-//		}
-//	}
 }

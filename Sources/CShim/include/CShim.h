@@ -32,6 +32,20 @@ typedef struct
 } Conduit;
 
 //-----------------------------------------------------------------------------
+// QPdfView
+//-----------------------------------------------------------------------------
+WidgetID Conduit_pdfViewNew(WidgetID)	__attribute__((swift_name("Conduit.pdfViewNew(_:)")));
+long Conduit_pdfViewSetDocument(WidgetID, ObjectID)	__attribute__((swift_name("Conduit.pdfViewSetDocument(_:_:)")));
+
+//-----------------------------------------------------------------------------
+// QPdfDocument
+//-----------------------------------------------------------------------------
+ObjectID Conduit_pdfDocumentNew(ObjectID)	__attribute__((swift_name("Conduit.pdfDocumentNew(_:)")));
+long Conduit_pdfDocumentLoad(ObjectID, const char*)	__attribute__((swift_name("Conduit.pdfDocumentLoad(_:_:)")));
+void Conduit_pdfDocumentClose(ObjectID objectID)	__attribute__((swift_name("Conduit.pdfDocumentClose(_:)")));	
+long Conduit_pdfDocumentPageCount(ObjectID)	__attribute__((swift_name("Conduit.pdfDocumentPageCount(_:)")));
+
+//-----------------------------------------------------------------------------
 // QPixmap
 //-----------------------------------------------------------------------------
 ObjectID Conduit_pixmapWithPathNew(const char*path)	__attribute__((swift_name("Conduit.pixmapWithPathNew(_:)")));
@@ -45,12 +59,14 @@ SQCoord Conduit_pixmapDepth (ObjectID objectID)	__attribute__((swift_name("Condu
 //-----------------------------------------------------------------------------
 // QImage
 //-----------------------------------------------------------------------------
-ObjectID Conduit_imageNew(const char*path)	__attribute__((swift_name("Conduit.imageNew(_:)")));
-bool Conduit_imageLoad (ObjectID objectID, const char *path)	__attribute__((swift_name("Conduit.imageLoad(_:_:)")));	
-bool Conduit_imageIsGrayscale (ObjectID objectID)	__attribute__((swift_name("Conduit.imageIsGrayscale(_:)")));	
-SQCoord Conduit_imageWidth (ObjectID objectID)	__attribute__((swift_name("Conduit.imageWidth(_:)")));	
-SQCoord Conduit_imageHeight (ObjectID objectID)	__attribute__((swift_name("Conduit.imageHeight(_:)")));	
-SQCoord Conduit_imageDepth (ObjectID objectID)	__attribute__((swift_name("Conduit.imageDepth(_:)")));	
+GadgetID Conduit_imageNew(const char*path)	__attribute__((swift_name("Conduit.imageNew(_:)")));
+bool Conduit_imageLoad (GadgetID gadgetID, const char *path)	__attribute__((swift_name("Conduit.imageLoad(_:_:)")));	
+bool Conduit_imageIsGrayscale (GadgetID gadgetID)	__attribute__((swift_name("Conduit.imageIsGrayscale(_:)")));	
+SQCoord Conduit_imageWidth (GadgetID gadgetID)	__attribute__((swift_name("Conduit.imageWidth(_:)")));	
+SQCoord Conduit_imageHeight (GadgetID gadgetID)	__attribute__((swift_name("Conduit.imageHeight(_:)")));	
+SQCoord Conduit_imageDepth (GadgetID gadgetID)	__attribute__((swift_name("Conduit.imageDepth(_:)")));	
+void Conduit_imageSetPixel (GadgetID, SQCoord, SQCoord, long)	__attribute__((swift_name("Conduit.imageSetPixel(_:_:_:_:)")));	
+void Conduit_imageFill (GadgetID, long) 	__attribute__((swift_name("Conduit.imageFill(_:_:)")));	
 
 //-----------------------------------------------------------------------------
 // QApplication
@@ -178,7 +194,9 @@ void Conduit_widgetDestroy (WidgetID) 	__attribute__((swift_name("Conduit.widget
 void Conduit_move (WidgetID, SQCoord, SQCoord) 	__attribute__((swift_name("Conduit.move(_:_:_:)")));
 void Conduit_resize (WidgetID, SQCoord, SQCoord) 	__attribute__((swift_name("Conduit.resize(_:_:_:)")));
 void Conduit_setMinimumSize (WidgetID, SQSize) 	__attribute__((swift_name("Conduit.setMinimumSize(_:_:)")));
+SQSize Conduit_maximumSize (WidgetID)   	__attribute__((swift_name("Conduit.maximumSize(_:)")));
 SQSize Conduit_minimumSize (WidgetID)   	__attribute__((swift_name("Conduit.minimumSize(_:)")));
+void Conduit_setMaximumSize(WidgetID, SQSize)     __attribute__((swift_name("Conduit.setMaximumSize(_:_:)")));
 void Conduit_setFrame (WidgetID, SQRect) 	__attribute__((swift_name("Conduit.setFrame(_:_:)")));
 SQRect Conduit_frame (WidgetID)   	__attribute__((swift_name("Conduit.frame(_:)")));
 SQCoord Conduit_x (WidgetID)   	__attribute__((swift_name("Conduit.x(_:)")));
@@ -188,6 +206,7 @@ SQCoord Conduit_height (WidgetID)   	__attribute__((swift_name("Conduit.height(_
 void Conduit_setHidden (WidgetID, bool) 	__attribute__((swift_name("Conduit.setHidden(_:_:)")));
 bool Conduit_isHidden (WidgetID)   	__attribute__((swift_name("Conduit.isHidden(_:)")));
 bool Conduit_isEnabled (WidgetID)   	__attribute__((swift_name("Conduit.isEnabled(_:)")));
+bool Conduit_isMinimized(WidgetID windowID)   	__attribute__((swift_name("Conduit.isMinimized(_:)")));
 void Conduit_setStyleSheet (WidgetID, const char*) 	__attribute__((swift_name("Conduit.setStyleSheet(_:_:)")));
 const char *Conduit_styleSheet (WidgetID) 	__attribute__((swift_name("Conduit.styleSheet(_:)")));
 void Conduit_raise (WidgetID) 	__attribute__((swift_name("Conduit.raise(_:)")));
@@ -261,8 +280,8 @@ WidgetID Conduit_labelNew (WidgetID, const char*) 	__attribute__((swift_name("Co
 void Conduit_labelClear (WidgetID)	__attribute__((swift_name("Conduit.labelClear(_:)")));
 const char* Conduit_labelText (WidgetID) 	__attribute__((swift_name("Conduit.labelText(_:)")));
 void Conduit_labelSetText (WidgetID, const char*) 	__attribute__((swift_name("Conduit.labelSetText(_:_:)")));
-void Conduit_labelSetPixmap (WidgetID, ObjectID) 	__attribute__((swift_name("Conduit.labelSetPixmap(_:_:)")));
-void Conduit_labelSetImage (WidgetID, ObjectID) 	__attribute__((swift_name("Conduit.labelSetImage(_:_:)")));
+void Conduit_labelSetPixmap (WidgetID, GadgetID) 	__attribute__((swift_name("Conduit.labelSetPixmap(_:_:)")));
+void Conduit_labelSetImage (WidgetID, GadgetID) 	__attribute__((swift_name("Conduit.labelSetImage(_:_:)")));
 bool Conduit_labelWordWrap (WidgetID labelID) 	__attribute__((swift_name("Conduit.labelWordWrap(_:)")));
 void Conduit_labelSetWordWrap (WidgetID labelID, bool) 	__attribute__((swift_name("Conduit.labelSetWordWrap(_:_:)")));
 long Conduit_labelAlignment (WidgetID labelID) 	__attribute__((swift_name("Conduit.labelAlignment(_:)")));

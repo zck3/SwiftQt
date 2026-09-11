@@ -28,8 +28,13 @@ public class QScrollArea : QWidget {
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
-			self.widgetID = Conduit.scrollAreaNew (parentID)
-			QWidget.registerWidget (widgetID!, self)
+			let id = Conduit.scrollAreaNew (parentID)
+			if id != 0 {
+				self.widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QScrollArea.")
+			}
 		}
 	}
 
