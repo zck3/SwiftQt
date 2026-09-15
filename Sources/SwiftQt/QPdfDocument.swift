@@ -22,7 +22,8 @@
 import CShim
 
 @MainActor
-public class QPdfDocument : QObject {
+public class QPdfDocument : QObject 
+{
 	public convenience init (_ parent: QObject) {
 		self.init ()
 		if let parentID = parent.objectID {
@@ -69,8 +70,4 @@ public class QPdfDocument : QObject {
 		}
 		return 0
 	}
-
-	deinit {
-	}
-
 }

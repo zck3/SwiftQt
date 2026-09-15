@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -40,8 +40,8 @@ public class QCalendarWidget : QWidget{
 	public static let NoSelection = 0
 	public static let SingleSelection = 1
 
-        public var selectionChangedHandler: ()->Void = {
-                print ("QCalendarWidget selection changed!");
+        public var selectionChangedHandler: ()->Bool = {
+		return false
         }
 
 	public convenience init (_ parent: QWidget) {
@@ -57,15 +57,15 @@ public class QCalendarWidget : QWidget{
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalCalendarSelectionChanged:
-				selectionChangedHandler()
+				return selectionChangedHandler()
 
 			default: 
-				print ("QCalendarWidget unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func horizontalHeaderFormat() -> Int {

@@ -33,11 +33,9 @@ public var application : QApplication? = nil
 
 @MainActor
 @_cdecl("swiftEventHandler") 
-public func swiftEventHandler(event: SQEvent) -> Int 
+public func swiftEventHandler(event: SQEvent) -> Bool /* true => event handled, false => not handled */
 {
 	let id = event.recipient
-
-	// print ("Got event of type \(event.type) for \(id)")
 
 	if event.type == QWidgetDeallocated {
 		let widget = QWidgetStorage.shared.widget(id: id)
@@ -48,7 +46,7 @@ public func swiftEventHandler(event: SQEvent) -> Int
 		} else {
 			print ("C++ informed Swift that unfamiliar widget \(id) was deallocated.");
 		}
-		return 0
+		return true
 	}
 	else if event.type == QObjectDeallocated {
 		let object = QObjectStorage.shared.object(id: id)
@@ -59,7 +57,7 @@ public func swiftEventHandler(event: SQEvent) -> Int
 		} else {
 			print ("C++ informed Swift that unfamiliar object \(id) was deallocated.");
 		}
-		return 0
+		return true
 	}
 	else if event.type == QGadgetDeallocated {
 		let gadget = QGadgetStorage.shared.gadget(id: id)
@@ -70,45 +68,28 @@ public func swiftEventHandler(event: SQEvent) -> Int
 		} else {
 			print ("C++ informed Swift that unfamiliar gadget \(id) was deallocated.");
 		}
-		return 0
+		return true
 	}
 	
 	let widget : QWidget? = QWidgetStorage.shared.widget(id: event.recipient)
 	if let widget = widget {
-		return widget.processEvent (event)
+		return widget.event (event)
 	}
 
 	let object : QObject? = QObjectStorage.shared.object(id: event.recipient)
 	if let object = object {
-		return object.processEvent (event)
+		return object.event (event)
 	}
 
 	let gadget : QGadget? = QGadgetStorage.shared.gadget(id: event.recipient)
 	if let gadget = gadget {
-		return gadget.processEvent (event)
-	}
-	return -1
-}
-
-#if false // Not used.
-@_cdecl("swiftEventHandlerForString") 
-public func swiftEventHandlerForString(event: SQEventType, parameter1: Int, parameter2: Int) -> UnsafeMutablePointer<CChar>
-{
-	var response : String
-
-	switch (event) {
-	case EventTypeRequireAppNameString:	
-		response = app?.name ?? "No Name"
-
-	default:	
-		response = ""
+		return gadget.event (event)
 	}
 
-	let convertibleResponse : NSString = NSString(string: response)
-	let unsafe = UnsafeMutablePointer<CChar>(mutating: convertibleResponse.utf8String)
-	return unsafe!
+	print ("Event of type \(event.typeString()) for \(id) not consumed.")
+
+	return false
 }
-#endif
 
 extension SQPoint {
 	mutating func zero() -> SQPoint {
@@ -169,6 +150,7 @@ public typealias QPoint = SQPoint
 public typealias QColor = SQColor
 public typealias QKeySequence = SQKeySequence 
 public typealias QUrl = String
+public typealias QEvent = SQEvent
 
 public extension SQKeySequence {
 	func count () -> Int {
@@ -211,3 +193,69 @@ public extension QUrl {
 	}
 }
 
+public extension SQEvent {
+	func typeString() -> String {
+		var string : String
+		switch (self.type) {
+		case 1: string = "QEventTimer"
+		case 2: string = "QEventMouseButtonPress"
+		case 3: string = "QEventMouseButtonRelease"
+		case 4: string = "QEventMouseButtonDblClick"
+		case 5: string = "QEventMouseMove"
+		case 6: string = "QEventKeyPress"
+		case 7: string = "QEventKeyRelease"
+		case 8: string = "QEventFocusIn"
+		case 9: string = "QEventFocusOut"
+		case 10: string = "QEventEnter"
+		case 11: string = "QEventLeave"
+		case 12: string = "QEventPaint"
+		case 13: string = "QEventMove"
+		case 14: string = "QEventResize"
+		case 15: string = "QEventCreate"
+		case 16: string = "QEventDestroy"
+		case 17: string = "QEventShow"
+		case 18: string = "QEventHide"
+		case 19: string = "QEventClose"
+		case 20: string = "QEventQuit"
+		case 21: string = "QEventParentChange"
+		case 22: string = "QEventThreadChange"
+		case 23: string = "QEventFocusAboutToChange"
+		case 24: string = "QEventWindowActivate"
+		case 25: string = "QEventWindowDeactivate"
+		case 26: string = "QEventShowToParent"
+		case 27: string = "QEventHideToParent"
+		case 31: string = "QEventWheel"
+		case 33: string = "QEventWindowTitleChange"
+		case 34: string = "QEventWindowIconChange"
+		case 35: string = "QEventApplicationWindowIconChange"
+		case 36: string = "QEventApplicationFontChange"
+		case 37: string = "QEventApplicationLayoutDirectionChange"
+		case 38: string = "QEventApplicationPaletteChange"
+		case 39: string = "QEventPaletteChange"
+		case 40: string = "QEventClipboard"
+		case 42: string = "QEventSpeech"
+		case 43: string = "QEventMetaCall"
+		case 50: string = "QEventSockAct"
+		case 52: string = "QEventDeferredDelete"
+		case 60: string = "QEventDragEnter"
+		case 61: string = "QEventDragMove"
+		case 62: string = "QEventDragLeave"
+		case 63: string = "QEventDrop"
+		case 64: string = "QEventDragResponse"
+		case 68: string = "QEventChildAdded"
+		case 69: string = "QEventChildPolished"
+		case 71: string = "QEventChildRemoved"
+		case 73: string = "QEventShowWindowRequest"
+		case 74: string = "QEventPolishRequest"
+		case 75: string = "QEventPolish"
+		case 76: string = "QEventLayoutRequest"
+		case 77: string = "QEventUpdateRequest"
+		case 78: string = "QEventUpdateLater"
+		case 131: string = "QEventParentAboutToChange"
+		case 132: string = "QEventWinEventAct"
+		default: string = "?"
+		}
+		return string
+	}
+
+}

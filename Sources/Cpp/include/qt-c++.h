@@ -88,6 +88,8 @@ public:
 	//---------------------------------------------------------------------
 	WidgetID pdfViewNew (WidgetID);
 	void pdfViewSetDocument (WidgetID, ObjectID);
+	void pdfViewSetPageMode (WidgetID, long);
+	void pdfViewSetZoomMode (WidgetID, long);
 
 	//---------------------------------------------------------------------
 	// QPdfDocument

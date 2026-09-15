@@ -25,7 +25,12 @@ import CShim
 // QLabel.swift
 
 @MainActor
-public class QLabel : QWidget{
+public class QLabel : QWidget 
+{
+	public var hoveredHandler : (_ event: QEvent)->Bool = { event in
+		return false
+	}
+
 	public convenience init (_ parent: QWidget, _ text: String?) {
 		self.init ()
 		if let parentID = parent.widgetID {
@@ -39,15 +44,15 @@ public class QLabel : QWidget{
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalLabelHovered:
-				print ("QLabel hover event."); // TODO
+				return hoveredHandler (event)
 
 			default: 
-				print ("QLabel unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func clear () {

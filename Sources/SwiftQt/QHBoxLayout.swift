@@ -26,10 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QHBoxLayout : QBoxLayout {
-	deinit {
-	}
-
+public class QHBoxLayout : QBoxLayout 
+{
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
@@ -43,11 +41,11 @@ public class QHBoxLayout : QBoxLayout {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
-			default: 
-				print ("QHBoxLayout unknown event.");
+		default: 
+			break
 		}
-		return 0
+		return false
 	}
 }

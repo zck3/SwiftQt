@@ -95,6 +95,16 @@ void Conduit_pdfViewSetDocument (WidgetID widgetID, ObjectID documentID)
 	sharedCallPropagator->pdfViewSetDocument (widgetID, documentID);
 }
 
+void Conduit_pdfViewSetPageMode (WidgetID widgetID, long mode)
+{
+	sharedCallPropagator->pdfViewSetPageMode (widgetID, mode);
+}
+
+void Conduit_pdfViewSetZoomMode (WidgetID widgetID, long mode)
+{
+	sharedCallPropagator->pdfViewSetZoomMode (widgetID, mode);
+}
+
 //--------------------
 // QPdfDocument
 //--------------------
@@ -2272,7 +2282,7 @@ ObjectID CallPropagator::addActionWithString (WidgetID widgetID, const char *str
                 memset ((void*)&event, 0, sizeof(event)); 
                 event.type = QSignalActionTriggered;
                 event.recipient = actionID; 
-                swiftEventHandler (event);
+                (void) swiftEventHandler (event);
         });
 
 	return actionID;
@@ -2301,7 +2311,7 @@ void CallPropagator::addAction (WidgetID widgetID, ObjectID actionID)
                 memset ((void*)&event, 0, sizeof(event)); 
                 event.type = QSignalActionTriggered;
                 event.recipient = actionID;
-                swiftEventHandler (event);
+                (void) swiftEventHandler (event);
         });
 }
 
@@ -2431,6 +2441,10 @@ void CallPropagator::windowSetCentralWidget (WidgetID windowID, WidgetID widgetI
 {
 	QMainWindow *window = lookupWindow (windowID);
 	if (!window) {
+		return;
+	}
+	if (widgetID == InvalidID) {
+		window->setCentralWidget (nullptr);
 		return;
 	}
 	QWidget *widget = (QWidget*) widgets[widgetID];
@@ -2704,11 +2718,10 @@ WidgetID CallPropagator::labelNew (WidgetID parentID, const char *text)
 
 	connect (label, &QLabel::linkHovered, this, [index, label]() {
 		SQEvent event;
-
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalLabelHovered;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (label, &QObject::destroyed, this, [this, index, label]() {
@@ -2952,7 +2965,7 @@ WidgetID CallPropagator::radioButtonNew (WidgetID parentID, const char *text)
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalRadioButtonToggled;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (button, &QRadioButton::destroyed, this, [this, index]() {
@@ -2985,7 +2998,7 @@ WidgetID CallPropagator::checkBoxNew (WidgetID parentID, const char *text)
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalCheckBoxStateChanged;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (button, &QCheckBox::destroyed, this, [this, index]() {
@@ -3060,7 +3073,7 @@ WidgetID CallPropagator::pushButtonNew (WidgetID parentID, const char *text)
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalPushButtonClicked;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (button, &QPushButton::destroyed, this, [this, index]() {
@@ -3132,7 +3145,7 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 		event.x = column;
 		event.y = row;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 	connect (table, &QTableWidget::cellClicked, this, [index](int row, int column) {
 		SQEvent event;
@@ -3141,7 +3154,7 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 		event.x = column;
 		event.y = row;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 	connect (table, &QTableWidget::cellDoubleClicked, this, [index](int row, int column) {
 		SQEvent event;
@@ -3150,14 +3163,14 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 		event.x = column;
 		event.y = row;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 	connect (table, &QTableWidget::itemSelectionChanged, this, [index]() {
 		SQEvent event;
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTableItemSelectionChanged;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 	connect (table, &QTableWidget::currentCellChanged, this, [index](int row, int column, int previousRow, int previousColumn) {
 		SQEvent event;
@@ -3168,7 +3181,7 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 		event.previousColumn = previousColumn;
 		event.previousRow = previousRow;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (table, &QTableWidget::destroyed, this, [this, index]() {
@@ -3518,7 +3531,7 @@ WidgetID CallPropagator::widgetIDForQScrollbar (QScrollBar* scrollbar)
 			memset ((void*)&event, 0, sizeof(event));
 			event.type = QSignalSliderPressed;
 			event.recipient = index;
-			swiftEventHandler (event);
+			(void) swiftEventHandler (event);
 		});
 		connect (scrollbar, &QScrollBar::sliderMoved, this, [index](int value) {
 			SQEvent event;
@@ -3526,14 +3539,14 @@ WidgetID CallPropagator::widgetIDForQScrollbar (QScrollBar* scrollbar)
 			event.type = QSignalSliderMoved;
 			event.x = value;
 			event.recipient = index;
-			swiftEventHandler (event);
+			(void) swiftEventHandler (event);
 		});
 		connect (scrollbar, &QScrollBar::sliderReleased, this, [index]() {
 			SQEvent event;
 			memset ((void*)&event, 0, sizeof(event));
 			event.type = QSignalSliderReleased;
 			event.recipient = index;
-			swiftEventHandler (event);
+			(void) swiftEventHandler (event);
 		});
 		connect (scrollbar, &QScrollBar::valueChanged, this, [index](int value) {
 			SQEvent event;
@@ -3541,7 +3554,7 @@ WidgetID CallPropagator::widgetIDForQScrollbar (QScrollBar* scrollbar)
 			event.type = QSignalSliderValueChanged;
 			event.x = value;
 			event.recipient = index;
-			swiftEventHandler (event);
+			(void) swiftEventHandler (event);
 		});
 	}
 
@@ -3625,7 +3638,7 @@ WidgetID CallPropagator::textEditNew (WidgetID parentID)
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTextEditCharFormatChanged;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (editor, &QTextEdit::textChanged, this, [index]() {
@@ -3633,7 +3646,7 @@ WidgetID CallPropagator::textEditNew (WidgetID parentID)
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTextEditTextChanged;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (editor, &QTextEdit::cursorPositionChanged, this, [index]() {
@@ -3641,7 +3654,7 @@ WidgetID CallPropagator::textEditNew (WidgetID parentID)
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTextEditCursorMoved;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (editor->document (), &QTextDocument::modificationChanged, this, [index]() {
@@ -3649,7 +3662,7 @@ WidgetID CallPropagator::textEditNew (WidgetID parentID)
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalTextEditModified;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	// TODO:
@@ -3949,21 +3962,21 @@ WidgetID CallPropagator::lineEditNew (WidgetID parentID)
                 memset ((void*)&event, 0, sizeof(event)); 
                 event.type = QSignalLineEditEditingFinished;
                 event.recipient = index; 
-                swiftEventHandler (event);
+                (void) swiftEventHandler (event);
         });
         connect (lineEdit, &QLineEdit::textChanged, this, [index]() {
                 SQEvent event; 
                 memset ((void*)&event, 0, sizeof(event)); 
                 event.type = QSignalLineEditTextChanged;
                 event.recipient = index; 
-                swiftEventHandler (event);
+                (void) swiftEventHandler (event);
         });
         connect (lineEdit, &QLineEdit::returnPressed, this, [index]() {
                 SQEvent event; 
                 memset ((void*)&event, 0, sizeof(event)); 
                 event.type = QSignalLineEditReturnPressed;
                 event.recipient = index; 
-                swiftEventHandler (event);
+                (void) swiftEventHandler (event);
         });
 
 	connect (lineEdit, &QLineEdit::destroyed, this, [this, index]() {
@@ -4278,7 +4291,7 @@ WidgetID CallPropagator::calendarWidgetNew (WidgetID parentID)
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalCalendarSelectionChanged;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (widget, &QCalendarWidget::destroyed, this, [this, index]() {
@@ -4435,7 +4448,7 @@ WidgetID CallPropagator::sliderNew (WidgetID parentID)
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalSliderPressed;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 	connect (widget, &QSlider::sliderMoved, this, [index](int value) {
 		SQEvent event;
@@ -4443,14 +4456,14 @@ WidgetID CallPropagator::sliderNew (WidgetID parentID)
 		event.type = QSignalSliderMoved;
 		event.x = value;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 	connect (widget, &QSlider::sliderReleased, this, [index]() {
 		SQEvent event;
 		memset ((void*)&event, 0, sizeof(event));
 		event.type = QSignalSliderReleased;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 	connect (widget, &QSlider::valueChanged, this, [index](int value) {
 		SQEvent event;
@@ -4458,7 +4471,7 @@ WidgetID CallPropagator::sliderNew (WidgetID parentID)
 		event.type = QSignalSliderValueChanged;
 		event.x = value;
 		event.recipient = index;
-		swiftEventHandler (event);
+		(void) swiftEventHandler (event);
 	});
 
 	connect (widget, &QSlider::destroyed, this, [this, index]() {
@@ -4789,6 +4802,37 @@ void CallPropagator::pdfViewSetDocument (WidgetID widgetID, ObjectID documentID)
 	view->setDocument (document);
 }
 
+void CallPropagator::pdfViewSetPageMode (WidgetID widgetID, long value)
+{
+	QPdfView *view = (QPdfView*) widgets[widgetID];
+	if (!view) {
+		return;
+	}
+	QPdfView::PageMode mode;
+	switch (value) {
+	case 0: mode = QPdfView::PageMode::SinglePage; break;
+	case 1: mode = QPdfView::PageMode::MultiPage; break;
+	default: return;
+	}
+	view->setPageMode(mode);
+}
+
+void CallPropagator::pdfViewSetZoomMode (WidgetID widgetID, long value)
+{
+	QPdfView *view = (QPdfView*) widgets[widgetID];
+	if (!view) {
+		return;
+	}
+	QPdfView::ZoomMode mode;
+	switch (value) {
+	case 0: mode = QPdfView::ZoomMode::Custom; break;
+	case 1: mode = QPdfView::ZoomMode::FitToWidth; break;
+	case 2: mode = QPdfView::ZoomMode::FitInView; break;
+	default: return;
+	}
+	view->setZoomMode(mode);
+}
+
 //--------------------
 // QPdfDocument
 //--------------------
@@ -4912,7 +4956,6 @@ ObjectID CallPropagator::applicationNew (long argc_, char *argv[])
 
 bool EventFilter::eventFilter (QObject *object, QEvent *event) 
 {
-	// Only if the recipient was a QMainWindow should it be conveyed to the Swift side.
 	if (auto *window = qobject_cast<QMainWindow *>(object)) {
 		// Only if the recipient was a QMainWindow should it be conveyed to the Swift side.
 		WidgetID widgetID = sharedCallPropagator->lookupWidget ((QWidget*) object);
@@ -4928,8 +4971,7 @@ bool EventFilter::eventFilter (QObject *object, QEvent *event)
 				QResizeEvent *resize = (QResizeEvent*) event;
 				swiftEvent.width = resize->size().width();
 				swiftEvent.height = resize->size().height ();
-				swiftEventHandler (swiftEvent);
-				return true;
+				return swiftEventHandler (swiftEvent);
 			}
 
 			case QEvent::Create:
@@ -4948,23 +4990,20 @@ bool EventFilter::eventFilter (QObject *object, QEvent *event)
 			case QEvent::MouseButtonRelease:
 			case QEvent::MouseMove:
 			case QEvent::Timer:
-				swiftEventHandler (swiftEvent);
-				return true;
+				return swiftEventHandler (swiftEvent);
 
 			case QEvent::Move: {
 				QMoveEvent *move = (QMoveEvent*) event;
 				swiftEvent.type = QEventMove;
 				swiftEvent.x = move->pos().x();
 				swiftEvent.y = move->pos().y();
-				swiftEventHandler (swiftEvent);
-				return true;
+				return swiftEventHandler (swiftEvent);
 			}
 			case QEvent::Wheel: {
 				QWheelEvent *wheel = (QWheelEvent*) event;
 				swiftEvent.type = QEventWheel;
 				swiftEvent.value = wheel->angleDelta().y();
-				swiftEventHandler (swiftEvent);
-				return true;
+				return swiftEventHandler (swiftEvent);
 			}
 
 			case QEvent::KeyPress: {
@@ -4974,8 +5013,7 @@ bool EventFilter::eventFilter (QObject *object, QEvent *event)
 				swiftEvent.x = (long) keyEvent->modifiers();
 				swiftEvent.y = keyEvent->nativeModifiers();
 				swiftEvent.width = keyEvent->nativeScanCode();
-				swiftEventHandler (swiftEvent);
-				return true;
+				return swiftEventHandler (swiftEvent);
 			}
 			case QEvent::KeyRelease: {
 				QKeyEvent *keyEvent = (QKeyEvent*) event;
@@ -4984,8 +5022,7 @@ bool EventFilter::eventFilter (QObject *object, QEvent *event)
 				swiftEvent.x = (long) keyEvent->modifiers();
 				swiftEvent.y = keyEvent->nativeModifiers();
 				swiftEvent.width = keyEvent->nativeScanCode();
-				swiftEventHandler (swiftEvent);
-				return true;
+				return swiftEventHandler (swiftEvent);
 			}
 
 			default:

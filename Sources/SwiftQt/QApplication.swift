@@ -25,10 +25,11 @@ import CShim
 // QApplication.swift
 
 @MainActor
-public class QApplication : QObject {
-
-        public var aboutToQuitHandler: ()->Void = {
+public class QApplication : QObject 
+{
+        public var aboutToQuitHandler: ()->Bool = {
                 print ("QApplication is exiting!");
+		return true
         }
 
 	public required convenience init (argc: Int, argv: [String]) {
@@ -66,19 +67,15 @@ public class QApplication : QObject {
 		QObject.registerObject (id, self)
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 		case QEventQuit:
-			aboutToQuitHandler()
-			break;
+			return aboutToQuitHandler()
 
 		default: 
 			print ("QApplication unknown event type.");
 		}
-		return 0
-	}
-
-	deinit {
+		return false
 	}
 
 	public static func exec () {

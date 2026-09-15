@@ -26,7 +26,7 @@ import CShim
  */
 
 @MainActor
-public class QGadgetStorage{
+public class QGadgetStorage {
 	static let shared = QGadgetStorage()
 
 	private var gadgets: [GadgetID: QGadget] = [:]
@@ -65,16 +65,12 @@ open class QGadget
 		QGadgetStorage.shared.unregister (id: gadgetID)
 	}
 
-	public init () {
-
-	}
-
-	deinit {
-
-	}
-
-	open func processEvent (_ event: SQEvent) -> Int
+	open func event (_ event: QEvent) -> Bool
 	{
-		return 0
+		switch (event.type) {
+		default: 
+			break
+		}
+		return false
 	}
 }

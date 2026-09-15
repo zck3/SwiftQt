@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QRadioButton : QAbstractButton {
+public class QRadioButton : QAbstractButton 
+{
 	public convenience init (_ parent: QWidget, _ string: String) {
 		self.init ()
 		if let parentID = parent.widgetID {
@@ -40,14 +41,14 @@ public class QRadioButton : QAbstractButton {
 		}
 	}
 
-	open override func processEvent (_ event: SQEvent) -> Int {
+	open override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalRadioButtonToggled:
-				toggledHandler()
+				return toggledHandler()
 
 			default: 
-				print ("QRadioButton unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 }

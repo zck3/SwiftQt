@@ -36,6 +36,8 @@ typedef struct
 //-----------------------------------------------------------------------------
 WidgetID Conduit_pdfViewNew(WidgetID)	__attribute__((swift_name("Conduit.pdfViewNew(_:)")));
 long Conduit_pdfViewSetDocument(WidgetID, ObjectID)	__attribute__((swift_name("Conduit.pdfViewSetDocument(_:_:)")));
+void Conduit_pdfViewSetPageMode(WidgetID, long)	__attribute__((swift_name("Conduit.pdfViewSetPageMode(_:_:)")));
+void Conduit_pdfViewSetZoomMode(WidgetID, long)	__attribute__((swift_name("Conduit.pdfViewSetZoomMode(_:_:)")));
 
 //-----------------------------------------------------------------------------
 // QPdfDocument

@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QStatusBar : QWidget{
+public class QStatusBar : QWidget
+{
 	public convenience init (_ parent: QMainWindow, _ text: String?) {
 		self.init ()
 		if let windowID = parent.widgetID {
@@ -40,12 +41,12 @@ public class QStatusBar : QWidget{
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			default: 
-				print ("QStatusBar unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func showMessage (_ text: String, _ duration: Int = 0) {

@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,14 +28,6 @@ import CShim
 
 @MainActor
 public class QLayout : QObject {
-	public override func processEvent (_ event: SQEvent) -> Int {
-		switch (event.type) {
-			default: 
-				print ("QLayout unknown event.");
-		}
-		return 0
-	}
-
 	public func addWidget (_ widget : QWidget) {
 		if let objectID = objectID, let widgetID = widget.widgetID {
 			Conduit.layoutAddWidget (objectID, widgetID)
@@ -59,6 +51,14 @@ public class QLayout : QObject {
 		if let objectID = objectID {
 			Conduit.layoutSetSpacing (objectID, value)
 		}
+	}
+
+	public override func event (_ event: QEvent) -> Bool {
+		switch (event.type) {
+		default: 
+			break
+		}
+		return false
 	}
 
 }

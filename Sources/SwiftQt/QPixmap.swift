@@ -25,7 +25,8 @@ import CShim
 // QPixmap.swift
 
 @MainActor
-public class QPixmap : QGadget {
+public class QPixmap : QGadget 
+{
 	public convenience init (_ path: String?) {
 		self.init ()
 		let id = Conduit.pixmapWithPathNew (path ?? "")

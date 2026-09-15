@@ -25,7 +25,8 @@ import CShim
 // QImage.swift
 
 @MainActor
-public class QImage : QGadget {
+public class QImage : QGadget 
+{
 	public required convenience init (_ path: String?) {
 		self.init ()
 		let id = Conduit.imageNew (path ?? "")

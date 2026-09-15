@@ -58,4 +58,6 @@ CHANGE LOG
 0.29	- Added QPdfDocument and QPdfView. 
 	- Detection of object instantiation errors. 
 	- Improved QWidget, QImage.
+0.30	- Refactored event/signal handling.
+	- Improved QPdfView and QMainWindow.
 

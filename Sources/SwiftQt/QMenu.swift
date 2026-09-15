@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QMenu : QWidget {
+public class QMenu : QWidget 
+{
 	public convenience init (_ title:String) {
 		self.init ()
 
@@ -39,12 +40,12 @@ public class QMenu : QWidget {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			default: 
-				print ("QMenu unknown event.")
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func title () -> String {

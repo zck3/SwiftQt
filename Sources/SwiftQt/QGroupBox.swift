@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QGroupBox : QWidget {
+public class QGroupBox : QWidget 
+{
 	public convenience init (_ title: String, _ parent: QMainWindow) {
 		self.init ()
 		if let parentID = parent.widgetID {
@@ -40,12 +41,12 @@ public class QGroupBox : QWidget {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			default: 
-				print ("QGroupBox unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func title () -> String {

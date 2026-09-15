@@ -25,7 +25,8 @@ import CShim
 // QLCDNumber.swift
 
 @MainActor
-public class QLCDNumber : QWidget{
+public class QLCDNumber : QWidget
+{
 	public convenience init (_ parent: QWidget, numberOfDigits: Int) {
 		self.init ()
 		if let parentID = parent.widgetID {
@@ -39,12 +40,12 @@ public class QLCDNumber : QWidget{
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
-			default: 
-				print ("QLCDNumber unknown event.");
+		default: 
+			break
 		}
-		return 0
+		return false
 	}
 
 	public func setHexMode () {
@@ -52,55 +53,65 @@ public class QLCDNumber : QWidget{
 			Conduit.lcdNumberSetHexMode (widgetID)
 		}
 	}
+
 	public func setBinMode () {
 		if let widgetID = widgetID {
 			Conduit.lcdNumberSetBinMode (widgetID)
 		}
 	}
+
 	public func setDecMode () {
 		if let widgetID = widgetID {
 			Conduit.lcdNumberSetDecMode (widgetID)
 		}
 	}
+
 	public func setOctMode () {
 		if let widgetID = widgetID {
 			Conduit.lcdNumberSetOctMode (widgetID)
 		}
 	}
+
 	public func value () -> Double {
 		if let widgetID = widgetID {
 			return Conduit.lcdNumberValue (widgetID)
 		}
 		return 0.0
 	}
+
 	public func intValue () -> Int {
 		if let widgetID = widgetID {
 			return Conduit.lcdNumberIntValue (widgetID)
 		}
 		return 0
 	}
+
 	public func digitCount () -> Int {
 		if let widgetID = widgetID {
 			return Conduit.lcdNumberDigitCount (widgetID)
 		}
 		return 0
 	}
+
 	public func smallDecimalPoint () -> Bool {
 		if let widgetID = widgetID {
 			return Conduit.lcdNumberSmallDecimalPoint (widgetID)
 		}
 		return false
 	}
+
 	public func setSmallDecimalPoint (_ value: Bool) {
 		if let widgetID = widgetID {
 			return Conduit.lcdNumberSetSmallDecimalPoint (widgetID, value)
 		}
 	}
+
 	public func display (_ value: Int) {
 		if let widgetID = widgetID {
 			Conduit.lcdNumberDisplayInt (widgetID, value)
 		}
 	}
+
 	public func display (_ value: Double) {
 		if let widgetID = widgetID {
 			Conduit.lcdNumberDisplayDouble (widgetID, value)

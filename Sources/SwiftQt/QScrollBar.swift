@@ -20,13 +20,14 @@
  *=======================================================================*/
 
 // QScrollBar
-// We're typically given a scroll bar by a class that uses them
-// and we don't instantiate them ourselves.
+// We're typically given a scrollbar by another object that uses it
+// and we don't instantiate scrollbars ourselves.
 
 import CShim
 
 @MainActor
-public class QScrollBar : QAbstractSlider {
+public class QScrollBar : QAbstractSlider 
+{
 	public convenience init (withID: WidgetID) {
 		self.init ()
 		if withID != 0 {
@@ -37,33 +38,33 @@ public class QScrollBar : QAbstractSlider {
 		}
 	}
 
-	public var valueChangedHandler: (_ value: Int)->Void = { value in 
-		print ("QScrollBar value changed to \(value)!");
+	public var valueChangedHandler: (_ value: Int)->Bool = { value in 
+		return false
 	}
-	public var sliderMovedHandler: (_ value: Int)->Void = { value in 
-		print ("QScrollBar moved! New value=\(value)");
+	public var sliderMovedHandler: (_ value: Int)->Bool = { value in 
+		return false
 	}
-	public var sliderPressedHandler: ()->Void = {
-		print ("QScrollBar pressed!");
+	public var sliderPressedHandler: ()->Bool = {
+		return false
 	}
-	public var sliderReleasedHandler: ()->Void = {
-		print ("QScrollBar released!");
+	public var sliderReleasedHandler: ()->Bool = {
+		return false
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalSliderValueChanged:
-				valueChangedHandler(event.x)
+				return valueChangedHandler(event.x)
 			case QSignalSliderMoved:
-				sliderMovedHandler(event.x)
+				return sliderMovedHandler(event.x)
 			case QSignalSliderPressed:
-				sliderPressedHandler()
+				return sliderPressedHandler()
 			case QSignalSliderReleased:
-				sliderReleasedHandler()
+				return sliderReleasedHandler()
 
 			default: 
-				print ("QScrollBar unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 }

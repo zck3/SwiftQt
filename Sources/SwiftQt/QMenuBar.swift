@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QMenuBar : QWidget {
+public class QMenuBar : QWidget 
+{
 	public required override init () {
 		super.init()
 		let id = Conduit.menuBarNew ()
@@ -38,12 +39,12 @@ public class QMenuBar : QWidget {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			default: 
-				print ("QMenuBar unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func addMenu (_ menu: QMenu) {

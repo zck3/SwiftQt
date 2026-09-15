@@ -22,12 +22,16 @@
 import CShim
 
 @MainActor
-public class QLineEdit : QWidget {
-	public var textChangedHandler: ()->Void = {
+public class QLineEdit : QWidget 
+{
+	public var textChangedHandler: ()->Bool = {
+		return false
 	}
-	public var returnPressedHandler: ()->Void = {
+	public var returnPressedHandler: ()->Bool = {
+		return false
 	}
-	public var editingFinishedHandler: ()->Void = {
+	public var editingFinishedHandler: ()->Bool = {
+		return false
 	}
 
 	public convenience init (_ parent: QMainWindow) {
@@ -43,18 +47,18 @@ public class QLineEdit : QWidget {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalLineEditTextChanged:
-				textChangedHandler ()
+				return textChangedHandler ()
 			case QSignalLineEditReturnPressed:
-				returnPressedHandler ()
+				return returnPressedHandler ()
 			case QSignalLineEditEditingFinished:
-				editingFinishedHandler ()
+				return editingFinishedHandler ()
 			default: 
-				print ("QLineEdit unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func setPlaceholderText (_ string: String) {

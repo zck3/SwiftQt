@@ -33,17 +33,17 @@ public class QSlider : QAbstractSlider {
 	public static let TicksLeft = TicksAbove	
 	public static let TicksRight = TicksBelow
 
-	public var valueChangedHandler: (_ value: Int)->Void = { value in 
-		//print ("Slider value changed to \(value)!");
+	public var valueChangedHandler: (_ value: Int)->Bool = { value in 
+		return false
 	}
-	public var sliderMovedHandler: (_ value: Int)->Void = { value in 
-		//print ("Slider moved! New value=\(value)");
+	public var sliderMovedHandler: (_ value: Int)->Bool = { value in 
+		return false
 	}
-	public var sliderPressedHandler: ()->Void = {
-		//print ("Slider pressed!");
+	public var sliderPressedHandler: ()->Bool = {
+		return false
 	}
-	public var sliderReleasedHandler: ()->Void = {
-		//print ("Slider released!");
+	public var sliderReleasedHandler: ()->Bool = {
+		return false
 	}
 
 	public convenience init (_ parent: QMainWindow) {
@@ -59,21 +59,21 @@ public class QSlider : QAbstractSlider {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalSliderValueChanged:
-				valueChangedHandler (event.x)
+				return valueChangedHandler (event.x)
 			case QSignalSliderMoved:
-				sliderMovedHandler (event.x)
+				return sliderMovedHandler (event.x)
 			case QSignalSliderPressed:
-				sliderPressedHandler ()
+				return sliderPressedHandler ()
 			case QSignalSliderReleased:
-				sliderReleasedHandler ()
+				return sliderReleasedHandler ()
 
 			default: 
-				print ("QSlider unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func tickerPosition () -> Int {
@@ -82,17 +82,20 @@ public class QSlider : QAbstractSlider {
 		}
 		return 0
 	}
+
 	public func tickerInterval () -> Int {
 		if let widgetID = widgetID {
 			return Conduit.sliderTickInterval (widgetID)
 		}
 		return 0
 	}
+
 	public func setTickPosition (_ value: Int) {
 		if let widgetID = widgetID {
 			Conduit.sliderSetTickPosition (widgetID, value)
 		}
 	}
+
 	public func setTickInterval (_ value: Int) {
 		if let widgetID = widgetID {
 			Conduit.sliderSetTickInterval (widgetID, value)

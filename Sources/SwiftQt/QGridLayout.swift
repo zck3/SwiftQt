@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QGridLayout : QLayout{
+public class QGridLayout : QLayout
+{
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let widgetID = parent.widgetID {
@@ -40,12 +41,12 @@ public class QGridLayout : QLayout{
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
-			default: 
-				print ("QGridLayout unknown event.");
+		default: 
+			break
 		}
-		return 0
+		return false
 	}
 
 	public func addWidget (_ widget : QWidget, 
@@ -56,6 +57,7 @@ public class QGridLayout : QLayout{
 			Conduit.gridLayoutAddWidget (objectID, subwidgetID, row, column, alignment)
 		}
 	}
+
 	public func addWidget (_ widget : QWidget, 
 				row: Int,
 				column: Int,
@@ -73,79 +75,93 @@ public class QGridLayout : QLayout{
 		}
 		return QRect.zero
 	}
+
 	public func columnCount () -> Int {
 		if let objectID = objectID {
 			return Conduit.gridLayoutColumnCount (objectID)
 		}
 		return 0
 	}
+
 	public func rowCount () -> Int {
 		if let objectID = objectID {
 			return Conduit.gridLayoutRowCount (objectID)
 		}
 		return 0
 	}
+
 	public func columnMinimumWidth (_ column: Int) -> Int {
 		if let objectID = objectID {
 			return Conduit.gridLayoutColumnMinimumWidth (objectID, column)
 		}
 		return 0
 	}
+
 	public func rowMinimumHeight (_ row: Int) -> Int {
 		if let objectID = objectID {
 			return Conduit.gridLayoutRowMinimumHeight (objectID, row)
 		}
 		return 0
 	}
+
 	public func columnStretch (_ column: Int) -> Int {
 		if let objectID = objectID {
 			return Conduit.gridLayoutColumnStretch (objectID, column)
 		}
 		return 0
 	}
+
 	public func rowStretch (_ row: Int) -> Int {
 		if let objectID = objectID {
 			return Conduit.gridLayoutRowStretch (objectID, row)
 		}
 		return 0
 	}
+
 	public func horizontalSpacing () -> Int {
 		if let objectID = objectID {
 			return Conduit.gridLayoutHorizontalSpacing (objectID)
 		}
 		return 0
 	}
+
 	public func verticalSpacing () -> Int {
 		if let objectID = objectID {
 			return Conduit.gridLayoutVerticalSpacing (objectID)
 		}
 		return 0
 	}
+
 	public func setColumnMinimumWidth (column: Int, _ value: Int)  {
 		if let objectID = objectID {
 			Conduit.gridLayoutSetColumnMinimumWidth (objectID, column, value)
 		}
 	}
+
 	public func setRowMinimumHeight (row: Int, _ value: Int)  {
 		if let objectID = objectID {
 			Conduit.gridLayoutSetRowMinimumHeight (objectID, row, value)
 		}
 	}
+
 	public func setColumnStretch (column: Int, _ value: Int)  {
 		if let objectID = objectID {
 			Conduit.gridLayoutSetColumnStretch (objectID, column, value)
 		}
 	}
+
 	public func setRowStretch (row: Int, _ value: Int)  {
 		if let objectID = objectID {
 			Conduit.gridLayoutSetRowStretch (objectID, row, value)
 		}
 	}
+
 	public func setHorizontalSpacing (_ value: Int)  {
 		if let objectID = objectID {
 			Conduit.gridLayoutSetHorizontalSpacing (objectID, value)
 		}
 	}
+
 	public func setVerticalSpacing (_ value: Int)  {
 		if let objectID = objectID {
 			Conduit.gridLayoutSetVerticalSpacing (objectID, value)

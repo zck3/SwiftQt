@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QPushButton : QAbstractButton {
+public class QPushButton : QAbstractButton 
+{
 	public convenience init (_ parent: QWidget, _ string: String) {
 		self.init ()
 		if let parentID = parent.widgetID {
@@ -40,15 +41,15 @@ public class QPushButton : QAbstractButton {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalPushButtonClicked:
-				clickedHandler()
+				return clickedHandler()
 
 			default: 
-				print ("QPushButton unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func isFlat () -> Bool {

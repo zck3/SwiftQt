@@ -22,33 +22,46 @@
 import CShim
 
 @MainActor
-open class QMainWindow : QWidget {
+open class QMainWindow : QWidget 
+{
 	let menuBarHeight = 44
 	var statusBar : QStatusBar? = nil
 
-	public var windowCreatedHandler: ()->Void = {
+	public var windowCreatedHandler: ()->Bool = {
+		return false
 	}
-	public var windowClosedHandler: ()->Void = {
+	public var windowClosedHandler: ()->Bool = {
+		return false
 	}
-	public var windowShownHandler: ()->Void = {
+	public var windowShownHandler: ()->Bool = {
+		return false
 	}
-	public var windowHiddenHandler: ()->Void = {
+	public var windowHiddenHandler: ()->Bool = {
+		return false
 	}
-	public var windowResizedHandler: (_ event: SQEvent)->Void = { event in
+	public var windowResizedHandler: (_ event: QEvent)->Bool = { event in
+		return false
 	}
-	public var windowMovedHandler: (_ event: SQEvent)->Void = { event in
+	public var windowMovedHandler: (_ event: QEvent)->Bool = { event in
+		return false
 	}
-	public var windowKeyPressHandler: (_ event: SQEvent)->Void = { event in
+	public var windowKeyPressHandler: (_ event: QEvent)->Bool = { event in
+		return false
 	}
-	public var windowKeyReleaseHandler: (_ event: SQEvent)->Void = { event in
+	public var windowKeyReleaseHandler: (_ event: QEvent)->Bool = { event in
+		return false
 	}
-	public var windowEnteredHandler: ()->Void = {
+	public var windowEnteredHandler: ()->Bool = {
+		return false
 	}
-	public var windowLeftHandler: ()->Void = {
+	public var windowLeftHandler: ()->Bool = {
+		return false
 	}
-	public var windowPaintedHandler: ()->Void = {
+	public var windowPaintedHandler: ()->Bool = {
+		return false
 	}
-	public var windowDidQuitHandler: ()->Void = {
+	public var windowDidQuitHandler: ()->Bool = {
+		return false
 	}
 
 	public required init (x: Int, y: Int, width: Int, height: Int) {
@@ -62,49 +75,37 @@ open class QMainWindow : QWidget {
 		}
 	}
 
-	open override func processEvent (_ event: SQEvent) -> Int {
+	open override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 		case QEventCreate:
-			windowCreatedHandler()
-			return 0
+			return windowCreatedHandler()
 		case QEventClose:
-			windowClosedHandler()
-			return 0
+			return windowClosedHandler()
 		case QEventShow:
-			windowShownHandler()
-			return 0
+			return windowShownHandler()
 		case QEventHide:
-			windowHiddenHandler()
-			return 0
+			return windowHiddenHandler()
 		case QEventResize:
-			windowResizedHandler(event)
-			return 0
+			return windowResizedHandler(event)
 		case QEventMove:
-			windowMovedHandler(event)
-			return 0
+			return windowMovedHandler(event)
 		case QEventKeyPress:
-			windowKeyPressHandler(event)
-			return 0
+			return windowKeyPressHandler(event)
 		case QEventKeyRelease:
-			windowKeyReleaseHandler(event)
-			return 0
+			return windowKeyReleaseHandler(event)
 		case QEventEnter:
-			windowEnteredHandler()
-			return 0
+			return windowEnteredHandler()
 		case QEventLeave:
-			windowLeftHandler()
-			return 0
+			return windowLeftHandler()
 		case QEventPaint:
-			windowPaintedHandler()
-			return 0
+			return windowPaintedHandler()
 		case QEventQuit:
-			windowDidQuitHandler()
-			return 0
+			return windowDidQuitHandler()
 		default: 
 			break
 		}
 
-		return super.processEvent(event)
+		return false
 	}
 
 	public func setTitle (_ title : String) {
@@ -135,9 +136,13 @@ open class QMainWindow : QWidget {
 	 *  First create the central widget, then apply desired layout to it,
 	 *  then call setCentralWidget. (Note, this isn't necessary for QWindow.)
 	 */
-	public func setCentralWidget (_ widget: QWidget) {
-		if let widgetID = widgetID, let subwidgetID = widget.widgetID {
-			Conduit.windowSetCentralWidget (widgetID, subwidgetID)
+	public func setCentralWidget (_ central: QWidget?) {
+		if let widgetID = widgetID {
+			if central == nil {
+				Conduit.windowSetCentralWidget (widgetID, 0)
+			} else if let centralID = central!.widgetID {
+				Conduit.windowSetCentralWidget (widgetID, centralID)
+			}
 		}
 	}
 

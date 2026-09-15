@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QTableWidgetItem : QObject {
+public class QTableWidgetItem : QObject 
+{
 	convenience init (_ string: String?) {
 		self.init ()
 		let id = Conduit.tableWidgetItemNew (string ?? "")
@@ -38,12 +39,12 @@ public class QTableWidgetItem : QObject {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			default: 
-				print ("QTableWidgetItem unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func text () -> String? {
@@ -76,9 +77,5 @@ public class QTableWidgetItem : QObject {
 	}
 	public func setFlags (_ flags: Int) {
 		// TODO
-	}
-
-	public override init () {
-		super.init ()
 	}
 }

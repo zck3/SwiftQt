@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QVBoxLayout : QBoxLayout {
+public class QVBoxLayout : QBoxLayout 
+{
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
@@ -41,11 +42,11 @@ public class QVBoxLayout : QBoxLayout {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			default: 
-				print ("QVBoxLayout unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 }

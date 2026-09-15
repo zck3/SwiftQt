@@ -24,7 +24,8 @@ import CShim
 // TODO: Add QAbstractScrollArea.
 
 @MainActor
-public class QScrollArea : QWidget {
+public class QScrollArea : QWidget 
+{
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
@@ -38,12 +39,12 @@ public class QScrollArea : QWidget {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			default: 
-				print ("QScrollArea unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func setWidget (_ widget: QWidget) {

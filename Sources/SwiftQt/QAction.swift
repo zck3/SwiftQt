@@ -27,6 +27,7 @@ import CShim
 @MainActor
 public class QAction : QObject {
 	public var triggeredHandler: ()->Void = {
+		// RULE: Action handlers don't return anything.
 	}
 
 	public required convenience init (_ text: String, _ handler: @escaping ()->Void) {
@@ -52,7 +53,7 @@ public class QAction : QObject {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalActionTriggered:
 				triggeredHandler ()
@@ -64,7 +65,7 @@ public class QAction : QObject {
 			default: 
 				print ("QAction unknown event.");
 		}
-		return 0
+		return false
 	}
 
 	public func setShortcut (_ sequence: QKeySequence) {

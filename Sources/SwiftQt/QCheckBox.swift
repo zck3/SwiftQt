@@ -26,9 +26,10 @@ import CShim
 // 
 
 @MainActor
-public class QCheckBox : QAbstractButton{
-	public var stateChangedHandler : ()->Void = {
-		print ("State changed.")
+public class QCheckBox : QAbstractButton
+{
+	public var stateChangedHandler : ()->Bool = {
+		return false
 	}
 
 	public convenience init (_ parent: QWidget, _ string: String) {
@@ -44,15 +45,15 @@ public class QCheckBox : QAbstractButton{
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalCheckBoxStateChanged:
-				stateChangedHandler()
+				return stateChangedHandler()
 
 			default: 
-				print ("QCheckBox unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func isTristate () -> Bool {

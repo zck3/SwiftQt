@@ -23,15 +23,20 @@ import CShim
 
 @MainActor
 public class QTableWidget : QWidget {
-        public var cellChangedHandler: (_ row:Int, _ column:Int)->Void = { row, column in
+        public var cellChangedHandler: (_ row:Int, _ column:Int)->Bool = { row, column in
+		return false
         }
-        public var cellClickedHandler : (_ row:Int, _ column:Int)->Void = { row, column in
+        public var cellClickedHandler : (_ row:Int, _ column:Int)->Bool = { row, column in
+		return false
         }
-        public var cellDoubleClickedHandler : (_ row:Int, _ column:Int)->Void = { row, column in
+        public var cellDoubleClickedHandler : (_ row:Int, _ column:Int)->Bool = { row, column in
+		return false
         }
-        public var currentCellChangedHandler: (_ row:Int, _ column:Int, _ previousRow:Int, _ previousColumn:Int)->Void = { row, column, previousRow, previousColumn in
+        public var currentCellChangedHandler: (_ row:Int, _ column:Int, _ previousRow:Int, _ previousColumn:Int)->Bool = { row, column, previousRow, previousColumn in
+		return false
         }
-	public var itemSelectionChangedHandler: ()->Void = {
+	public var itemSelectionChangedHandler: ()->Bool = {
+		return false
 	}
 	//----------
 
@@ -48,28 +53,28 @@ public class QTableWidget : QWidget {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 		case QSignalTableCellChanged:
-			cellChangedHandler(event.y, event.x)
+			return cellChangedHandler(event.y, event.x)
 
 		case QSignalTableCellClicked:
-			cellClickedHandler(event.y, event.x)
+			return cellClickedHandler(event.y, event.x)
 
 		case QSignalTableCellDoubleClicked:
-			cellDoubleClickedHandler(event.y, event.x)
+			return cellDoubleClickedHandler(event.y, event.x)
 
 		case QSignalTableCurrentCellChanged:
-			currentCellChangedHandler(event.y, event.x, event.previousRow, event.previousColumn)
+			return currentCellChangedHandler(event.y, event.x, event.previousRow, event.previousColumn)
 
 		case QSignalTableItemSelectionChanged:
-			itemSelectionChangedHandler()
+			return itemSelectionChangedHandler()
 
 		default: 
-			print ("QTableWidget unknown event.");
+			break
 		}
 
-		return 0
+		return false
 	}
 
 	public func columnCount () -> Int {

@@ -25,7 +25,8 @@ import CShim
 // QPdfView.swift
 
 @MainActor
-public class QPdfView : QWidget {
+public class QPdfView : QWidget 
+{
 	public convenience init (_ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
@@ -39,12 +40,12 @@ public class QPdfView : QWidget {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			default: 
-				print ("QPdfView unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func setDocument (_ document: QPdfDocument) {
@@ -53,6 +54,15 @@ public class QPdfView : QWidget {
 		}
 	}
 
-	// TODO pdfview->setPageMode(QPdfView::PageMode::MultiPage);
-	// TODO pdfview->setZoomMode(QPdfView::ZoomMode::FitToWidth);
+	public func setPageMode (_ mode: Int) {
+		if let widgetID = widgetID {
+			Conduit.pdfViewSetPageMode (widgetID, mode)
+		}
+	}
+
+	public func setZoomMode (_ mode: Int) {
+		if let widgetID = widgetID {
+			Conduit.pdfViewSetZoomMode (widgetID, mode)
+		}
+	}
 }

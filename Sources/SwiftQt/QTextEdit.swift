@@ -22,14 +22,19 @@
 import CShim
 
 @MainActor
-public class QTextEdit : QWidget {
-	public var formatChangedHandler: ()->Void = {
+public class QTextEdit : QWidget 
+{
+	public var formatChangedHandler: ()->Bool = {
+		return false
 	}
-	public var cursorMovedHandler: ()->Void = {
+	public var cursorMovedHandler: ()->Bool = {
+		return false
 	}
-	public var modifiedHandler: ()->Void = {
+	public var modifiedHandler: ()->Bool = {
+		return false
 	}
-	public var textChangedHandler: ()->Void = {
+	public var textChangedHandler: ()->Bool = {
+		return false
 	}
 	//----------
 
@@ -49,24 +54,24 @@ public class QTextEdit : QWidget {
 	deinit {
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QSignalTextEditCharFormatChanged:
-				formatChangedHandler()
+				return formatChangedHandler()
 
 			case QSignalTextEditCursorMoved:
-				cursorMovedHandler()
+				return cursorMovedHandler()
 
 			case QSignalTextEditModified:
-				modifiedHandler()
+				return modifiedHandler()
 
 			case QSignalTextEditTextChanged:
-				textChangedHandler()
+				return textChangedHandler()
 
 			default: 
-				print ("QTextEdit unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func toPlainText () -> String {

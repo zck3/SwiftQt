@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,7 +22,8 @@
 import CShim
 
 @MainActor
-public class QWebEngineView : QWidget{
+public class QWebEngineView : QWidget
+{
 	public convenience init (_ window: QMainWindow) {
 		self.init ()
 		if let windowID = window.widgetID {
@@ -48,12 +49,12 @@ public class QWebEngineView : QWidget{
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			default: 
-				print ("QWebEngineView unknown event.");
+				break
 		}
-		return 0
+		return false
 	}
 
 	public func back (_ html: String) {

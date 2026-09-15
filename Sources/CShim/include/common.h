@@ -26,9 +26,9 @@
 #define SWIFTQT_COMMON_TYPES_H
 
 #define kKitName "SwiftQt"
-#define kKitRelease "0.29"
+#define kKitRelease "0.30"
 #define kKitReleaseMajor 0
-#define kKitReleaseMinor 29
+#define kKitReleaseMinor 30
 
 #ifdef __cplusplus
 extern "C" {
@@ -201,7 +201,7 @@ bool SQRect_containsPoint (SQRect rect, SQCoord x, SQCoord y)	__attribute__((swi
 //SQColor SQColor_fromRGB(RGB)	__attribute__((swift_name("SQColor.fromRGB(_:)")));
 //SQColor SQColor_fromRgb(int,int,int)	__attribute__((swift_name("SQColor.fromRgb(_:_:_:)")));
 
-extern int swiftEventHandler (SQEvent);
+extern bool swiftEventHandler (SQEvent);
 
 const char * _Nonnull SQReleaseName(void);
 const char * _Nonnull SQReleaseString(void);

@@ -1,6 +1,6 @@
 /*=========================================================================
  * This file is part of SwiftQt.
- * (C) 2023 Zack T Smith.
+ * (C) 2023, 2026 Zack T Smith.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,8 @@ import CShim
 // 
 
 @MainActor
-public class QBoxLayout : QLayout {
+public class QBoxLayout : QLayout 
+{
 	// QBoxLayout::Direction
 	public static let LeftToRight = 0
 	public static let RightToLeft = 1
@@ -46,12 +47,12 @@ public class QBoxLayout : QLayout {
 		}
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
-			default: 
-				print ("QBoxLayout unknown event.");
+		default: 
+			break
 		}
-		return 0
+		return false
 	}
 
 	// Note, Box layout's addWidget has 3 parameters, Layout's has 1.

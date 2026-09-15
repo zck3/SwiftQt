@@ -117,6 +117,15 @@ public class Qt {
 	public static let PdfIncorrectPassword = 5
 	public static let PdfUnsupportedSecurityScheme = 6
 
+	// QPdfView::PageMode
+	public static let PageModeSinglePage = 0
+	public static let PageModeMultiPage = 1
+
+	// QPdfView::ZoomMode
+	public static let ZoomModeCustom = 0
+	public static let ZoomModeFitToWidth = 1
+	public static let ZoomModeFitInView = 2
+
 	// Key codes
 	public static let Key_Space = 0x20
 	public static let Key_Any = Key_Space

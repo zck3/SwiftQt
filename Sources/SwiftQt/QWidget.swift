@@ -45,15 +45,20 @@ public class QWidgetStorage {
 @MainActor
 open class QWidget : QObject 
 {
-	public var mouseButtonPressEventHandler: (_ event: SQEvent) -> Void = { event in
+	public var mouseButtonPressEventHandler: (_ event: QEvent) -> Bool = { event in
+		return false
 	}
-	public var mouseButtonReleaseEventHandler: (_ event: SQEvent) -> Void = { event in
+	public var mouseButtonReleaseEventHandler: (_ event: QEvent) -> Bool = { event in
+		return false
 	}
-	public var mouseMoveEventHandler: (_ event: SQEvent) -> Void = { event in
+	public var mouseMoveEventHandler: (_ event: QEvent) -> Bool = { event in
+		return false
 	}
-	public var mouseButtonDblClickEventHandler: (_ event: SQEvent) -> Void = { event in
+	public var mouseButtonDblClickEventHandler: (_ event: QEvent) -> Bool = { event in
+		return false
 	}
-	public var wheelEventHandler: (_ event: SQEvent) -> Void = { event in
+	public var wheelEventHandler: (_ event: QEvent) -> Bool = { event in
+		return false
 	}
 
 	@MainActor
@@ -78,30 +83,6 @@ open class QWidget : QObject
 		let idMask : Int = 0x00ffffff
 		QWidgetStorage.shared.unregister (id: widgetID & idMask)
 	}
-
-#if false
-	// Not used
-	public static func manufactureWidget (fromID widgetID: WidgetID) -> QWidget {
-		switch (widgetID >> 24) {
-		case 1: 
-			let label : QLabel = QLabel()
-			label.widgetID = widgetID
-			return label
-		case 2: 
-			return QLineEdit()
-		case 3: 
-			return QTextEdit()
-		case 4: 
-			return QPushButton()
-		case 5: 
-			let widget : QScrollBar = QScrollBar ()
-			widget.widgetID = widgetID
-			return widget
-		default: 
-			return QWidget()
-		}
-	}
-#endif
 
 	public convenience init (_ parent: QWidget) {
 		self.init ()
@@ -336,22 +317,22 @@ open class QWidget : QObject
 		return nil
 	}
 
-	public override func processEvent (_ event: SQEvent) -> Int {
+	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
 			case QEventMouseButtonRelease:
-				mouseButtonReleaseEventHandler (event)
+				return mouseButtonReleaseEventHandler (event)
 			case QEventMouseButtonPress:
-				mouseButtonPressEventHandler (event)
+				return mouseButtonPressEventHandler (event)
 			case QEventMouseButtonDblClick:
-				mouseButtonDblClickEventHandler (event)
+				return mouseButtonDblClickEventHandler (event)
 			case QEventWheel:
-				wheelEventHandler (event)
+				return wheelEventHandler (event)
 			case QEventMouseMove:
-				mouseMoveEventHandler (event)
+				return mouseMoveEventHandler (event)
 			default: 
-				print ("QWidget unknown event \(event.type).")
+				break
 		}
-		return 0
+		return false
 	}
 
 }

@@ -62,15 +62,17 @@ open class QObject
 	}
 
 	public init () {
-
 	}
 
 	deinit {
-
 	}
 
-	open func processEvent (_ event: SQEvent) -> Int
+	open func event (_ event: QEvent) -> Bool 
 	{
-		return 0
+		switch (event.type) {
+		default: 
+			break
+		}
+		return false
 	}
 }
