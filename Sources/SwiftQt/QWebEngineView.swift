@@ -24,6 +24,13 @@ import CShim
 @MainActor
 public class QWebEngineView : QWidget
 {
+	public var loadFinishedSlot : (_ success: Bool)->Void = { success in
+	}
+	public var loadStartedSlot : ()->Void = { 
+	}
+	public var selectionChangedSlot : ()->Void = { 
+	}
+
 	public convenience init (_ window: QMainWindow) {
 		self.init ()
 		if let windowID = window.widgetID {
@@ -47,14 +54,6 @@ public class QWebEngineView : QWidget
 		if let widgetID = widgetID {
 			Conduit.webEngineViewSetHTML (widgetID, html)
 		}
-	}
-
-	public override func event (_ event: QEvent) -> Bool {
-		switch (event.type) {
-			default: 
-				break
-		}
-		return false
 	}
 
 	public func back (_ html: String) {
@@ -103,6 +102,31 @@ public class QWebEngineView : QWidget
 			}
 		}
 		return ""
+	}
+
+	public func setZoomFactor (_ value: Double) {
+		if let widgetID = widgetID {
+			Conduit.webEngineViewSetZoomFactor (widgetID, value)
+		}
+	}
+	public func zoomFactor () -> Double {
+		if let widgetID = widgetID {
+			return Conduit.webEngineViewZoomFactor (widgetID)
+		}
+		return 0.0
+	}
+
+	public override func event (_ event: QEvent) -> Bool {
+		return false
+	}
+
+	public override func signal (_ signal: SQSignal) {
+		switch (signal.type) {
+			case QSignalWebEngineViewLoadFinished:
+				loadFinishedSlot (signal.x == 1)
+			default: 
+				break
+		}
 	}
 
 }

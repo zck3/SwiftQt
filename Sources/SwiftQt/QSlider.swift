@@ -25,7 +25,8 @@ import CShim
 // QSlider.swift
 
 @MainActor
-public class QSlider : QAbstractSlider {
+public class QSlider : QAbstractSlider 
+{
 	public static let NoTicks = 0
 	public static let TicksBothSides = 3
 	public static let TicksAbove = 1
@@ -33,17 +34,13 @@ public class QSlider : QAbstractSlider {
 	public static let TicksLeft = TicksAbove	
 	public static let TicksRight = TicksBelow
 
-	public var valueChangedHandler: (_ value: Int)->Bool = { value in 
-		return false
+	public var valueChangedSlot: (_ value: Int)->Void = { value in 
 	}
-	public var sliderMovedHandler: (_ value: Int)->Bool = { value in 
-		return false
+	public var sliderMovedSlot: (_ value: Int)->Void = { value in 
 	}
-	public var sliderPressedHandler: ()->Bool = {
-		return false
+	public var sliderPressedSlot: ()->Void = {
 	}
-	public var sliderReleasedHandler: ()->Bool = {
-		return false
+	public var sliderReleasedSlot: ()->Void = {
 	}
 
 	public convenience init (_ parent: QMainWindow) {
@@ -61,19 +58,25 @@ public class QSlider : QAbstractSlider {
 
 	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
-			case QSignalSliderValueChanged:
-				return valueChangedHandler (event.x)
-			case QSignalSliderMoved:
-				return sliderMovedHandler (event.x)
-			case QSignalSliderPressed:
-				return sliderPressedHandler ()
-			case QSignalSliderReleased:
-				return sliderReleasedHandler ()
-
 			default: 
 				break
 		}
 		return false
+	}
+
+	public override func signal (_ signal: SQSignal) {
+		switch (signal.type) {
+			case QSignalSliderValueChanged:
+				valueChangedSlot (signal.x)
+			case QSignalSliderMoved:
+				sliderMovedSlot (signal.x)
+			case QSignalSliderPressed:
+				sliderPressedSlot ()
+			case QSignalSliderReleased:
+				sliderReleasedSlot ()
+			default: 
+				break
+		}
 	}
 
 	public func tickerPosition () -> Int {

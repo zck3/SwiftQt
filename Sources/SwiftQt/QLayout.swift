@@ -27,7 +27,8 @@ import CShim
 // 
 
 @MainActor
-public class QLayout : QObject {
+public class QLayout : QObject 
+{
 	public func addWidget (_ widget : QWidget) {
 		if let objectID = objectID, let widgetID = widget.widgetID {
 			Conduit.layoutAddWidget (objectID, widgetID)
@@ -54,10 +55,6 @@ public class QLayout : QObject {
 	}
 
 	public override func event (_ event: QEvent) -> Bool {
-		switch (event.type) {
-		default: 
-			break
-		}
 		return false
 	}
 

@@ -38,33 +38,36 @@ public class QScrollBar : QAbstractSlider
 		}
 	}
 
-	public var valueChangedHandler: (_ value: Int)->Bool = { value in 
-		return false
+	public var valueChangedSlot: (_ value: Int)->Void = { value in 
 	}
-	public var sliderMovedHandler: (_ value: Int)->Bool = { value in 
-		return false
+	public var sliderMovedSlot: (_ value: Int)->Void = { value in 
 	}
-	public var sliderPressedHandler: ()->Bool = {
-		return false
+	public var sliderPressedSlot: ()->Void = {
 	}
-	public var sliderReleasedHandler: ()->Bool = {
-		return false
+	public var sliderReleasedSlot: ()->Void = {
 	}
 
 	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
-			case QSignalSliderValueChanged:
-				return valueChangedHandler(event.x)
-			case QSignalSliderMoved:
-				return sliderMovedHandler(event.x)
-			case QSignalSliderPressed:
-				return sliderPressedHandler()
-			case QSignalSliderReleased:
-				return sliderReleasedHandler()
-
 			default: 
 				break
 		}
 		return false
 	}
+
+	public override func signal (_ signal: SQSignal) {
+		switch (signal.type) {
+			case QSignalSliderValueChanged:
+				valueChangedSlot(signal.x)
+			case QSignalSliderMoved:
+				sliderMovedSlot(signal.x)
+			case QSignalSliderPressed:
+				sliderPressedSlot()
+			case QSignalSliderReleased:
+				sliderReleasedSlot()
+			default: 
+				break
+		}
+	}
+
 }

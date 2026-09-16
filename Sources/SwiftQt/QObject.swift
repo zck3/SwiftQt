@@ -75,4 +75,15 @@ open class QObject
 		}
 		return false
 	}
+
+	/* This receives signals from the C++ side. 
+	 * It's overridden in Swift classes to call slots i.e. Swift closures.
+	 */
+	open func signal (_ signal: SQSignal)
+	{
+		switch (signal.type) {
+		default: 
+			break
+		}
+	}
 }

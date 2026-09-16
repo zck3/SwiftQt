@@ -1310,6 +1310,14 @@ void Conduit_webEngineViewStop (WidgetID widgetID) {
 void Conduit_webEngineViewSetUrl (WidgetID widgetID, const char* string) {
 	sharedCallPropagator->webEngineViewSetUrl (widgetID, string);
 }
+double Conduit_webEngineZoomFactor (WidgetID widgetID)
+{
+	return sharedCallPropagator->webEngineViewZoomFactor (widgetID);
+}
+void Conduit_webEngineSetZoomFactor (WidgetID widgetID, double value)
+{
+	sharedCallPropagator->webEngineViewSetZoomFactor (widgetID, value);
+}
 
 //--------------------
 // QLCDNumber
@@ -2278,11 +2286,27 @@ ObjectID CallPropagator::addActionWithString (WidgetID widgetID, const char *str
 	// because on the Swift side the closure is attached to it.
 
         connect (action, &QAction::triggered, this, [actionID]() {
-                SQEvent event; 
-                memset ((void*)&event, 0, sizeof(event)); 
-                event.type = QSignalActionTriggered;
-                event.recipient = actionID; 
-                (void) swiftEventHandler (event);
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalActionTriggered;
+                signal.recipient = actionID; 
+                (void) swiftSignalHandler (signal);
+        });
+
+        connect (action, &QAction::changed, this, [actionID]() {
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalActionChanged;
+                signal.recipient = actionID; 
+                (void) swiftSignalHandler (signal);
+        });
+
+        connect (action, &QAction::toggled, this, [actionID]() {
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalActionToggled;
+                signal.recipient = actionID; 
+                (void) swiftSignalHandler (signal);
         });
 
 	return actionID;
@@ -2307,11 +2331,11 @@ void CallPropagator::addAction (WidgetID widgetID, ObjectID actionID)
 	// because on the Swift side the closure is attached to it.
 
         connect (action, &QAction::triggered, widget, [actionID]() {
-                SQEvent event; 
-                memset ((void*)&event, 0, sizeof(event)); 
-                event.type = QSignalActionTriggered;
-                event.recipient = actionID;
-                (void) swiftEventHandler (event);
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalActionTriggered;
+                signal.recipient = actionID;
+                (void) swiftSignalHandler (signal);
         });
 }
 
@@ -2717,11 +2741,11 @@ WidgetID CallPropagator::labelNew (WidgetID parentID, const char *text)
 	widgets[index] = label;
 
 	connect (label, &QLabel::linkHovered, this, [index, label]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalLabelHovered;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalLabelHovered;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (label, &QObject::destroyed, this, [this, index, label]() {
@@ -2961,11 +2985,11 @@ WidgetID CallPropagator::radioButtonNew (WidgetID parentID, const char *text)
 	widgets[index] = button;
 
 	connect (button, &QRadioButton::toggled, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalRadioButtonToggled;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalRadioButtonToggled;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (button, &QRadioButton::destroyed, this, [this, index]() {
@@ -2994,11 +3018,11 @@ WidgetID CallPropagator::checkBoxNew (WidgetID parentID, const char *text)
 	widgets[index] = button;
 
 	connect (button, &QCheckBox::checkStateChanged, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalCheckBoxStateChanged;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalCheckBoxStateChanged;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (button, &QCheckBox::destroyed, this, [this, index]() {
@@ -3069,11 +3093,11 @@ WidgetID CallPropagator::pushButtonNew (WidgetID parentID, const char *text)
 	widgets[index] = button;
 
 	connect (button, &QPushButton::clicked, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalPushButtonClicked;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalPushButtonClicked;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (button, &QPushButton::destroyed, this, [this, index]() {
@@ -3139,49 +3163,49 @@ WidgetID CallPropagator::tableWidgetNew (WidgetID parentID)
 	widgets[index] = table;
 
 	connect (table, &QTableWidget::cellChanged, this, [index](int row, int column) {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalTableCellChanged;
-		event.x = column;
-		event.y = row;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalTableCellChanged;
+		signal.x = column;
+		signal.y = row;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 	connect (table, &QTableWidget::cellClicked, this, [index](int row, int column) {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalTableCellClicked;
-		event.x = column;
-		event.y = row;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalTableCellClicked;
+		signal.x = column;
+		signal.y = row;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 	connect (table, &QTableWidget::cellDoubleClicked, this, [index](int row, int column) {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalTableCellDoubleClicked;
-		event.x = column;
-		event.y = row;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalTableCellDoubleClicked;
+		signal.x = column;
+		signal.y = row;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 	connect (table, &QTableWidget::itemSelectionChanged, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalTableItemSelectionChanged;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalTableItemSelectionChanged;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 	connect (table, &QTableWidget::currentCellChanged, this, [index](int row, int column, int previousRow, int previousColumn) {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalTableCurrentCellChanged;
-		event.x = column;
-		event.y = row;
-		event.previousColumn = previousColumn;
-		event.previousRow = previousRow;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalTableCurrentCellChanged;
+		signal.x = column;
+		signal.y = row;
+		signal.previousColumn = previousColumn;
+		signal.previousRow = previousRow;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (table, &QTableWidget::destroyed, this, [this, index]() {
@@ -3527,34 +3551,34 @@ WidgetID CallPropagator::widgetIDForQScrollbar (QScrollBar* scrollbar)
 		});
 
 		connect (scrollbar, &QScrollBar::sliderPressed, this, [index]() {
-			SQEvent event;
-			memset ((void*)&event, 0, sizeof(event));
-			event.type = QSignalSliderPressed;
-			event.recipient = index;
-			(void) swiftEventHandler (event);
+			SQSignal signal;
+			memset ((void*)&signal, 0, sizeof(signal));
+			signal.type = QSignalSliderPressed;
+			signal.recipient = index;
+			(void) swiftSignalHandler (signal);
 		});
 		connect (scrollbar, &QScrollBar::sliderMoved, this, [index](int value) {
-			SQEvent event;
-			memset ((void*)&event, 0, sizeof(event));
-			event.type = QSignalSliderMoved;
-			event.x = value;
-			event.recipient = index;
-			(void) swiftEventHandler (event);
+			SQSignal signal;
+			memset ((void*)&signal, 0, sizeof(signal));
+			signal.type = QSignalSliderMoved;
+			signal.x = value;
+			signal.recipient = index;
+			(void) swiftSignalHandler (signal);
 		});
 		connect (scrollbar, &QScrollBar::sliderReleased, this, [index]() {
-			SQEvent event;
-			memset ((void*)&event, 0, sizeof(event));
-			event.type = QSignalSliderReleased;
-			event.recipient = index;
-			(void) swiftEventHandler (event);
+			SQSignal signal;
+			memset ((void*)&signal, 0, sizeof(signal));
+			signal.type = QSignalSliderReleased;
+			signal.recipient = index;
+			(void) swiftSignalHandler (signal);
 		});
 		connect (scrollbar, &QScrollBar::valueChanged, this, [index](int value) {
-			SQEvent event;
-			memset ((void*)&event, 0, sizeof(event));
-			event.type = QSignalSliderValueChanged;
-			event.x = value;
-			event.recipient = index;
-			(void) swiftEventHandler (event);
+			SQSignal signal;
+			memset ((void*)&signal, 0, sizeof(signal));
+			signal.type = QSignalSliderValueChanged;
+			signal.x = value;
+			signal.recipient = index;
+			(void) swiftSignalHandler (signal);
 		});
 	}
 
@@ -3634,35 +3658,35 @@ WidgetID CallPropagator::textEditNew (WidgetID parentID)
 	widgets[index] = editor;
 
 	connect (editor, &QTextEdit::currentCharFormatChanged, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalTextEditCharFormatChanged;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalTextEditCharFormatChanged;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (editor, &QTextEdit::textChanged, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalTextEditTextChanged;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalTextEditTextChanged;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (editor, &QTextEdit::cursorPositionChanged, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalTextEditCursorMoved;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalTextEditCursorMoved;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (editor->document (), &QTextDocument::modificationChanged, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalTextEditModified;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalTextEditModified;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	// TODO:
@@ -3809,12 +3833,34 @@ WidgetID CallPropagator::webEngineViewNew (WidgetID parentID)
 	}
 
 	QWebEngineView *webview = new QWebEngineView (parent);
-	//connect (reloadAction, &QAction::triggered, webview, &QWebEngineView::reload);
-	//connect (backAction, &QAction::triggered, webview, &QWebEngineView::back);
-	//connect (forwardAction, &QAction::triggered, webview, &QWebEngineView::forward);
 
 	int index = widgetObjectGadgetCounter++;
 	widgets[index] = webview;
+
+	connect (webview, &QWebEngineView::loadFinished, this, [this, index](bool success) {
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalWebEngineViewLoadFinished;
+                signal.recipient = index; 
+                signal.x = success ? 1 : 0;
+                (void) swiftSignalHandler (signal);
+	});
+
+	connect (webview, &QWebEngineView::loadStarted, this, [this, index]() {
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalWebEngineViewLoadStarted;
+                signal.recipient = index; 
+                (void) swiftSignalHandler (signal);
+	});
+
+	connect (webview, &QWebEngineView::selectionChanged, this, [this, index]() {
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalWebEngineViewSelectionChanged;
+                signal.recipient = index; 
+               (void) swiftSignalHandler (signal);
+	});
 
 	connect (webview, &QWebEngineView::destroyed, this, [this, index]() {
 		widgetDestroyed(index);
@@ -3917,6 +3963,22 @@ void CallPropagator::webEngineViewSetUrl (WidgetID widgetID, const char *url_str
 	}
 }
 
+double CallPropagator::webEngineViewZoomFactor (WidgetID widgetID)
+{
+	QWebEngineView *webEngineView = (QWebEngineView *) widgets[widgetID];
+	if (!webEngineView) {
+		return 0.0;
+	}
+	return webEngineView->zoomFactor();
+}
+void CallPropagator::webEngineViewSetZoomFactor (WidgetID widgetID, double value)
+{
+	QWebEngineView *webEngineView = (QWebEngineView *) widgets[widgetID];
+	if (!webEngineView) {
+		return; 
+	}
+	webEngineView->setZoomFactor(value);
+}
 
 //--------------------
 // QLineEdit
@@ -3958,25 +4020,25 @@ WidgetID CallPropagator::lineEditNew (WidgetID parentID)
 	widgets[index] = lineEdit;
 
         connect (lineEdit, &QLineEdit::editingFinished, this, [index]() {
-                SQEvent event; 
-                memset ((void*)&event, 0, sizeof(event)); 
-                event.type = QSignalLineEditEditingFinished;
-                event.recipient = index; 
-                (void) swiftEventHandler (event);
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalLineEditEditingFinished;
+                signal.recipient = index; 
+                (void) swiftSignalHandler (signal);
         });
         connect (lineEdit, &QLineEdit::textChanged, this, [index]() {
-                SQEvent event; 
-                memset ((void*)&event, 0, sizeof(event)); 
-                event.type = QSignalLineEditTextChanged;
-                event.recipient = index; 
-                (void) swiftEventHandler (event);
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalLineEditTextChanged;
+                signal.recipient = index; 
+                (void) swiftSignalHandler (signal);
         });
         connect (lineEdit, &QLineEdit::returnPressed, this, [index]() {
-                SQEvent event; 
-                memset ((void*)&event, 0, sizeof(event)); 
-                event.type = QSignalLineEditReturnPressed;
-                event.recipient = index; 
-                (void) swiftEventHandler (event);
+                SQSignal signal; 
+                memset ((void*)&signal, 0, sizeof(signal)); 
+                signal.type = QSignalLineEditReturnPressed;
+                signal.recipient = index; 
+                (void) swiftSignalHandler (signal);
         });
 
 	connect (lineEdit, &QLineEdit::destroyed, this, [this, index]() {
@@ -4287,11 +4349,11 @@ WidgetID CallPropagator::calendarWidgetNew (WidgetID parentID)
 	widgets[index] = widget;
 
 	connect (widget, &QCalendarWidget::selectionChanged, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalCalendarSelectionChanged;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalCalendarSelectionChanged;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (widget, &QCalendarWidget::destroyed, this, [this, index]() {
@@ -4444,34 +4506,34 @@ WidgetID CallPropagator::sliderNew (WidgetID parentID)
 	widgets[index] = widget;
 
 	connect (widget, &QSlider::sliderPressed, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalSliderPressed;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalSliderPressed;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 	connect (widget, &QSlider::sliderMoved, this, [index](int value) {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalSliderMoved;
-		event.x = value;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalSliderMoved;
+		signal.x = value;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 	connect (widget, &QSlider::sliderReleased, this, [index]() {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalSliderReleased;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalSliderReleased;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 	connect (widget, &QSlider::valueChanged, this, [index](int value) {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QSignalSliderValueChanged;
-		event.x = value;
-		event.recipient = index;
-		(void) swiftEventHandler (event);
+		SQSignal signal;
+		memset ((void*)&signal, 0, sizeof(signal));
+		signal.type = QSignalSliderValueChanged;
+		signal.x = value;
+		signal.recipient = index;
+		(void) swiftSignalHandler (signal);
 	});
 
 	connect (widget, &QSlider::destroyed, this, [this, index]() {

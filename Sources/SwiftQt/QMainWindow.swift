@@ -108,6 +108,9 @@ open class QMainWindow : QWidget
 		return false
 	}
 
+	public override func signal (_ signal: SQSignal) {
+	}
+
 	public func setTitle (_ title : String) {
 		if let widgetID = widgetID {
 			Conduit.windowSetTitle (widgetID, title)

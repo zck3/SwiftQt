@@ -42,13 +42,16 @@ public class QRadioButton : QAbstractButton
 	}
 
 	open override func event (_ event: QEvent) -> Bool {
-		switch (event.type) {
-			case QSignalRadioButtonToggled:
-				return toggledHandler()
+		return false
+	}
 
+	public override func signal (_ signal: SQSignal) {
+		switch (signal.type) {
+			case QSignalRadioButtonToggled:
+				toggledSlot()
 			default: 
 				break
 		}
-		return false
 	}
+
 }

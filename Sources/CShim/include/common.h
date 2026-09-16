@@ -26,9 +26,9 @@
 #define SWIFTQT_COMMON_TYPES_H
 
 #define kKitName "SwiftQt"
-#define kKitRelease "0.30"
+#define kKitRelease "0.31"
 #define kKitReleaseMajor 0
-#define kKitReleaseMinor 30
+#define kKitReleaseMinor 31
 
 #ifdef __cplusplus
 extern "C" {
@@ -121,24 +121,30 @@ enum : long {
 	QEventLayoutRequest = 76,                    
 	QEventUpdateRequest = 77,                    
 	QEventUpdateLater = 78,                      
+};
 
+enum : long {
 	// Messages from C++ to Swift telling it to deallocate Swift widgets and objects.
 	QWidgetDeallocated = 600,
 	QObjectDeallocated = 601,
-	QGadgetDeallocated = 602,
+	QGadgetDeallocated = 602
+};
 
+enum : long {
 	//----------------------------------------
 	// The following convey to the Swift side
-	// that a Signal in the C++ code
-	// triggered a call to the associated
-	// C++ closure (Slot). 
-	// The means by which the equivalent 
-	// Swift closure is invoked is by passing
-	// one of the below faux events to the
-	// Swift side.
+	// that a Signal was emitted on the C++ side
+	// and triggered a call to the associated
+	// C++ closure (Slot). For Swift support,
+	// the equivalent Swift closure will be
+	// invoked by passing one of the below 
+	// signal type codes to the Swift side,
+	// along with relevant data.
 	//----------------------------------------
 
 	QSignalActionTriggered = 605,
+	QSignalActionChanged,
+	QSignalActionToggled,
 
 	QSignalPushButtonClicked,
 	QSignalRadioButtonToggled, 
@@ -169,6 +175,10 @@ enum : long {
 	QSignalLineEditTextChanged,
 	QSignalLineEditEditingFinished,
 	QSignalLineEditReturnPressed,
+
+	QSignalWebEngineViewLoadFinished,
+	QSignalWebEngineViewLoadStarted,
+	QSignalWebEngineViewSelectionChanged,
 };
 
 typedef struct event
@@ -184,6 +194,20 @@ typedef struct event
 	long previousRow;
 	long previousColumn;
 } SQEvent;
+
+typedef struct signal
+{
+	long recipient; // can be WidgetID or ObjectID
+	long type;
+	long key;
+	SQCoord x; // or column in the case of table
+	SQCoord y; // or row in the case of table
+	SQCoord width;
+	SQCoord height;
+	float value;
+	long previousRow;
+	long previousColumn;
+} SQSignal;
 
 SQPoint SQPoint_new(SQCoord,SQCoord) 	__attribute__((swift_name("SQPoint.init(_:_:)")));
 SQPoint SQPoint_zero(void) 	__attribute__((swift_name("getter:SQPoint.zero()")));
@@ -202,6 +226,8 @@ bool SQRect_containsPoint (SQRect rect, SQCoord x, SQCoord y)	__attribute__((swi
 //SQColor SQColor_fromRgb(int,int,int)	__attribute__((swift_name("SQColor.fromRgb(_:_:_:)")));
 
 extern bool swiftEventHandler (SQEvent);
+extern bool swiftSignalHandler (SQSignal);
+extern bool swiftDestructor (long, long);
 
 const char * _Nonnull SQReleaseName(void);
 const char * _Nonnull SQReleaseString(void);

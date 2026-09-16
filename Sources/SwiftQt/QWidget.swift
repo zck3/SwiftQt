@@ -295,10 +295,10 @@ open class QWidget : QObject
 		return nil
 	}
 
-	public func addAction (_ string: String, _ triggeredHandler: @escaping () -> Void) -> QAction? {
+	public func addAction (_ string: String, _ triggered: @escaping () -> Void) -> QAction? {
 		if let widgetID = widgetID {
 			let action = QAction ()
-			action.triggeredHandler = triggeredHandler
+			action.triggeredSlot = triggered
 			let actionID : Int = Conduit.addActionWithString (widgetID, string)
 			action.objectID = actionID
 			QObject.registerObject(actionID, action)
@@ -307,11 +307,11 @@ open class QWidget : QObject
 		return nil
 	}
 
-	public func addAction (_ action: QAction, _ triggeredHandler: @escaping () -> Void) -> QAction? {
+	public func addAction (_ action: QAction, _ triggered: @escaping () -> Void) -> QAction? {
 		if let widgetID = widgetID, 
 		   let actionID = action.objectID {
 			Conduit.addAction (widgetID, actionID)
-			action.triggeredHandler = triggeredHandler
+			action.triggeredSlot = triggered
 			return action
 		}
 		return nil
@@ -333,6 +333,9 @@ open class QWidget : QObject
 				break
 		}
 		return false
+	}
+
+	public override func signal (_ signal: SQSignal) {
 	}
 
 }

@@ -25,9 +25,13 @@ import CShim
 // QAction.swift
 
 @MainActor
-public class QAction : QObject {
-	public var triggeredHandler: ()->Void = {
-		// RULE: Action handlers don't return anything.
+public class QAction : QObject 
+{
+	public var triggeredSlot: ()->Void = {
+	}
+	public var changedSlot: ()->Void = {
+	}
+	public var toggledSlot: ()->Void = {
 	}
 
 	public required convenience init (_ text: String, _ handler: @escaping ()->Void) {
@@ -36,7 +40,7 @@ public class QAction : QObject {
 		if id != 0 {
 			self.objectID = id
 			QObject.registerObject (id, self)
-			triggeredHandler = handler
+			triggeredSlot = handler
 		} else {
 			fatalError("Unable to instantiate a QAction.")
 		}
@@ -54,18 +58,24 @@ public class QAction : QObject {
 	}
 
 	public override func event (_ event: QEvent) -> Bool {
-		switch (event.type) {
-			case QSignalActionTriggered:
-				triggeredHandler ()
+		return false
+	}
 
+	public override func signal (_ signal: SQSignal) {
+		switch (signal.type) {
+			case QSignalActionTriggered:
+				triggeredSlot ()
+			case QSignalActionChanged:
+				changedSlot ()
+			case QSignalActionToggled:
+				toggledSlot ()
 			// TODO
 			// Changed
 			// Hovered
 			// Toggled
 			default: 
-				print ("QAction unknown event.");
+				break
 		}
-		return false
 	}
 
 	public func setShortcut (_ sequence: QKeySequence) {

@@ -27,8 +27,7 @@ import CShim
 @MainActor
 public class QLabel : QWidget 
 {
-	public var hoveredHandler : (_ event: QEvent)->Bool = { event in
-		return false
+	public var hoveredSlot: ()->Void = { 
 	}
 
 	public convenience init (_ parent: QWidget, _ text: String?) {
@@ -45,14 +44,16 @@ public class QLabel : QWidget
 	}
 
 	public override func event (_ event: QEvent) -> Bool {
-		switch (event.type) {
-			case QSignalLabelHovered:
-				return hoveredHandler (event)
+		return false
+	}
 
+	public override func signal (_ signal: SQSignal) {
+		switch (signal.type) {
+			case QSignalLabelHovered:
+				hoveredSlot ()
 			default: 
 				break
 		}
-		return false
 	}
 
 	public func clear () {

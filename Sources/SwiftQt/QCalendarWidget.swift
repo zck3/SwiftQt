@@ -25,7 +25,8 @@ import CShim
 // QCalendarWidget.swift
 
 @MainActor
-public class QCalendarWidget : QWidget{
+public class QCalendarWidget : QWidget
+{
 	// QCalendarWidget::HorizontalHeaderFormat
 	public static let SingleLetterDayNames	= 1
 	public static let ShortDayNames = 2
@@ -40,8 +41,7 @@ public class QCalendarWidget : QWidget{
 	public static let NoSelection = 0
 	public static let SingleSelection = 1
 
-        public var selectionChangedHandler: ()->Bool = {
-		return false
+        public var selectionChangedSlot: ()->Void = {
         }
 
 	public convenience init (_ parent: QWidget) {
@@ -58,14 +58,16 @@ public class QCalendarWidget : QWidget{
 	}
 
 	public override func event (_ event: QEvent) -> Bool {
+		return false
+	}
+
+	public override func signal (_ event: SQSignal) {
 		switch (event.type) {
 			case QSignalCalendarSelectionChanged:
-				return selectionChangedHandler()
-
+				selectionChangedSlot()
 			default: 
 				break
 		}
-		return false
 	}
 
 	public func horizontalHeaderFormat() -> Int {

@@ -43,10 +43,6 @@ public class QVBoxLayout : QBoxLayout
 	}
 
 	public override func event (_ event: QEvent) -> Bool {
-		switch (event.type) {
-			default: 
-				break
-		}
 		return false
 	}
 }

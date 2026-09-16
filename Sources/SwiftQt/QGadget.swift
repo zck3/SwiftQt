@@ -26,7 +26,8 @@ import CShim
  */
 
 @MainActor
-public class QGadgetStorage {
+public class QGadgetStorage 
+{
 	static let shared = QGadgetStorage()
 
 	private var gadgets: [GadgetID: QGadget] = [:]

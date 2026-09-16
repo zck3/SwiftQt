@@ -348,6 +348,8 @@ public:
 	const char *webEngineViewSelectedText (WidgetID);
 	const char *webEngineViewTitle (WidgetID);
 	void webEngineViewSetUrl (WidgetID, const char*);
+	double webEngineViewZoomFactor (WidgetID widgetID);
+	void webEngineViewSetZoomFactor (WidgetID widgetID, double value);
 
 	//---------------------------------------------------------------------
 	// QLineEdit
@@ -456,25 +458,13 @@ private:
 	std::map<ObjectID, QObject*> objects;
 	std::map<GadgetID, void*> gadgets;
 	void widgetDestroyed (WidgetID widgetID) {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QWidgetDeallocated;
-		event.recipient = widgetID;
-		swiftEventHandler (event);
+		swiftDestructor (widgetID, QWidgetDeallocated);
 	}
 	void objectDestroyed (ObjectID objectID) {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QObjectDeallocated;
-		event.recipient = objectID;
-		swiftEventHandler (event);
+		swiftDestructor (objectID, QObjectDeallocated);
 	}
 	void gadgetDestroyed (GadgetID gadgetID) {
-		SQEvent event;
-		memset ((void*)&event, 0, sizeof(event));
-		event.type = QGadgetDeallocated;
-		event.recipient = gadgetID;
-		swiftEventHandler (event);
+		swiftDestructor (gadgetID, QGadgetDeallocated);
 	}
 	WidgetID lookupOrAddWidget (QWidget*);
 	ObjectID lookupOrAddObject (QObject*);

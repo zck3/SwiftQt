@@ -406,6 +406,8 @@ void Conduit_webEngineViewStop (WidgetID)	__attribute__((swift_name("Conduit.web
 const char *Conduit_webEngineViewSelectedText (WidgetID)	__attribute__((swift_name("Conduit.webEngineViewSelectedText(_:)")));
 const char *Conduit_webEngineViewTitle (WidgetID)	__attribute__((swift_name("Conduit.webEngineViewTitle(_:)")));
 void Conduit_webEngineViewSetUrl (WidgetID, const char*)	__attribute__((swift_name("Conduit.webEngineViewSetUrl(_:_:)")));
+double Conduit_webEngineZoomFactor (WidgetID)	__attribute__((swift_name("Conduit.webEngineViewZoomFactor(_:)")));
+void Conduit_webEngineSetZoomFactor (WidgetID, double)	__attribute__((swift_name("Conduit.webEngineViewSetZoomFactor(_:_:)")));
 
 //-----------------------------------------------------------------------------
 // QTableWidgetItem

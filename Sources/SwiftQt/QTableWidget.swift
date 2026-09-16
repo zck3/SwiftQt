@@ -22,21 +22,17 @@
 import CShim
 
 @MainActor
-public class QTableWidget : QWidget {
-        public var cellChangedHandler: (_ row:Int, _ column:Int)->Bool = { row, column in
-		return false
+public class QTableWidget : QWidget 
+{
+        public var cellChangedSlot: (_ row:Int, _ column:Int)->Void = { row, column in
         }
-        public var cellClickedHandler : (_ row:Int, _ column:Int)->Bool = { row, column in
-		return false
+        public var cellClickedSlot : (_ row:Int, _ column:Int)->Void = { row, column in
         }
-        public var cellDoubleClickedHandler : (_ row:Int, _ column:Int)->Bool = { row, column in
-		return false
+        public var cellDoubleClickedSlot : (_ row:Int, _ column:Int)->Void = { row, column in
         }
-        public var currentCellChangedHandler: (_ row:Int, _ column:Int, _ previousRow:Int, _ previousColumn:Int)->Bool = { row, column, previousRow, previousColumn in
-		return false
+        public var currentCellChangedSlot: (_ row:Int, _ column:Int, _ previousRow:Int, _ previousColumn:Int)->Void = { row, column, previousRow, previousColumn in
         }
-	public var itemSelectionChangedHandler: ()->Bool = {
-		return false
+	public var itemSelectionChangedSlot: ()->Void = {
 	}
 	//----------
 
@@ -54,27 +50,25 @@ public class QTableWidget : QWidget {
 	}
 
 	public override func event (_ event: QEvent) -> Bool {
-		switch (event.type) {
+		return false
+	}
+
+	public override func signal (_ signal: SQSignal) {
+		switch (signal.type) {
 		case QSignalTableCellChanged:
-			return cellChangedHandler(event.y, event.x)
-
+			cellChangedSlot (signal.y, signal.x)
 		case QSignalTableCellClicked:
-			return cellClickedHandler(event.y, event.x)
-
+			cellClickedSlot (signal.y, signal.x)
 		case QSignalTableCellDoubleClicked:
-			return cellDoubleClickedHandler(event.y, event.x)
-
+			cellDoubleClickedSlot (signal.y, signal.x)
 		case QSignalTableCurrentCellChanged:
-			return currentCellChangedHandler(event.y, event.x, event.previousRow, event.previousColumn)
-
+			currentCellChangedSlot (signal.y, signal.x, 
+					        signal.previousRow, signal.previousColumn)
 		case QSignalTableItemSelectionChanged:
-			return itemSelectionChangedHandler()
-
+			itemSelectionChangedSlot ()
 		default: 
 			break
 		}
-
-		return false
 	}
 
 	public func columnCount () -> Int {

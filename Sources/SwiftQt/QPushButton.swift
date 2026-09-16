@@ -43,13 +43,19 @@ public class QPushButton : QAbstractButton
 
 	public override func event (_ event: QEvent) -> Bool {
 		switch (event.type) {
-			case QSignalPushButtonClicked:
-				return clickedHandler()
-
 			default: 
 				break
 		}
 		return false
+	}
+
+	public override func signal (_ signal: SQSignal) {
+		switch (signal.type) {
+			case QSignalPushButtonClicked:
+				clickedSlot()
+			default: 
+				break
+		}
 	}
 
 	public func isFlat () -> Bool {

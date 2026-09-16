@@ -27,11 +27,9 @@ import CShim
 
 @MainActor
 public class QAbstractButton : QWidget {
-	public var clickedHandler: ()->Bool = {
-		return false
+	public var clickedSlot: ()->Void = {
 	}
-	public var toggledHandler: ()->Bool = {
-		return false
+	public var toggledSlot: ()->Void = {
 	}
 
 	public func text () -> String {

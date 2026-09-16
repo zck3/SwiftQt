@@ -41,10 +41,6 @@ public class QLCDNumber : QWidget
 	}
 
 	public override func event (_ event: QEvent) -> Bool {
-		switch (event.type) {
-		default: 
-			break
-		}
 		return false
 	}
 

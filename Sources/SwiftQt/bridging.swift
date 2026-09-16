@@ -37,51 +37,17 @@ public func swiftEventHandler(event: SQEvent) -> Bool /* true => event handled, 
 {
 	let id = event.recipient
 
-	if event.type == QWidgetDeallocated {
-		let widget = QWidgetStorage.shared.widget(id: id)
-		if let widget = widget {
-			let type = String(describing: type(of: widget))
-			print ("C++ informed Swift that widget \(id) of type \(type) was deallocated.");
-			QWidgetStorage.shared.unregister(id: id)
-		} else {
-			print ("C++ informed Swift that unfamiliar widget \(id) was deallocated.");
-		}
-		return true
-	}
-	else if event.type == QObjectDeallocated {
-		let object = QObjectStorage.shared.object(id: id)
-		if let object = object {
-			let type = String(describing: type(of: object))
-			print ("C++ informed Swift that object \(id) of type \(type) was deallocated.");
-			QObjectStorage.shared.unregister(id: id)
-		} else {
-			print ("C++ informed Swift that unfamiliar object \(id) was deallocated.");
-		}
-		return true
-	}
-	else if event.type == QGadgetDeallocated {
-		let gadget = QGadgetStorage.shared.gadget(id: id)
-		if let gadget = gadget {
-			let type = String(describing: type(of: gadget))
-			print ("C++ informed Swift that gadget \(id) of type \(type) was deallocated.");
-			QGadgetStorage.shared.unregister(id: id)
-		} else {
-			print ("C++ informed Swift that unfamiliar gadget \(id) was deallocated.");
-		}
-		return true
-	}
-	
-	let widget : QWidget? = QWidgetStorage.shared.widget(id: event.recipient)
+	let widget : QWidget? = QWidgetStorage.shared.widget(id: id)
 	if let widget = widget {
 		return widget.event (event)
 	}
 
-	let object : QObject? = QObjectStorage.shared.object(id: event.recipient)
+	let object : QObject? = QObjectStorage.shared.object(id: id)
 	if let object = object {
 		return object.event (event)
 	}
 
-	let gadget : QGadget? = QGadgetStorage.shared.gadget(id: event.recipient)
+	let gadget : QGadget? = QGadgetStorage.shared.gadget(id: id)
 	if let gadget = gadget {
 		return gadget.event (event)
 	}
@@ -89,6 +55,61 @@ public func swiftEventHandler(event: SQEvent) -> Bool /* true => event handled, 
 	print ("Event of type \(event.typeString()) for \(id) not consumed.")
 
 	return false
+}
+
+@MainActor
+@_cdecl("swiftDestructor") 
+public func swiftDestructor(id: Int, hint: Int)
+{
+	if hint == QWidgetDeallocated {
+		let widget = QWidgetStorage.shared.widget(id: id)
+		if let widget = widget {
+			let typeString = String(describing: type(of: widget))
+			print ("C++ informed Swift that widget \(id) of type \(typeString) was deallocated.");
+			QWidgetStorage.shared.unregister(id: id)
+		} else {
+			print ("C++ informed Swift that unfamiliar widget \(id) was deallocated.");
+		}
+	}
+	else if hint == QObjectDeallocated {
+		let object = QObjectStorage.shared.object(id: id)
+		if let object = object {
+			let typeString = String(describing: type(of: object))
+			print ("C++ informed Swift that object \(id) of type \(typeString) was deallocated.");
+			QObjectStorage.shared.unregister(id: id)
+		} else {
+			print ("C++ informed Swift that unfamiliar object \(id) was deallocated.");
+		}
+	}
+	else if hint == QGadgetDeallocated {
+		let gadget = QGadgetStorage.shared.gadget(id: id)
+		if let gadget = gadget {
+			let typeString = String(describing: type(of: gadget))
+			print ("C++ informed Swift that gadget \(id) of type \(typeString) was deallocated.");
+			QGadgetStorage.shared.unregister(id: id)
+		} else {
+			print ("C++ informed Swift that unfamiliar gadget \(id) was deallocated.");
+		}
+	}
+}
+
+@MainActor
+@_cdecl("swiftSignalHandler") 
+public func swiftSignalHandler(signal: SQSignal)
+{
+	let id = signal.recipient
+
+	let widget : QWidget? = QWidgetStorage.shared.widget(id: signal.recipient)
+	if let widget = widget {
+		return widget.signal (signal)
+	}
+
+	let object : QObject? = QObjectStorage.shared.object(id: signal.recipient)
+	if let object = object {
+		return object.signal (signal)
+	}
+
+	print ("Signal of type \(signal.type) for \(id) not consumed.")
 }
 
 extension SQPoint {

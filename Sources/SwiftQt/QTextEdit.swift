@@ -24,17 +24,13 @@ import CShim
 @MainActor
 public class QTextEdit : QWidget 
 {
-	public var formatChangedHandler: ()->Bool = {
-		return false
+	public var formatChangedSlot: ()->Void = {
 	}
-	public var cursorMovedHandler: ()->Bool = {
-		return false
+	public var cursorMovedSlot: ()->Void = {
 	}
-	public var modifiedHandler: ()->Bool = {
-		return false
+	public var modifiedSlot: ()->Void = {
 	}
-	public var textChangedHandler: ()->Bool = {
-		return false
+	public var textChangedSlot: ()->Void = {
 	}
 	//----------
 
@@ -51,27 +47,23 @@ public class QTextEdit : QWidget
 		}
 	}
 
-	deinit {
+	public override func event (_ event: QEvent) -> Bool {
+		return false
 	}
 
-	public override func event (_ event: QEvent) -> Bool {
-		switch (event.type) {
+	public override func signal (_ signal: SQSignal) {
+		switch (signal.type) {
 			case QSignalTextEditCharFormatChanged:
-				return formatChangedHandler()
-
+				formatChangedSlot()
 			case QSignalTextEditCursorMoved:
-				return cursorMovedHandler()
-
+				cursorMovedSlot()
 			case QSignalTextEditModified:
-				return modifiedHandler()
-
+				modifiedSlot()
 			case QSignalTextEditTextChanged:
-				return textChangedHandler()
-
+				textChangedSlot()
 			default: 
 				break
 		}
-		return false
 	}
 
 	public func toPlainText () -> String {
