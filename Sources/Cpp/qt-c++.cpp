@@ -729,6 +729,16 @@ void Conduit_addAction (WidgetID widgetID, ObjectID actionID)
 	sharedCallPropagator->addAction (widgetID, actionID);
 }
 
+void Conduit_setFont (WidgetID ID, SQFont font)
+{
+	sharedCallPropagator->setFont (ID, font);
+}
+
+SQFont Conduit_font (WidgetID ID)
+{
+	return sharedCallPropagator->font (ID);
+}
+
 //--------------------
 // QMainWindow
 //--------------------
@@ -863,16 +873,6 @@ void Conduit_actionSetShortcut (ObjectID actionID, SQKeySequence keySequence)
 {
 	return sharedCallPropagator->actionSetShortcut (actionID, keySequence);
 }
-
-#if 0
-//--------------------
-// QColor
-//--------------------
-ObjectID Conduit_colorNew (long red, long green, long blue)
-{
-	return sharedCallPropagator->colorNew (red, green, blue);
-}
-#endif
 
 //--------------------
 // QLabel
@@ -2337,6 +2337,51 @@ void CallPropagator::addAction (WidgetID widgetID, ObjectID actionID)
                 signal.recipient = actionID;
                 (void) swiftSignalHandler (signal);
         });
+}
+
+void CallPropagator::setFont (WidgetID widgetID, SQFont info)
+{
+	QWidget *widget = (QWidget*) widgets[widgetID];
+	if (!widget) {
+		return;
+	}
+	QFont font = QFont(info.family ?: "Times", 
+		info.pointSize > 0 ? info.pointSize : 12, 
+		info.weight, 
+		info.italic);
+	if (info.underline) {
+		font.setUnderline(true);
+	}
+	if (info.strikeOut) {
+		font.setStrikeOut(true);
+	}
+	widget->setFont(font);
+}
+
+SQFont CallPropagator::font (WidgetID widgetID)
+{
+	SQFont info;
+	memset ((void*) &info, 0, sizeof(SQFont));
+
+	QWidget *widget = (QWidget*) widgets[widgetID];
+	if (!widget) {
+		return info;
+	}
+
+	QFont font = widget->font();
+	info.underline = font.underline();
+	info.strikeOut = font.strikeOut();
+	info.italic = font.italic();
+	info.weight = font.weight();
+	info.pointSize = font.pointSize();
+	info.pixelSize = font.pixelSize();
+	info.fixedPitch = font.fixedPitch();
+
+	QString family = font.family();
+	std::string string = family.toStdString();
+	const char *cstring = string.c_str();
+	info.family = strdup(cstring);
+	return info;
 }
 
 //--------------------

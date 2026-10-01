@@ -338,4 +338,38 @@ open class QWidget : QObject
 	public override func signal (_ signal: SQSignal) {
 	}
 
+	public func font () -> QFont {
+		if let widgetID = widgetID {
+			// Fetching the Font, first we fetch the non-string part.
+			let sqfont : SQFont = Conduit.font (widgetID)
+			var font : QFont = QFont.init()
+			font.family = sqfont.familyString()
+			font.pointSize = sqfont.pointSize
+			font.pixelSize = sqfont.pixelSize
+			font.weight = sqfont.weight
+			font.italic = sqfont.italic
+			font.underline = sqfont.underline
+			font.strikeOut = sqfont.strikeOut
+			font.fixedPitch = sqfont.fixedPitch
+			return font
+		}
+		return QFont.init()
+	}
+
+	public func setFont (_ font: QFont) {
+		if let widgetID = widgetID {
+			font.family.withCString { ptr in
+				var sqfont = SQFont()
+				sqfont.family = ptr
+				sqfont.pointSize = font.pointSize
+				sqfont.pixelSize = font.pixelSize
+				sqfont.weight = font.weight 
+				sqfont.italic = font.italic
+				sqfont.underline = font.underline 
+				sqfont.strikeOut = font.strikeOut
+				sqfont.fixedPitch = font.fixedPitch
+				Conduit.setFont (widgetID, sqfont)
+			}
+		}
+	}
 }

@@ -69,7 +69,7 @@ The `configure` script ensures the dependencies are installed.
 
 The Swift compiler is available at 
 [here] https://www.swift.org/install/linux/
-or you can compile it yourself, as I did.
+or you can compile it yourself, as I've done.
 
 You can build SwiftQt by itself as follows:
 
@@ -84,18 +84,16 @@ I'll provide a sample application separately from the library.
 SwiftQt is a work in progress and still in the alpha stage of development.
 There is much yet to be done.
 
-Shall I attempt a declarative UI some day? Time will tell.
-
 Currently I need to have more Qt classes represented in Swift.
 
 * QMediaPlayer
 * QTabWidget
-* QPdfDocument, QPdfView
 * QFileDialog
 * QTimer
 * QDateTime
 * Qt-enclosed OpenGL window
 * Video playback support
+* QPainter for command-line terminal UI.
 * QGraphicsView, QGraphicsScene, QGraphicsPixmapItem for zoomable/pannable image viewer.
-* Struct traversal for declarative UI.
+* Declarative UI.
 

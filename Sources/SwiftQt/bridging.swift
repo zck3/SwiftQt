@@ -142,6 +142,21 @@ extension SQRect {
 	}
 }
 
+@MainActor
+extension SQFont {
+	func familyString () -> String {
+		let unsafeString : UnsafePointer<CChar>? = self.family
+		if let unsafeString = unsafeString {
+			let safeString : String = String (cString:unsafeString)
+			unsafeString.deallocate() // It was strdup'd.
+			return safeString
+		} else {
+			print ("Unable to get font family.")
+			return ""
+		}
+	}
+}
+
 extension SQColor {
 	public func fromRgb(_ red: Int, _ green: Int, _ blue: Int) -> SQColor {
 		return (((red & 255) << 16) | ((green & 255) << 8) | (blue & 255)) as SQColor

@@ -61,27 +61,31 @@ public class QLabel : QWidget
 			Conduit.labelClear (widgetID)
 		}
 	}
+
 	public func text () -> String {
 		if let widgetID = widgetID {
 			let unsafeString : UnsafePointer<CChar>? = Conduit.labelText (widgetID)
 			if let unsafeString = unsafeString {
-				let safeString : String = String (cString:unsafeString);
+				let safeString : String = String (cString:unsafeString)
 				unsafeString.deallocate()
 				return safeString
 			}
 		}
 		return ""
 	}
+
 	public func setText (_ text: String) {
 		if let widgetID = widgetID {
 			Conduit.labelSetText (widgetID, text)
 		}
 	}
+
 	public func setImage (_ image: QImage) {
 		if let widgetID = widgetID, let imageID = image.gadgetID {
 			Conduit.labelSetImage (widgetID, imageID)
 		}
 	}
+
 	public func setPixmap (_ pixmap: QPixmap) {
 		if let widgetID = widgetID, let pixmapID = pixmap.gadgetID {
 			Conduit.labelSetPixmap (widgetID, pixmapID)
@@ -99,34 +103,40 @@ public class QLabel : QWidget
 			return Conduit.labelSetWordWrap (widgetID, value)
 		}
 	}
+
 	public func indent () -> Int {
 		if let widgetID = widgetID {
 			return Conduit.labelIndent (widgetID)
 		}
 		return 0
 	}
+
 	public func setIndent (_ value: Int) {
 		if let widgetID = widgetID {
 			return Conduit.labelSetIndent (widgetID, value)
 		}
 	}
+
 	public func margin () -> Int {
 		if let widgetID = widgetID {
 			return Conduit.labelMargin (widgetID)
 		}
 		return 0
 	}
+
 	public func setMargin (_ value: Int) {
 		if let widgetID = widgetID {
 			return Conduit.labelSetMargin (widgetID, value)
 		}
 	}
+
 	public func alignment () -> Int {
 		if let widgetID = widgetID {
 			return Conduit.labelAlignment (widgetID)
 		}
 		return Qt.AlignNone
 	}
+
 	public func setAlignment (_ value: Int) {
 		if let widgetID = widgetID {
 			return Conduit.labelSetAlignment (widgetID, value)

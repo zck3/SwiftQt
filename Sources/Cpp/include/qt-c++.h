@@ -82,6 +82,8 @@ public:
 	void addAction (WidgetID, ObjectID); // Add preexisting QAction.
 	void clearFocus (WidgetID);
 	void setFocus (WidgetID);
+	void setFont (WidgetID ID, SQFont info);
+	SQFont font (WidgetID ID);
 
 	//---------------------------------------------------------------------
 	// QPdfView

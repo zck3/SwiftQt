@@ -225,6 +225,8 @@ ObjectID Conduit_addAction (WidgetID, ObjectID) 	__attribute__((swift_name("Cond
 ObjectID Conduit_addActionWithString (WidgetID, const char*) 	__attribute__((swift_name("Conduit.addActionWithString(_:_:)"))); // "Convenience function" per the header file.
 void Conduit_clearFocus (WidgetID)   	__attribute__((swift_name("Conduit.clearFocus(_:)")));
 void Conduit_setFocus (WidgetID)   	__attribute__((swift_name("Conduit.setFocus(_:)")));
+SQFont Conduit_font (WidgetID) 	__attribute__((swift_name("Conduit.font(_:)")));
+void Conduit_setFont (WidgetID, SQFont) 	__attribute__((swift_name("Conduit.setFont(_:_:)")));
 
 //-----------------------------------------------------------------------------
 // QGroupBox

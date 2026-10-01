@@ -60,4 +60,8 @@ CHANGE LOG
 	- Improved QWidget, QImage.
 0.30	- Refactored event/signal handling.
 	- Improved QPdfView and QMainWindow.
+0.31	- Created swiftDestructor & swiftSignalHandler. 
+	- Renamed slot closures to use -Slot suffix. 
+	- Improved QWebEngineView.
+0.32	- Added QFont value type.
 

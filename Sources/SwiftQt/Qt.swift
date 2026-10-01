@@ -126,6 +126,17 @@ public class Qt {
 	public static let ZoomModeFitToWidth = 1
 	public static let ZoomModeFitInView = 2
 
+	// QFont::Weight
+	public static let WeightThin = 100
+	public static let WeightExtraLight = 200
+	public static let WeightLight = 300
+	public static let WeightNormal = 400
+	public static let WeightMedium = 500
+	public static let WeightDemiBold = 600
+	public static let WeightBold = 700
+	public static let WeightExtraBold = 800
+	public static let WeightBlack = 900
+
 	// Key codes
 	public static let Key_Space = 0x20
 	public static let Key_Any = Key_Space

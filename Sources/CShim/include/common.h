@@ -26,9 +26,9 @@
 #define SWIFTQT_COMMON_TYPES_H
 
 #define kKitName "SwiftQt"
-#define kKitRelease "0.31"
+#define kKitRelease "0.32"
 #define kKitReleaseMajor 0
-#define kKitReleaseMinor 31
+#define kKitReleaseMinor 32
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,8 +44,19 @@ typedef long GadgetID; // e.g. QPainter object.
 #define InvalidID (0)
 typedef long SQCoord;
 typedef long SQColor;
-typedef const char * const SQKeySequence; // e.g. "Ctrl+w" or a name such as "Redo"
+typedef const char * const _Nonnull SQKeySequence; // e.g. "Ctrl+w" or a name such as "Redo"
 typedef long long SQDate; // Qt represents a date as a 64-bit Julian day number.
+
+typedef struct {
+	const char * _Nullable family;
+	long pointSize;
+	long weight; // QFont::Weight
+	bool italic;
+	bool underline;
+	bool strikeOut;
+	long pixelSize;
+	bool fixedPitch;
+} SQFont;
 
 typedef struct {
 	SQCoord x;
@@ -224,6 +235,8 @@ bool SQRect_containsPoint (SQRect rect, SQCoord x, SQCoord y)	__attribute__((swi
 
 //SQColor SQColor_fromRGB(RGB)	__attribute__((swift_name("SQColor.fromRGB(_:)")));
 //SQColor SQColor_fromRgb(int,int,int)	__attribute__((swift_name("SQColor.fromRgb(_:_:_:)")));
+
+SQFont SQFont_new(const char * _Nonnull,int,int,bool) 	__attribute__((swift_name("SQFont.new(_:_:_:_:)")));
 
 extern bool swiftEventHandler (SQEvent);
 extern bool swiftSignalHandler (SQSignal);
