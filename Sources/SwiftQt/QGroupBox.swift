@@ -28,8 +28,8 @@ import CShim
 @MainActor
 public class QGroupBox : QWidget 
 {
-	public convenience init (_ title: String, _ parent: QMainWindow) {
-		self.init ()
+	public required convenience init (_ title: String, _ parent: QWidget) {
+		self.init()
 		if let parentID = parent.widgetID {
 			let id = Conduit.groupBoxNew (parentID, title)
 			if id != 0 {
@@ -38,6 +38,23 @@ public class QGroupBox : QWidget
 			} else {
 				fatalError("Unable to instantiate a QGroupBox.")
 			}
+		} else {
+			fatalError("QGroupBox requires a parent widget.")
+		}
+	}
+
+	public convenience init (_ parent: QWidget) {
+		self.init()
+		if let parentID = parent.widgetID {
+			let id = Conduit.groupBoxNew (parentID, "")
+			if id != 0 {
+				widgetID = id
+				QWidget.registerWidget (id, self)
+			} else {
+				fatalError("Unable to instantiate a QGroupBox.")
+			}
+		} else {
+			fatalError("QGroupBox requires a parent widget.")
 		}
 	}
 

@@ -8,20 +8,24 @@ By Zack T Smith, 3 at zs3 dot me
 This is a library for creating Swift Qt 6 GUI applications on GNU/Linux 
 and other operating systems.                              
 
-If you want to create a Swift GUI application on an OS such as Linux, 
+If you want to create a Swift GUI application for an OS such as Linux, 
 you cannot use Apple's SwiftUI or AppKit because these only exist on Apple's platforms. 
 
 You'll have to use a library such as SwiftQt.
 
-## What is this not?
+## Is this for imperative or declarative UIs?
 
-SwiftQt is currently not an attempt at producing an open-source equivalent of `SwiftUI`, 
-which is the declarative GUI building system that Apple released around 2019.
+SwiftQt began as a solely imperative UI library.
 
-Nor is SwiftQt an attempt to create a Swift variant of `QML`, which is Qt's
-declarative GUI building system introduced by Nokia in 2009.
+Lately I'm adding a new layer for declarative UIs, currently embodied in the 
+`DeclarativeUI` class.
 
-## Implementation details
+Qt does have a native declarative UI capability called `QML`, 
+but that is not what I'm using. My creation is more similar to the syntax of `SwiftUI`.
+
+Nokia release QML in 2009 and Apple released in 2019. I'm working on mine in 2026.
+
+## How the imperative UI works
 
 First, to let Swift interact with Qt requires writing two mechanisms, one to let Swift
 code talk to the underlying C++ code via a C shim layer, and another to let C++ 
@@ -47,6 +51,16 @@ Note that Swift's C++ interoperability feature cannot be used for SwiftQt,
 because it is geared toward simpler C++ code. It wouldn't be able to understand
 Qt's expansive C++ codebase, nor its MOC files and signals and slots.
 
+## How the declarative UI works
+
+Because I'm coding in Swift and I want a syntax like that of SwiftUI,
+the language determines the approach. It is based on 
+Swift protocols, structs, and the @resultBuilder functionality.
+
+At present, DeclarativeUI is in a very early stage, pre-alpha.
+It doesn't yet have a ''differ'' nor proper management of state.
+It just builds a GUI based on the specified View hierarchy.
+
 ## Package.swift
 
 Writing a proper `Package.swift` was challenging, because as of Swift 6.2, 
@@ -59,13 +73,19 @@ To use SwiftQt, you should write a `Package.swift` for your application
 that references SwiftQt on Github. SPM will automatically fetch and compile 
 SwiftQt's code and link it with your app.
 
-SwiftQt depends on:
+Refer to one of my sample apps for an example of this is done:
+* [https://github.com/zck3/SampleSwiftQtApp] SampleSwiftQtApp
+* [https://github.com/zck3/zCalculator] zCalculator
+
+## Dependencies
 
 * The Swift compiler, 6.2 or better.
 * Qt 6, with all of its packages.
 * A C++ compiler such as Clang or G++.
 
 The `configure` script ensures the dependencies are installed.
+
+## Compiler 
 
 The Swift compiler is available at 
 [here] https://www.swift.org/install/linux/

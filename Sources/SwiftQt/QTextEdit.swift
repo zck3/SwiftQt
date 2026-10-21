@@ -34,10 +34,10 @@ public class QTextEdit : QWidget
 	}
 	//----------
 
-	public convenience init (_ parent: QMainWindow) {
+	public convenience init (_ parent: QWidget) {
 		self.init ()
-		if let windowID = parent.widgetID {
-			let id = Conduit.textEditNew (windowID)
+		if let parentID = parent.widgetID {
+			let id = Conduit.textEditNew (parentID)
 			if id != 0 {
 				self.widgetID = id
 				QWidget.registerWidget (id, self)
@@ -45,6 +45,11 @@ public class QTextEdit : QWidget
 				fatalError("Unable to instantiate a QTextEdit.")
 			}
 		}
+	}
+
+	public convenience init (_ text: String, _ parent: QWidget) {
+		self.init (parent);
+		setText (text);
 	}
 
 	public override func event (_ event: QEvent) -> Bool {

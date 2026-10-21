@@ -53,6 +53,10 @@ public:
 	void setFrame (WidgetID, SQRect);
 	SQRect frame (WidgetID);
 	SQSize minimumSize (WidgetID);
+	long minimumWidth (WidgetID);
+	long minimumHeight (WidgetID);
+	long maximumWidth (WidgetID);
+	long maximumHeight (WidgetID);
 	void setMinimumSize (WidgetID, SQSize);
 	SQSize maximumSize (WidgetID);
 	void setMaximumSize (WidgetID, SQSize);

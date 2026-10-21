@@ -216,11 +216,39 @@ open class QWidget : QObject
 		}
 	}
 
-	public func minimumSize (_ size: QSize) -> QSize {
+	public func minimumSize () -> QSize {
 		if let widgetID = widgetID {
 			return Conduit.minimumSize (widgetID)
 		}
 		return QSize.zero
+	}
+
+	public func minimumWidth () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.minimumWidth (widgetID)
+		}
+		return 0
+	}
+
+	public func minimumHeight () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.minimumHeight (widgetID)
+		}
+		return 0
+	}
+
+	public func maximumWidth () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.maximumWidth (widgetID)
+		}
+		return 0
+	}
+
+	public func maximumHeight () -> Int {
+		if let widgetID = widgetID {
+			return Conduit.maximumHeight (widgetID)
+		}
+		return 0
 	}
 
 	public func setMinimumSize (_ size: QSize) {
@@ -358,9 +386,13 @@ open class QWidget : QObject
 
 	public func setFont (_ font: QFont) {
 		if let widgetID = widgetID {
-			font.family.withCString { ptr in
+			var family = font.family
+			if family.length == 0 {
+				family = Qt.defaultFont
+			}
+			family.withCString { ptr in
 				var sqfont = SQFont()
-				sqfont.family = ptr
+				sqfont.family = ptr 
 				sqfont.pointSize = font.pointSize
 				sqfont.pixelSize = font.pixelSize
 				sqfont.weight = font.weight 

@@ -30,7 +30,7 @@ public class QLabel : QWidget
 	public var hoveredSlot: ()->Void = { 
 	}
 
-	public convenience init (_ parent: QWidget, _ text: String?) {
+	public convenience init (_ text: String?, _ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
 			let id = Conduit.labelNew (parentID, text ?? "")

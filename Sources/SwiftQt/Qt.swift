@@ -28,13 +28,14 @@ public class Qt {
 	public static let AlignNone = 0
 	public static let AlignLeft = 1
 	public static let AlignRight = 2
-	public static let AlignCenter = 4
+	public static let AlignHCenter = 4
 	public static let AlignJustify = 8
 	public static let AlignTop = 0x20
 	public static let AlignBottom = 0x40
 	public static let AlignVCenter = 0x80
 	public static let AlignMiddle = 0x80
 	public static let AlignBaseline = 0x100
+	public static let AlignCenter = AlignVCenter | AlignHCenter
 
 	// Qt::AnchorPoint
 	public static let AnchorLeft = 0
@@ -254,5 +255,13 @@ public class Qt {
 	public static let Key_Hyper_R = 0x01000057
 	public static let Key_Help = 0x01000058
 	public static let Key_AltGr = 0x01001103
+
+#if os(Linux)
+	public static let defaultFont = "DejaVu Sans"
+#elseif os(macOS)
+	public static let defaultFont = "SF Pro"
+#else 
+	public static let defaultFont = "Helvetica"
+#endif
 }
 

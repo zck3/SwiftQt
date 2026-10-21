@@ -28,7 +28,7 @@ import CShim
 @MainActor
 public class QRadioButton : QAbstractButton 
 {
-	public convenience init (_ parent: QWidget, _ string: String) {
+	public convenience init (_ string: String, _ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
 			let id = Conduit.radioButtonNew (parentID, string)

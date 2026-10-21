@@ -198,6 +198,10 @@ void Conduit_resize (WidgetID, SQCoord, SQCoord) 	__attribute__((swift_name("Con
 void Conduit_setMinimumSize (WidgetID, SQSize) 	__attribute__((swift_name("Conduit.setMinimumSize(_:_:)")));
 SQSize Conduit_maximumSize (WidgetID)   	__attribute__((swift_name("Conduit.maximumSize(_:)")));
 SQSize Conduit_minimumSize (WidgetID)   	__attribute__((swift_name("Conduit.minimumSize(_:)")));
+long Conduit_minimumWidth (WidgetID)   	__attribute__((swift_name("Conduit.minimumWidth(_:)")));
+long Conduit_minimumHeight (WidgetID)   	__attribute__((swift_name("Conduit.minimumHeight(_:)")));
+long Conduit_maximumWidth (WidgetID)   	__attribute__((swift_name("Conduit.maximumWidth(_:)")));
+long Conduit_maximumHeight (WidgetID)   	__attribute__((swift_name("Conduit.maximumHeight(_:)")));
 void Conduit_setMaximumSize(WidgetID, SQSize)     __attribute__((swift_name("Conduit.setMaximumSize(_:_:)")));
 void Conduit_setFrame (WidgetID, SQRect) 	__attribute__((swift_name("Conduit.setFrame(_:_:)")));
 SQRect Conduit_frame (WidgetID)   	__attribute__((swift_name("Conduit.frame(_:)")));

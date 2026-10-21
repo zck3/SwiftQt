@@ -28,10 +28,10 @@ import CShim
 @MainActor
 public class QStatusBar : QWidget
 {
-	public convenience init (_ parent: QMainWindow, _ text: String?) {
+	public convenience init (_ text: String, _ parent: QWidget) {
 		self.init ()
-		if let windowID = parent.widgetID {
-			let id = Conduit.statusBarNew (windowID, text ?? "")
+		if let parentID = parent.widgetID {
+			let id = Conduit.statusBarNew (parentID, text)
 			if id != 0 {
 				self.widgetID = id
 				QWidget.registerWidget (id, self)

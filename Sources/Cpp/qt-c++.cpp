@@ -623,6 +623,22 @@ SQSize Conduit_minimumSize (WidgetID widgetID)
 	return sharedCallPropagator->minimumSize (widgetID);
 }
 
+long Conduit_minimumWidth (WidgetID widgetID) {
+	return sharedCallPropagator->minimumWidth (widgetID);
+}
+
+long Conduit_minimumHeight (WidgetID widgetID) {
+	return sharedCallPropagator->minimumHeight (widgetID);
+}
+
+long Conduit_maximumWidth (WidgetID widgetID) {
+	return sharedCallPropagator->maximumWidth (widgetID);
+}
+
+long Conduit_maximumHeight (WidgetID widgetID) {
+	return sharedCallPropagator->maximumHeight (widgetID);
+}
+
 void Conduit_setParent (WidgetID widgetID, WidgetID parentID)
 {
 	sharedCallPropagator->setParent (widgetID, parentID);
@@ -1543,14 +1559,16 @@ ObjectID CallPropagator::boxLayoutNew (WidgetID parentID, long direction)
 	if (!parent) {
 		return InvalidID;
 	}
+
 	QBoxLayout::Direction dir;
 	switch (direction) {
-	case 0: dir = QBoxLayout::LeftToRight; break;
-	case 1: dir = QBoxLayout::RightToLeft; break;
-	default:
-	case 2: dir = QBoxLayout::TopToBottom; break;
-	case 3: dir = QBoxLayout::BottomToTop; break;
+		case 0: dir = QBoxLayout::LeftToRight; break;
+		case 1: dir = QBoxLayout::RightToLeft; break;
+		default:
+		case 2: dir = QBoxLayout::TopToBottom; break;
+		case 3: dir = QBoxLayout::BottomToTop; break;
 	}
+
 	QBoxLayout *layout = new QBoxLayout (dir, parent);
 	int layoutID = widgetObjectGadgetCounter++;
 	objects[layoutID] = (QObject*) layout;
@@ -1567,7 +1585,7 @@ static Qt::Alignment long_to_alignment (long value)
 	Qt::Alignment alignment;
 	if (value & 1) alignment |= Qt::AlignLeft;
 	if (value & 2) alignment |= Qt::AlignRight;
-	if (value & 4) alignment |= Qt::AlignCenter;
+	if (value & 4) alignment |= Qt::AlignHCenter;
 	if (value & 8) alignment |= Qt::AlignJustify;
 	if (value & 0x20) alignment |= Qt::AlignTop;
 	if (value & 0x40) alignment |= Qt::AlignBottom;
@@ -1627,6 +1645,7 @@ ObjectID CallPropagator::hBoxLayoutNew (WidgetID parentID)
 	if (!parent) {
 		return InvalidID;
 	}
+
 	QHBoxLayout *layout = new QHBoxLayout (parent);
 	int layoutID = widgetObjectGadgetCounter++;
 	objects[layoutID] = (QObject*) layout;
@@ -1647,6 +1666,7 @@ ObjectID CallPropagator::vBoxLayoutNew (WidgetID parentID)
 	if (!parent) {
 		return InvalidID;
 	}
+
 	QVBoxLayout *layout = new QVBoxLayout (parent);
 	int layoutID = widgetObjectGadgetCounter++;
 	objects[layoutID] = (QObject*) layout;
@@ -1674,13 +1694,6 @@ GadgetID CallPropagator::pixmapWithPathNew (const char* path)
 	int gadgetID = widgetObjectGadgetCounter++;
 	gadgets[gadgetID] = (QObject*) pixmap;
 
-#if 0
-	// Need wrapper class or cleanup function
-	connect (pixmap, &QPixmap::destroyed, this, [this, gadgetID]() {
-		objectDestroyed(gadgetID);
-	});
-#endif
-
 	return gadgetID;
 }
 
@@ -1694,13 +1707,6 @@ GadgetID CallPropagator::pixmapWithSizeNew (SQCoord width, SQCoord height)
 	}
 	int gadgetID = widgetObjectGadgetCounter++;
 	gadgets[gadgetID] = (QWidget*) pixmap;
-
-#if 0
-	// Need wrapper class or cleanup function
-	connect (pixmap, &QPixmap::destroyed, this, [this, gadgetID]() {
-		objectDestroyed(gadgetID);
-	});
-#endif
 
 	return gadgetID;
 }
@@ -1861,7 +1867,12 @@ WidgetID CallPropagator::groupBoxNew (WidgetID parentID, const char* title)
 	if (!parent) {
 		return InvalidID;
 	}
-	QGroupBox *widget = new QGroupBox(title, parent);
+	
+	QGroupBox *widget = new QGroupBox (parent);
+	if (title) {
+		QString qtitle (title);
+		widget->setTitle (qtitle);
+	}
 	int widgetID = widgetObjectGadgetCounter++;
 	widgets[widgetID] = (QWidget*) widget;
 
@@ -2070,6 +2081,38 @@ SQSize CallPropagator::minimumSize (WidgetID widgetID)
 	return size;
 }
 
+long CallPropagator::minimumWidth (WidgetID widgetID) {
+	QWidget *widget = widgets[widgetID];
+	if (!widget) {
+		return 0;
+	}
+	return widget->minimumWidth();
+}
+
+long CallPropagator::minimumHeight (WidgetID widgetID) {
+	QWidget *widget = widgets[widgetID];
+	if (!widget) {
+		return 0;
+	}
+	return widget->minimumHeight();
+}
+
+long CallPropagator::maximumWidth (WidgetID widgetID) {
+	QWidget *widget = widgets[widgetID];
+	if (!widget) {
+		return 0;
+	}
+	return widget->maximumWidth();
+}
+
+long CallPropagator::maximumHeight (WidgetID widgetID) {
+	QWidget *widget = widgets[widgetID];
+	if (!widget) {
+		return 0;
+	}
+	return widget->maximumHeight();
+}
+
 WidgetID CallPropagator::parentWidget (WidgetID widgetID)
 {
 	QWidget *widget = widgets[widgetID];
@@ -2090,17 +2133,18 @@ void CallPropagator::setParent (WidgetID widgetID, WidgetID parentID)
 	if (!widget) {
 		return;
 	}
-	if (parentID <= 0) {
+	QWidget *parent = NULL;
+	if (parentID) {
+		parent = widgets[parentID];
+	}
+	if (!parent || parentID == InvalidID) {
+		// Just unlink the parent; maybe later we'll set a new parent pointer.
 		widget->setParent (nullptr);
-		widgets[widgetID] = nullptr;
-		widget->deleteLater();
 		return;
 	}
-	QWidget *parent = widgets[widgetID];
-	if (!parent) {
-		return;
+	if (parent) {
+		widget->setParent (parent);
 	}
-	widget->setParent (parent);
 }
 
 SQCoord CallPropagator::x (WidgetID widgetID)
@@ -2214,10 +2258,12 @@ void CallPropagator::setLayout (WidgetID widgetID, WidgetID layoutID)
 	if (!widget) {
 		return;
 	}
+
 	QLayout *layout = (QLayout*) objects[layoutID];
 	if (!layout) {
 		return;
 	}
+
 	widget->setLayout (layout);
 }
 
@@ -3022,6 +3068,10 @@ WidgetID CallPropagator::radioButtonNew (WidgetID parentID, const char *text)
 	}
 
 	QRadioButton *button = new QRadioButton (parent);
+	if (!button) {
+		return InvalidID;
+	}
+
 	if (text) {
 		button->setText (text ?: "");
 	} 
@@ -3507,14 +3557,16 @@ WidgetID CallPropagator::lookupOrAddWidget (QWidget* widget)
 {
 	// Check whether we already have this QWidget on file.
 	// If not, create an entry for it in the widgets dictionary.
-	int index = -1;
+	int index = InvalidID;
+	bool found = false;
 	for (const auto & [key, value] : widgets) {
 		if (((void*)value) == (void*)widget) {
 			index = key;
+			found = true;
 			break;
 		}
 	}
-	if (index == -1) {
+	if (!found) {
 		index = widgetObjectGadgetCounter++;
 		widgets[index] = (QWidget*) widget;
         } 
@@ -3525,7 +3577,7 @@ WidgetID CallPropagator::lookupWidget (QWidget* widget)
 {
 	// Check whether we already have this QWidget on file.
 	// If not, create an entry for it in the widgets dictionary.
-	int index = 0;
+	int index = InvalidID;
 	for (const auto & [key, value] : widgets) {
 		if (((void*)value) == (void*)widget) {
 			index = key;
@@ -3539,14 +3591,16 @@ ObjectID CallPropagator::lookupOrAddObject (QObject* object)
 {
 	// Check whether we already have this QObject on file.
 	// If not, create an entry for it in the objects dictionary.
-	int index = -1;
+	int index = InvalidID;
+	bool found = false;
 	for (const auto & [key, value] : objects) {
 		if (((void*)value) == (void*)object) {
 			index = key;
+			found = true;
 			break;
 		}
 	}
-	if (index == -1) {
+	if (!found) {
 		index = widgetObjectGadgetCounter++;
 		objects[index] = (QObject*) object;
         } 
@@ -3557,7 +3611,8 @@ ObjectID CallPropagator::lookupObject (QObject* object)
 {
 	// Check whether we already have this QObject on file.
 	// If not, create an entry for it in the objects dictionary.
-	int index = -1;
+	int index = InvalidID;
+	bool found = false;
 	for (const auto & [key, value] : objects) {
 		if (((void*)value) == (void*)object) {
 			index = key;
@@ -3821,7 +3876,7 @@ void CallPropagator::textEditSetAlignment (WidgetID widgetID, long value)
 	}
 
 	Qt::Alignment alignment = long_to_alignment(value);
-	editor->setAlignment ((Qt::Alignment)alignment);
+	editor->setAlignment (alignment);
 }
 
 long CallPropagator::textEditAlignment (WidgetID widgetID)
@@ -4177,11 +4232,12 @@ ObjectID CallPropagator::gridLayoutNew (WidgetID parentID)
 	if (!parent) {
 		return InvalidID;
 	}
+
 	QGridLayout *layout = new QGridLayout (parent);
 	int layoutID = widgetObjectGadgetCounter++;
 	objects[layoutID] = (QObject*) layout;
 
-	connect (layout, &QGridLayout::destroyed, this, [this, layoutID]() {
+	connect (layout, &QObject::destroyed, this, [this, layoutID]() {
 		objectDestroyed(layoutID);
 	});
 
@@ -4199,16 +4255,7 @@ void CallPropagator::gridLayoutAddWidget (ObjectID layoutID, WidgetID widgetID, 
 		return;
 	}
 
-	Qt::Alignment alignment;
-	if (value & 1) alignment |= Qt::AlignLeft;
-	if (value & 2) alignment |= Qt::AlignRight;
-	if (value & 4) alignment |= Qt::AlignCenter;
-	if (value & 8) alignment |= Qt::AlignJustify;
-	if (value & 0x20) alignment |= Qt::AlignTop;
-	if (value & 0x40) alignment |= Qt::AlignBottom;
-	if (value & 0x80) alignment |= Qt::AlignVCenter;
-	if (value & 0x100) alignment |= Qt::AlignBaseline;
-
+	Qt::Alignment alignment = long_to_alignment(value);
 	layout->addWidget (widget, row, column, alignment);
 }
 
@@ -4223,16 +4270,7 @@ void CallPropagator::gridLayoutAddWidgetWithSpans (ObjectID layoutID, WidgetID w
 		return;
 	}
 
-	Qt::Alignment alignment;
-	if (value & 1) alignment |= Qt::AlignLeft;
-	if (value & 2) alignment |= Qt::AlignRight;
-	if (value & 4) alignment |= Qt::AlignCenter;
-	if (value & 8) alignment |= Qt::AlignJustify;
-	if (value & 0x20) alignment |= Qt::AlignTop;
-	if (value & 0x40) alignment |= Qt::AlignBottom;
-	if (value & 0x80) alignment |= Qt::AlignVCenter;
-	if (value & 0x100) alignment |= Qt::AlignBaseline;
-
+	Qt::Alignment alignment = long_to_alignment(value);
 	layout->addWidget (widget, row, column, rowspan, colspan, alignment);
 }
 
@@ -4547,6 +4585,7 @@ WidgetID CallPropagator::sliderNew (WidgetID parentID)
 	if (!widget) {
 		return InvalidID;
 	}
+
 	int index = widgetObjectGadgetCounter++;
 	widgets[index] = widget;
 
@@ -4678,7 +4717,8 @@ void CallPropagator::abstractSliderSetPageStep (WidgetID widgetID, long pageStep
 }
 
 void CallPropagator::abstractSliderSetValue (WidgetID widgetID, long value) {
-	QAbstractSlider *widget = (QAbstractSlider *) widgets[widgetID];
+	//QAbstractSlider *widget = (QAbstractSlider *) widgets[widgetID];
+	QSlider *widget = (QSlider *) widgets[widgetID];
 	if (!widget) {
 		return;
 	}
@@ -5064,14 +5104,15 @@ ObjectID CallPropagator::applicationNew (long argc_, char *argv[])
 bool EventFilter::eventFilter (QObject *object, QEvent *event) 
 {
 	if (auto *window = qobject_cast<QMainWindow *>(object)) {
-		// Only if the recipient was a QMainWindow should it be conveyed to the Swift side.
+		// Only if the recipient was a QMainWindow should it be conveyed 
+		// to the Swift side.
 		WidgetID widgetID = sharedCallPropagator->lookupWidget ((QWidget*) object);
-		if (widgetID != -1) {
+		if (widgetID != InvalidID) {
 			SQEvent swiftEvent;
 			memset ((void*) &swiftEvent, 0, sizeof(swiftEvent));
 
 			swiftEvent.recipient = widgetID;
-			swiftEvent.type = static_cast<long>(event->type());
+			swiftEvent.type = (long) event->type();
 
 			switch (event->type()) {
 			case QEvent::Resize: {
@@ -5097,6 +5138,11 @@ bool EventFilter::eventFilter (QObject *object, QEvent *event)
 			case QEvent::MouseButtonRelease:
 			case QEvent::MouseMove:
 			case QEvent::Timer:
+			case QEvent::HoverEnter:
+			case QEvent::HoverLeave:
+			case QEvent::HoverMove:
+			case QEvent::ActivationChange:
+			case QEvent::WindowDeactivate:
 				return swiftEventHandler (swiftEvent);
 
 			case QEvent::Move: {
@@ -5122,6 +5168,7 @@ bool EventFilter::eventFilter (QObject *object, QEvent *event)
 				swiftEvent.width = keyEvent->nativeScanCode();
 				return swiftEventHandler (swiftEvent);
 			}
+
 			case QEvent::KeyRelease: {
 				QKeyEvent *keyEvent = (QKeyEvent*) event;
 				swiftEvent.type = QEventKeyRelease;
@@ -5133,6 +5180,7 @@ bool EventFilter::eventFilter (QObject *object, QEvent *event)
 			}
 
 			default:
+				// printf("OTHER EVENT %d\n", event->type());
 				break;
 			}
 		}

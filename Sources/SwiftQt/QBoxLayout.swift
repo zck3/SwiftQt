@@ -34,10 +34,10 @@ public class QBoxLayout : QLayout
 	public static let TopToBottom = 2
 	public static let BottomToTop = 3
 
-	public convenience init (_ direction: Int, _ parent: QMainWindow) {
+	public convenience init (_ direction: Int, _ parent: QWidget) {
 		self.init ()
-		if let windowID = parent.widgetID {
-			let id = Conduit.boxLayoutNew (windowID, direction)
+		if let parentID = parent.widgetID {
+			let id = Conduit.boxLayoutNew (parentID, direction)
 			if id != 0 {
 				objectID = id
 				QObject.registerObject (id, self)

@@ -64,4 +64,8 @@ CHANGE LOG
 	- Renamed slot closures to use -Slot suffix. 
 	- Improved QWebEngineView.
 0.32	- Added QFont value type.
+0.33	- Fixed QGroupBox setAlignment crashing bug.
+	- Fixed QMainWindow parameter bug.
+	- Fixed parameter order in some init functions to match Qt's.
+	- Began DeclarativeUI.
 

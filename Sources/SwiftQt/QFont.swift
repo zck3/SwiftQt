@@ -23,14 +23,15 @@ import CShim
 
 @MainActor
 public struct QFont {
-	var family : String
-	var fixedPitch : Bool
-	var italic : Bool
-	var pixelSize : Int
-	var pointSize : Int
-	var strikeOut : Bool
-	var underline : Bool 
-	var weight : Int
+	var family: String
+	var fixedPitch: Bool
+	var italic: Bool
+	var pixelSize: Int
+	var pointSize: Int
+	var strikeOut: Bool
+	var underline: Bool 
+	var weight: Int
+	var modified: Bool
 
 	func bold () -> Bool {
 		return self.weight > Qt.WeightMedium
@@ -45,6 +46,7 @@ public struct QFont {
 		strikeOut = false
 		underline = false
 		weight = 0
+		modified = false
 	}
 
 	public mutating func setUnderline (_ value : Bool) {

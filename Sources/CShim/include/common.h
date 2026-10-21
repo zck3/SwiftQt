@@ -26,9 +26,9 @@
 #define SWIFTQT_COMMON_TYPES_H
 
 #define kKitName "SwiftQt"
-#define kKitRelease "0.32"
+#define kKitRelease "0.33"
 #define kKitReleaseMajor 0
-#define kKitReleaseMinor 32
+#define kKitReleaseMinor 33
 
 #ifdef __cplusplus
 extern "C" {
@@ -132,6 +132,7 @@ enum : long {
 	QEventLayoutRequest = 76,                    
 	QEventUpdateRequest = 77,                    
 	QEventUpdateLater = 78,                      
+	QEventHoverMove = 129,
 };
 
 enum : long {

@@ -31,7 +31,7 @@ public class QCheckBox : QAbstractButton
 	public var stateChangedSlot: ()->Void = {
 	}
 
-	public convenience init (_ parent: QWidget, _ string: String) {
+	public convenience init (_ string: String, _ parent: QWidget) {
 		self.init ()
 		if let parentID = parent.widgetID {
 			let id = Conduit.checkBoxNew (parentID, string)

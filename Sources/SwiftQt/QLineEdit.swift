@@ -31,10 +31,10 @@ public class QLineEdit : QWidget
 	public var editingFinishedSlot: ()->Void = {
 	}
 
-	public convenience init (_ parent: QMainWindow) {
+	public convenience init (_ parent: QWidget) {
 		self.init ()
-		if let windowID = parent.widgetID {
-			let id = Conduit.lineEditNew (windowID)
+		if let parentID = parent.widgetID {
+			let id = Conduit.lineEditNew (parentID)
 			if id != 0 {
 				self.widgetID = id
 				QWidget.registerWidget (id, self)
@@ -42,6 +42,11 @@ public class QLineEdit : QWidget
 				fatalError("Unable to instantiate a QLineEdit.")
 			}
 		}
+	}
+
+	public convenience init (_ text: String, _ parent: QWidget) {
+		self.init (parent)
+		setText (text)
 	}
 
 	public override func event (_ event: QEvent) -> Bool {

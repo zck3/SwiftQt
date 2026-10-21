@@ -31,10 +31,10 @@ public class QWebEngineView : QWidget
 	public var selectionChangedSlot : ()->Void = { 
 	}
 
-	public convenience init (_ window: QMainWindow) {
+	public convenience init (_ parent: QWidget) {
 		self.init ()
-		if let windowID = window.widgetID {
-			let id = Conduit.webEngineViewNew (windowID)
+		if let parentID = parent.widgetID {
+			let id = Conduit.webEngineViewNew (parentID)
 			if id != 0 {
 				self.widgetID = id
 				QWidget.registerWidget (id, self)
